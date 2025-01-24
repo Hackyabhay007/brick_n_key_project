@@ -1,6 +1,5 @@
 "use client"
 
-
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
@@ -52,22 +51,49 @@ const residenceData: ResidenceItem[] = [
     {
         id: 7,
         image: "/images/popular_residence_img_2.png",
-        title: "Modern Lofts",
-        location: "Manhattan"
+        title: "Tropical Towers",
+        location: "Queens"
     },
     {
         id: 8,
-        image: "/images/popular_residence_img_4.png",
-        title: "Garden Homes",
-        location: "Brooklyn"
-    }
+        image: "/images/popular_residence_img_3.png",
+        title: "Tropical Towers",
+        location: "Queens"
+    },
 ];
 
 const Popular_Residence = () => {
     const [startIndex, setStartIndex] = useState(0);
 
-    const canSlideNext = startIndex < residenceData.length - 6;
-    const canSlidePrev = startIndex > 0;
+    // Responsive calculation for different screen sizes
+    const getVisibleItems = () => {
+        const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+        
+        if (screenWidth >= 1024) {
+            // Desktop: 6 items
+            return {
+                itemsToShow: 6,
+                canSlideNext: startIndex < residenceData.length - 6,
+                canSlidePrev: startIndex > 0
+            };
+        } else if (screenWidth >= 768) {
+            // Tablet: 5.5 items
+            return {
+                itemsToShow: 5.5,
+                canSlideNext: startIndex < residenceData.length - 5.5,
+                canSlidePrev: startIndex > 0
+            };
+        } else {
+            // Mobile: 4.5 items
+            return {
+                itemsToShow: 4.5,
+                canSlideNext: startIndex < residenceData.length - 4.5,
+                canSlidePrev: startIndex > 0
+            };
+        }
+    };
+
+    const { itemsToShow, canSlideNext, canSlidePrev } = getVisibleItems();
 
     const handleNext = () => {
         if (canSlideNext) {
@@ -81,14 +107,12 @@ const Popular_Residence = () => {
         }
     };
 
-    // const visibleItems = residenceData.slice(startIndex, startIndex + 6);
-
     return (
         <div className="w-full relative flex justify-end bg-bgColor">
-            <div className="w-[95%] 2xl:w-[85%] -mt-[4.5rem] z-20 p-10 rounded-tl-[79px] rounded-b-[20px] bg-bgBlue">
-                <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-white font-[500] text-[28px] leading-[39.81px]">Popular Residence</h2>
-                    <div className="flex gap-2 mr-16">
+            <div className="w-[95%] 2xl:w-[90%] max-sm:w-[97.5%] -mt-24 z-20 py-10 max-lg:py-4 pl-10 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue">
+                <div className="flex justify-between items-center mb-8 max-lg:mb-4">
+                    <h2 className="text-white font-[500] text-[28px] max-lg:text-lg leading-[39.81px]">Popular Residence</h2>
+                    <div className="flex gap-2 mr-16 max-lg:mr-10">
                         <button
                             onClick={handlePrev}
                             disabled={!canSlidePrev}
@@ -97,7 +121,7 @@ const Popular_Residence = () => {
                                 : 'bg-slate-800 hover:bg-slate-700 text-white'
                                 }`}
                         >
-                            <ChevronLeft className="text-xl" />
+                            <ChevronLeft className="h-6 w-fit max-sm:h-4" />
                         </button>
                         <button
                             onClick={handleNext}
@@ -107,24 +131,36 @@ const Popular_Residence = () => {
                                 : 'bg-slate-800 hover:bg-slate-700 text-white'
                                 }`}
                         >
-                            <ChevronRight className="text-xl" />
+                            <ChevronRight className="h-6 w-fit max-sm:h-4 " />
                         </button>
                     </div>
                 </div>
 
                 <div className="overflow-hidden">
                     <div
-                        className="flex gap-6 transition-transform duration-500 ease-in-out"
+                        className="flex gap-6 max-sm:gap-4 transition-transform duration-500 ease-in-out"
                         style={{
-                            transform: `translateX(-${startIndex * (100 / 6)}%)`,
+                            transform: `translateX(-${startIndex * (100 / itemsToShow)}%)`,
                         }}
                     >
                         {residenceData.map((item) => (
-                            <div key={item.id} className="min-w-[calc((100%-5*1.5rem)/6)] flex-shrink-0">
+                            <div 
+                                key={item.id} 
+                                className="min-w-[calc((100%-5*1.5rem)/6)] flex-shrink-0 
+                                    lg:min-w-[calc((100%-5*1.5rem)/6)]
+                                    md:min-w-[calc((100%-4*1.5rem)/5.5)]
+                                    max-md:min-w-[calc((100%-3*1.5rem)/4.5)]"
+                            >
                                 <div className="rounded-lg overflow-hidden flex flex-col justify-start items-start text-[16px] font-[500] leading-[19.5px]">
-                                    <Image width={48} height={48} src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-[10px]" />
-                                    <h3 className=" text-white mt-3">{item.title}</h3>
-                                    <p className="text-[#ADADAD] mt-2">{item.location}</p>
+                                    <Image 
+                                        width={100} 
+                                        height={100} 
+                                        src={item.image} 
+                                        alt={item.title} 
+                                        className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full max-[400px]:w-auto max-[400px]:h-auto object-cover rounded-[10px]" 
+                                    />
+                                    <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-[7px]">{item.title}</h3>
+                                    <p className="text-[#ADADAD] mt-2 max-sm:mt-0 max-sm:text-[10px]">{item.location}</p>
                                 </div>
                             </div>
                         ))}

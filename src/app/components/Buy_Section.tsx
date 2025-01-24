@@ -34,9 +34,10 @@ const Buy_Section = () => {
   ];
 
   return (
-    <div className="w-full mt-20">
-      <div className="buySection bg-white bg-opacity-100 w-[102px] h-[39px] flex justify-center items-center rounded-t-[15px] text-[#ED371C]">Buy</div>
-      <div className=" bg-white bg-opacity-90 rounded-b-[20px] rounded-tr-[20px] shadow-lg p-2 flex items-center gap-2">
+    <>
+    <div className="w-full mt-20 max-lg:hidden">
+      <div className="buySection bg-[#F1EFE7] bg-opacity-100 w-[102px] h-[39px] flex justify-center items-center rounded-t-[15px] text-[14px] text-[#ED371C] leading-[36px] tracking-[0.2em] font-[500]">Buy</div>
+      <div className="w-full h-[102px] bg-white bg-opacity-80 rounded-b-[20px] rounded-tr-[20px] shadow-lg p-2 flex items-center gap-2">
         {/* Location Dropdown */}
         <div className="relative flex-1">
           <button
@@ -47,9 +48,9 @@ const Buy_Section = () => {
             className="w-full flex items-center gap-2 p-2 text-gray-500 hover:text-gray-700"
           >
             <div className="location_section w-full flex flex-col items-start justify-normal border-r-2 border-[#DCDCEB] pr-4">
-              <h3 className='text-[#110229] font-[600]'>Location</h3>
-              <div className='w-full flex justify-between'>
-                <span className="text-sm">Select Your City</span>
+              <h3 className='text-[18px] text-[#110229] font-[600]'>Location</h3>
+              <div className='w-full flex justify-between items-center'>
+                <span className="text-[16px] font-[400] text-[#8F90A6]">Select Your City</span>
                 <MapPin className="h-4 w-4" />
               </div>
             </div>
@@ -79,9 +80,9 @@ const Buy_Section = () => {
             className="w-full flex flex-col items-start gap-2 p-2 text-gray-500 hover:text-gray-700"
           >
             <div className="location_section w-full flex flex-col items-start justify-normal border-r-2 border-[#DCDCEB] pr-4">
-              <h3 className='text-[#110229] font-[600]'>Property Type</h3>
-              <div className='w-full flex justify-between'>
-                <span className="text-sm">Choose Property Type</span>
+              <h3 className='text-[18px] text-[#110229] font-[600]'>Property Type</h3>
+              <div className='w-full flex justify-between items-center'>
+                <span className="text-[16px] font-[400] text-[#8F90A6]">Choose Property Type</span>
                 <ChevronDown className="h-4 w-4 ml-auto" />
               </div>
             </div>
@@ -110,9 +111,9 @@ const Buy_Section = () => {
         {/* Price Range Slider */}
         <div className="flex-1">
           <div className="location_section w-full flex flex-col items-start justify-normal pr-4 text-gray-500">
-            <h3 className='text-[#110229] font-[600]'>Price Ranger</h3>
-            <div className='w-full flex justify-between'>
-            <span className="text-sm">Choose Price Range</span>
+            <h3 className='text-[18px] text-[#110229] font-[600]'>Price Ranger</h3>
+            <div className='w-full flex justify-between items-center'>
+            <span className="text-[16px] font-[400] text-[#8F90A6]">Choose Price Range</span>
             </div>
           </div>
         </div>
@@ -123,6 +124,12 @@ const Buy_Section = () => {
         </button>
       </div>
     </div>
+
+    <div className="buy_section_in_mobile w-full lg:hidden rounded-lg flex justify-between items-center bg-bgColor">
+          <input type="text" placeholder='Try - New Projects in Noida' className='w-full py-3 bg-transparent px-2 rounded-lg' />
+          <button className='bg-bgRed p-1.5 mx-1 rounded-lg'><Search /></button>
+    </div>
+    </>
   );
 };
 
