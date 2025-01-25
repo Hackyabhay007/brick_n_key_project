@@ -21,35 +21,35 @@ const testimonials: Testimonial[] = [
         name: 'Mr. XYZ',
         position: 'CEO',
         company: 'at ABC',
-        image: '/placeholder/400/300'
+        image: '/images/Trusted_by_img.png'
     },
     {
         id: 2,
         name: 'Mr. XYZ',
         position: 'CEO',
         company: 'at ABC',
-        image: '/placeholder/400/300'
+        image: '/images/Trusted_by_img.png'
     },
     {
         id: 3,
         name: 'Mr. XYZ',
         position: 'CEO',
         company: 'at ABC',
-        image: '/placeholder/400/300'
+        image: '/images/Trusted_by_img.png'
     },
     {
         id: 4,
         name: 'Mr. XYZ',
         position: 'CEO',
         company: 'at ABC',
-        image: '/placeholder/400/300'
+        image: '/images/Trusted_by_img.png'
     },
     {
         id: 5,
         name: 'Mr. XYZ',
         position: 'CEO',
         company: 'at ABC',
-        image: '/placeholder/400/300'
+        image: '/images/Trusted_by_img.png'
     }
 ];
 
@@ -200,7 +200,7 @@ export default function Trust_Us() {
                                             <Image
                                                 width={100}
                                                 height={100}
-                                                src="/images/Trusted_by_img.png"
+                                                src={testimonial.image}
                                                 alt={`Testimonial by ${testimonial.name}`}
                                                 className="w-full h-full object-cover"
                                             />

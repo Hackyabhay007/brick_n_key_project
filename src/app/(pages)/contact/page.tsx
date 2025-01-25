@@ -8,6 +8,7 @@ interface ContactFormData {
     lastName: string;
     iWantTo: string;
     notes: string;
+    phone: string;
 }
 
 const ContactForm = () => {
@@ -15,7 +16,8 @@ const ContactForm = () => {
         firstName: '',
         lastName: '',
         iWantTo: '',
-        notes: ''
+        notes: '',
+        phone: ''
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -74,7 +76,7 @@ const ContactForm = () => {
                     <form onSubmit={handleSubmit} className="space-y-6 max-lg:space-y-3 mt-12 flex flex-col max-md:items-center">
                         <div className=" w-full grid grid-cols-2 gap-16 max-sm:gap-6">
                             <div className='w-full'>
-                                <label className="block font-[400] text-xl max-lg:text-base leading-[24.38px] mb-2 max-lg:mb-0">First Name</label>
+                                <label className="block font-[400] text-xl max-lg:text-base leading-[24.38px] mb-1 max-lg:mb-0">First Name</label>
                                 <input
                                     type="text"
                                     className="w-full p-2 bg-white bg-opacity-20 rounded-[5px]"
@@ -84,7 +86,7 @@ const ContactForm = () => {
                             </div>
 
                             <div className='w-full'>
-                                <label className="block font-[400] text-xl max-lg:text-base leading-[24.38px] mb-2 max-lg:mb-0">Last Name</label>
+                                <label className="block font-[400] text-xl max-lg:text-base leading-[24.38px] mb-1 max-lg:mb-0">Last Name</label>
                                 <input
                                     type="text"
                                     className="w-full p-2 bg-white bg-opacity-20 rounded-[5px]"
@@ -94,18 +96,30 @@ const ContactForm = () => {
                             </div>
                         </div>
 
-                        <div className='w-full'>
-                            <label className="block w-full font-[400] text-xl max-lg:text-base leading-[24.38px] mb-2 max-lg:mb-0">I Want To</label>
-                            <input
-                                type="text"
-                                className="w-full p-2 bg-white bg-opacity-20 rounded-[5px]"
-                                placeholder="Buy Property"
-                                onChange={(e) => setFormData({ ...formData, iWantTo: e.target.value })}
-                            />
+                        <div className=" w-full grid grid-cols-2 gap-16 max-sm:gap-6">
+                            <div className='w-full'>
+                                <label className="block w-full font-[400] text-xl max-lg:text-base leading-[24.38px] mb-1 max-lg:mb-0">Phone Number</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-2 bg-white bg-opacity-20 rounded-[5px]"
+                                    placeholder="Phone Number"
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                />
+                            </div>
+
+                            <div className='w-full'>
+                                <label className="block w-full font-[400] text-xl max-lg:text-base leading-[24.38px] mb-1 max-lg:mb-0">I Want To</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-2 bg-white bg-opacity-20 rounded-[5px]"
+                                    placeholder="Buy Property"
+                                    onChange={(e) => setFormData({ ...formData, iWantTo: e.target.value })}
+                                />
+                            </div>
                         </div>
 
                         <div className='w-full'>
-                            <label className="block w-full font-[400] text-xl max-lg:text-base leading-[24.38px] mb-2 max-lg:mb-0">Notes</label>
+                            <label className="block w-full font-[400] text-xl max-lg:text-base leading-[24.38px] mb-1 max-lg:mb-0">Notes</label>
                             <textarea
                                 className="w-full bg-white bg-opacity-20 rounded-[5px]"
                                 rows={5}

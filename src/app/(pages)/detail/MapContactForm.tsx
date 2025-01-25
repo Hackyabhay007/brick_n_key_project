@@ -1,7 +1,5 @@
 "use client"
 
-
-
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 
@@ -10,6 +8,7 @@ interface FormData {
   lastName: string;
   intent: string;
   notes: string;
+  phone : string;
 }
 
 const MapContactForm = () => {
@@ -17,7 +16,8 @@ const MapContactForm = () => {
     firstName: '',
     lastName: '',
     intent: '',
-    notes: ''
+    notes: '',
+    phone: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,21 +27,21 @@ const MapContactForm = () => {
 
   return (
     <>
-      <div className="h-screen w-[90%] max-lg:hidden mx-auto my-16 grid grid-cols-2 max-md:grid-cols-1 max-lg:gpa6 place-items-center items-center">
+      <div className="h-auto w-[90%] max-sm:w-[95%] mx-auto my-16 grid grid-cols-2 max-lg:grid-cols-1 place-items-center items-center">
         <div className='w-full h-full flex justify-center items-center'>
           <img src="/images/map_contact_img.png" className='h-full w-full' alt="map_contact_img" />
         </div>
 
         {/* Form Section */}
-        <div className=" bg-bgBlue h-full flex flex-col justify-center items-center text-white py-16 px-8">
+        <div className=" bg-bgBlue w-full h-full flex flex-col justify-center items-center text-white py-16 px-8">
           <h2 className="text-3xl font-[400]">
             Still haven't found what you're looking for?
           </h2>
 
           <form onSubmit={handleSubmit} className="pt-10">
-            <div className="grid grid-cols-2 gap-4">
+            <div className=" grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="" className='font-[400] text-[20px] leading-[24.38px]'>First Name</label>
+                <label htmlFor="" className='font-[400] text-[20px] max-[410px]:text-lg leading-[24.38px]'>First Name</label>
                 <input
                   type="text"
                   placeholder="First Name"
@@ -51,7 +51,7 @@ const MapContactForm = () => {
                 />
               </div>
               <div>
-                <label htmlFor="" className='font-[400] text-[20px] leading-[24.38px]'>Last Name</label>
+                <label htmlFor="" className='font-[400] text-[20px] max-[410px]:text-lg leading-[24.38px]'>Last Name</label>
                 <input
                   type="text"
                   placeholder="Last Name"
@@ -62,15 +62,27 @@ const MapContactForm = () => {
               </div>
             </div>
 
-            <div className='my-3'>
-              <label htmlFor="" className='font-[400] text-[20px] leading-[24.38px]'>I want to</label>
-              <input
-                type="text"
-                placeholder="Buy Property"
-                className="w-full bg-white bg-opacity-50 rounded px-4 py-1 text-white placeholder-white"
-                value={formData.intent}
-                onChange={(e) => setFormData({ ...formData, intent: e.target.value })}
-              />
+            <div className=" grid grid-cols-2 gap-4">
+              <div className='my-3'>
+                <label htmlFor="" className='font-[400] text-[20px]  max-[410px]:text-lg leading-[24.38px]'>Phone Number</label>
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  className="w-full bg-white bg-opacity-50 rounded px-4 py-1 text-white placeholder-white"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
+              </div>
+              <div className='my-3'>
+                <label htmlFor="" className='font-[400] text-[20px] max-[410px]:text-lg leading-[24.38px]'>I want to</label>
+                <input
+                  type="text"
+                  placeholder="Buy Property"
+                  className="w-full bg-white bg-opacity-50 rounded px-4 py-1 text-white placeholder-white"
+                  value={formData.intent}
+                  onChange={(e) => setFormData({ ...formData, intent: e.target.value })}
+                />
+              </div>
             </div>
 
             <div>

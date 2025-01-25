@@ -19,7 +19,7 @@ const Overview = () => {
   };
 
   return (
-    <div className="w-[90%] mx-auto bg-bgBlue text-white my-16 rounded-[20px] p-10">
+    <div className="w-[90%] max-sm:w-[95%] mx-auto bg-bgBlue text-white my-16 rounded-[20px] p-10">
       <h2 className="text-[36px] leading-[43.88px] tracking-[0.01em] font-[700] mb-8">Overview</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
