@@ -6,6 +6,9 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 
+
+
+
 const Explore = () => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });

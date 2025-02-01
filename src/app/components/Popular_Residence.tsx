@@ -3,6 +3,12 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import { useEffect } from "react";
+import { fetchPopularSection } from "../../redux/slices/popularSlice";
+import { AppDispatch, RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setFilter } from '@/redux/slices/propertyItemSlice';
+import Link from 'next/link';
 
 interface ResidenceItem {
     id: number;
@@ -64,11 +70,24 @@ const residenceData: ResidenceItem[] = [
 
 const Popular_Residence = () => {
     const [startIndex, setStartIndex] = useState(0);
+    const data = useSelector((state: RootState) => state.popularSection?.data);
+    const dispatch = useDispatch<AppDispatch>();
+    // const { data, loading, error } = useSelector(
+    //     (state: RootState) => state.heroSection
+    // );
+
+    useEffect(() => {
+        dispatch(fetchPopularSection());
+    }, [dispatch]);
+
+    // if (data?.loading) return <p>Loading...</p>;
+    // if (data?.error) return <p>Error: {data?.error}</p>;
+    // if (data) console.log(data.data);
 
     // Responsive calculation for different screen sizes
     const getVisibleItems = () => {
         const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
-        
+
         if (screenWidth >= 1024) {
             // Desktop: 6 items
             return {
@@ -107,6 +126,12 @@ const Popular_Residence = () => {
         }
     };
 
+
+    const handleFilterChange = (key: string, value: string | number | undefined) => {
+        console.log(value)
+        dispatch(setFilter({ key, value }));
+    };
+
     return (
         <div className="w-full relative flex justify-end bg-bgColor">
             <div className="w-[95%] 2xl:w-[90%] max-sm:w-[97.5%] -mt-24 z-20 py-10 max-lg:py-4 pl-10 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue">
@@ -143,24 +168,26 @@ const Popular_Residence = () => {
                             transform: `translateX(-${startIndex * (100 / itemsToShow)}%)`,
                         }}
                     >
-                        {residenceData.map((item) => (
-                            <div 
-                                key={item.id} 
+                        {(data?.data)?.map((item: { id: Number, property_Images: { url: String }, property_Location: string, property_Type: String }, index: Number) => (
+                            <div
+                                key={"string" + item.id}
                                 className="min-w-[calc((100%-5*1.5rem)/6)] flex-shrink-0 
                                     lg:min-w-[calc((100%-5*1.5rem)/6)]
                                     md:min-w-[calc((100%-4*1.5rem)/5.5)]
                                     max-md:min-w-[calc((100%-3*1.5rem)/4.5)]"
+                                    onClick={(e) => handleFilterChange('property_Construction_status', item.property_Location || undefined)}
                             >
+                                
                                 <div className="rounded-lg overflow-hidden flex flex-col justify-start items-start text-[16px] font-[500] leading-[19.5px]">
-                                    <Image 
-                                        width={100} 
-                                        height={100} 
-                                        src={item.image} 
-                                        alt={item.title} 
-                                        className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full max-[400px]:w-auto max-[400px]:h-auto object-cover rounded-[10px]" 
+                                    <img
+                                        width={100}
+                                        height={100}
+                                        src={`http://localhost:1337${item.property_Images.url}`}
+                                        alt="imsdf"
+                                        className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full max-[400px]:w-auto max-[400px]:h-auto object-cover rounded-[10px]"
                                     />
-                                    <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-[7px]">{item.title}</h3>
-                                    <p className="text-[#ADADAD] mt-2 max-sm:mt-0 max-sm:text-[10px]">{item.location}</p>
+                                    <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-[7px]">{item.property_Type}</h3>
+                                    <p className="text-[#ADADAD] mt-2 max-sm:mt-0 max-sm:text-[10px]">{item.property_Location}</p>
                                 </div>
                             </div>
                         ))}

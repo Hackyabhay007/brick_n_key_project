@@ -1,3 +1,5 @@
+"use client"
+
 import Brand from "./components/Brand"
 import Explore_Section from "./components/Explore_Section"
 import HeroSection from "./components/HeroSection"

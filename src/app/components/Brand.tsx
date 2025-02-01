@@ -1,7 +1,13 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Search, MapPin, SlidersHorizontal } from 'lucide-react';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBrandSectionSlice } from "../../redux/slices/brandSlice";
+import { AppDispatch, RootState } from "../../redux/store";
+
+
 
 interface BrandData {
   id: number;
@@ -21,8 +27,23 @@ interface PropertyData {
 const Brand = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [propertyIndex, setPropertyIndex] = useState(0);
+  const [cardIndex, setCardIndex] = useState(3);
   const brandTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const propertyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const data = useSelector((state: RootState) => state.brandSection?.data);
+  const dispatch = useDispatch<AppDispatch>();
+  // const { data, loading, error } = useSelector(
+  //     (state: RootState) => state.heroSection
+  // );
+
+  useEffect(() => {
+    dispatch(fetchBrandSectionSlice());
+  }, [dispatch]);
+
+  // if (data?.loading) return <p>Loading...</p>;
+  // if (data?.error) return <p>Error: {data?.error}</p>;
+  // if (data) console.log(data?.data);
 
   const brandLogos: BrandData[] = [
     { id: 1, icon: "/apple-logo.png", alt: "Apple", url: "/images/brand_img_1.png" },
@@ -153,16 +174,17 @@ const Brand = () => {
                 transform: `translateX(-${currentIndex * (100 / 5)}%)`
               }}
             >
-              {brandLogos.map((brand) => (
+              {(data?.data)?.map((currElem: { id: number, brand_ID: string, brand_name: string, brand_logo: { url: string } }, index: number) => (
                 <div
-                  key={brand.id}
-                  className="flex-shrink-0 w-1/5 px-4"
+                  key={"brand" + currElem.id}
+                  className="flex-shrink-0 w-1/5 px-4 cursor-pointer"
+                  onClick={() => { setCardIndex(index) }}
                 >
                   <div className="flex flex-col items-center justify-center h-20">
-                    <h3 className='text-white max-lg:text-sm max-md:text-[8px]'>{brand.alt}</h3>
+                    <h3 className='text-white max-lg:text-sm max-md:text-[8px]'>{currElem.brand_name}</h3>
                     <img
-                      src={brand.url}
-                      alt={brand.alt}
+                      src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.brand_logo.url}`}
+                      alt={currElem.brand_name}
                       className="h-14 max-lg:h-10 max-md:h-8 w-auto object-contain"
                     />
                   </div>
@@ -195,18 +217,22 @@ const Brand = () => {
         <div className="property_card_container w-full">
           {/* Desktop View */}
           <div className="hidden lg:grid grid-cols-3 justify-items-center gap-6">
-            {properties.map((property) => (
-              <div key={property.id} className='flex flex-col justify-start items-start gap-1'>
+            {(data?.data[cardIndex]?.brand_relations || [])?.map((currElem: { id: number, property_Location: string, propertyFeature: [{ id: number, item: string }], property_Images: [{ url: string }] }, index: number) => (
+              <div key={currElem?.id} className='flex flex-col justify-start items-start gap-1'>
                 <img src="/images/explore_img_2.png" className='rounded-[20px]' alt="" />
                 <div className='w-full h-full flex justify-between'>
                   <div className='text-white'>
-                    <h1 className='font-[700]'>{property.title}</h1>
-                    <p className='flex justify-start items-center gap-3 text-[14px]'><MapPin />{property.location}</p>
+                    <h1 className='font-[700]'>AKJ Complex</h1>
+                    <p className='flex justify-start items-center gap-2 text-sm'><MapPin />{currElem.property_Location}</p>
                   </div>
                   <div className='text-[#8F90A6] text-[16px]'>
-                    <p>10 Bedroom</p>
-                    <p>2 Garage</p>
-                    <p>150M</p>
+                    {
+                      (currElem?.propertyFeature)?.map((currElem) => {
+                        return (
+                          <p key={currElem.id} className='text-xs'>{currElem.item}</p>
+                        )
+                      })
+                    }
                   </div>
                 </div>
               </div>
@@ -241,22 +267,26 @@ const Brand = () => {
                   transform: `translateX(-${propertyIndex * 100}%)`
                 }}
               >
-                {properties.map((property) => (
+                {(data?.data[cardIndex]?.brand_relations || [])?.map((currElem: { id: number, property_Location: string, propertyFeature: [{ id: number, item: string }], property_Images: [{ url: string }] }, index: number) => (
                   <div
-                    key={property.id}
+                    key={currElem?.id}
                     className="flex-shrink-0 w-full px-4"
                   >
                     <div className='flex flex-col justify-start items-start gap-1'>
                       <img src="/images/explore_img_2.png" className='rounded-[20px] w-full' alt="" />
                       <div className='w-full h-full flex justify-between'>
                         <div className='text-white'>
-                          <h1 className='font-[700] text-[28px]'>{property.title}</h1>
-                          <p className='flex justify-start items-center gap-3 text-[14px]'><MapPin />{property.location}</p>
+                          <h1 className='font-[700] text-[28px]'>"AKJ Complex"</h1>
+                          <p className='flex justify-start items-center gap-3 text-[14px]'><MapPin />{currElem?.property_Location}</p>
                         </div>
                         <div className='text-[#8F90A6] text-[16px]'>
-                          <p>10 Bedroom</p>
-                          <p>2 Garage</p>
-                          <p>150M</p>
+                          {
+                            (currElem?.propertyFeature)?.map((currElem) => {
+                              return (
+                                <p key={currElem.id}>{currElem.item}</p>
+                              )
+                            })
+                          }
                         </div>
                       </div>
                     </div>

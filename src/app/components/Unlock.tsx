@@ -3,8 +3,22 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUnlockSection } from "../../redux/slices/unlockSectionSlice";
+import { AppDispatch, RootState } from "../../redux/store";
+
+
 
 export default function Unlock() {
+    const data = useSelector((state: RootState)=>state.unlockSection?.data);
+    const dispatch = useDispatch<AppDispatch>();
+
+    useEffect(() => {
+        dispatch(fetchUnlockSection());
+    }, [dispatch]);
+
+    // if(data) console.log(data);
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });
 
@@ -94,7 +108,7 @@ export default function Unlock() {
                         animate={isInView ? "visible" : "hidden"}
                         className="font-[600] text-6xl max-xl:text-5xl max-lg:text-3xl max-sm:text-xl text-center px-4"
                     >
-                        Unlock Your Dream Home Today!
+                        {data?.data?.Unlock_heading}
                     </motion.h3>
 
                     <motion.p
@@ -104,7 +118,7 @@ export default function Unlock() {
                         animate={isInView ? "visible" : "hidden"}
                         className=" w-[90%] max-sm:w-[95%] lg:w-[80%] max-lg:w-[90%] font-[400] text-lg sm:text-2xl max-md:text-2xl max-sm:text-sm max-lg:text-sm lg:text-[36px] mx-auto text-center"
                     >
-                        Join us on the journey to homeownership and discover the perfect place to call your own.
+                        {data?.data?.Unlock_description}
                     </motion.p>
 
                     <motion.button
@@ -113,7 +127,7 @@ export default function Unlock() {
                         animate={isInView ? "visible" : "hidden"}
                         className="w-[140px] sm:w-[150px] md:w-[166px] h-[44px] sm:h-[48px] md:h-[54px] flex justify-center items-center border-2 border-black rounded-[63px] text-base sm:text-xl md:text-2xl lg:text-[24px] leading-normal lg:leading-[29.26px] font-[500] mt-6 md:mt-10 lg:mt-12 hover:bg-black hover:text-white transition-colors duration-300"
                     >
-                        Call Now
+                        {data?.data?.Unlock_button_text}
                     </motion.button>
 
                     <div className="w-full absolute -bottom-16 max-2xl:-bottom-14 max-lg:-bottom-10 max-md:-bottom-3 max-sm:bottom-0">
@@ -132,7 +146,7 @@ export default function Unlock() {
                                 backgroundSize: 'cover',
                             }}
                         >
-                            BRICKNKEY
+                            {data?.data?.Unlock_transparent_text}
                         </motion.h1>
                     </div>
 
