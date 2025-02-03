@@ -87,7 +87,7 @@ export default function Unlock() {
 
     return (
         <>
-            <div className="unlock_container bg-bgColor w-full">
+            <div className="unlock_container pt-16 bg-bgColor w-full">
                 <motion.div
                     ref={ref}
                     variants={containerVariants}

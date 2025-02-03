@@ -23,7 +23,7 @@ export default function HeroSection() {
 
     // if (data?.loading) return <p>Loading...</p>;
     // if (data?.error) return <p>Error: {data?.error}</p>;
-    // if(data) console.log(data?.data?.data[0]?.HeroSection_video?.url);
+    if(data) console.log(data?.data);
 
 
     const ref = useRef(null);
@@ -63,7 +63,7 @@ export default function HeroSection() {
     return (
         <>
             <div className="heroSection_container relative z-10 w-full bg-bgColor">
-                <div ref={ref} className="heroSection_inner_container h-[575px]s relative mx-auto flex flex-col justify-center items-center bg-center w-[95%] md:w-[90%] 2xl:w-[80%]">
+                <div ref={ref} className="heroSection_inner_container h-[575px] relative mx-auto flex flex-col justify-center items-center bg-center w-[95%] md:w-[90%] 2xl:w-[80%]">
                     <motion.div
                         variants={videoVariants}
                         initial="hidden"

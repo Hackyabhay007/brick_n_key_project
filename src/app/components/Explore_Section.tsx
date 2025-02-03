@@ -1,17 +1,15 @@
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import { MapPin } from 'lucide-react';
 import Slider from './Slider';
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 
-
-
-
 const Explore = () => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });
+    const [currentLocation, setCurrentLocation] = useState("White Field, Bangalore");
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -43,7 +41,7 @@ const Explore = () => {
     };
 
     return (
-        <div className='w-full py-16 bg-bgColor'>
+        <div className='w-full pt-16 bg-bgColor'>
             <motion.div
                 ref={ref}
                 variants={containerVariants}
@@ -71,7 +69,7 @@ const Explore = () => {
                         className="flex w-fit items-center gap-2 my-12 max-lg:my-8 py-2 pl-2 pr-6 border-2 border-black rounded-full shadow-sm"
                     >
                         <MapPin className="text-xl text-gray-500" />
-                        <span>White Field, Bangalore</span>
+                        <span>{currentLocation}</span>
                     </motion.div>
                 </div>
 
@@ -79,7 +77,7 @@ const Explore = () => {
                 <motion.div
                     variants={headerVariants}
                 >
-                    <Slider />
+                    <Slider onLocationChange={setCurrentLocation} />
                 </motion.div>
             </motion.div>
         </div>

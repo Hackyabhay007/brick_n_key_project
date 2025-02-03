@@ -72,7 +72,7 @@ export default function Footer() {
                                     placeholder="Email Address"
                                     className="w-full h-full bg-white p-4 max-md:py-0 max-md:h-[38.93px] rounded-[15px] outline-none text-black text-xs"
                                 /> 
-                                 <div className="bg-[#ED371C] px-6 max-sm:px-1 max-sm:py-0 rounded-full mr-3 flex justify-center items-center whitespace-nowrap">
+                                 <div className="bg-[#ED371C] px-6 max-sm:px-2 max-sm:py-2 max-sm:text-xs rounded-full mr-3 flex justify-center items-center whitespace-nowrap">
                                     Subscribe
                                 </div>
                             </div>

@@ -7,12 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchLuxuryListingItem } from "../../redux/slices/luxuryListingSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 
-const Slider = () => {
+const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) => void }) => {
   const data = useSelector((state: RootState) => state.luxuryListingItems?.data);
   const dispatch = useDispatch<AppDispatch>();
   const [isClient, setIsClient] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right' | ''>('');
+  const [property_Location, setPropertyLocation] = useState('');
 
   useEffect(() => {
     setIsClient(true);
@@ -26,17 +27,25 @@ const Slider = () => {
     url: currElem?.property_Images?.[0]?.url || "/placeholder.jpg",
   })) || [];
 
+  useEffect(() => {
+    if (slides.length > 0) {
+      onLocationChange?.(getSlide(0).location);
+    }
+  }, [slides, onLocationChange]);
+
   const nextSlide = useCallback(() => {
     setSlideDirection('left');
     setCurrentSlide((prev) => (prev + 1) % slides.length);
     setTimeout(() => setSlideDirection(''), 500);
-  }, [slides.length]);
+    onLocationChange?.(getSlide(1).location);
+  }, [slides.length, onLocationChange]);
 
   const prevSlide = useCallback(() => {
     setSlideDirection('right');
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
     setTimeout(() => setSlideDirection(''), 500);
-  }, [slides.length]);
+    onLocationChange?.(getSlide(-1).location);
+  }, [slides.length, onLocationChange]);
 
   const getSlideIndex = (offset: number) => {
     return (currentSlide + offset + slides.length) % slides.length;
@@ -186,7 +195,7 @@ const Slider = () => {
                       {getSlide(0)?.location}
                     </p>
                   </div>
-                  <p className="text-xs">{getSlide(0)?.description}</p>
+                  <p className="text-xs">{getSlide(0)?.description?.slice(0, 100)}</p>
                 </div>
               </div>
             </div>

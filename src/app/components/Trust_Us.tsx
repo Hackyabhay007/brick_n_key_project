@@ -1,11 +1,14 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPeopleTrustUs_Slice } from "../../redux/slices/peopleTrust_usSlice";
+import { AppDispatch, RootState } from "../../redux/store";
 
 interface Testimonial {
     id: number;
@@ -56,8 +59,44 @@ const testimonials: Testimonial[] = [
 export default function Trust_Us() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slidesPerView, setSlidesPerView] = useState(3);
+    const [playingVideo, setPlayingVideo] = useState<number | null>(null);
+    const [trustUsArray, setTrustUsArray] = useState([]);
+    const videoRefs = useRef<{ [key: number]: HTMLVideoElement | null }>({});
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });
+
+    const data = useSelector((state: RootState) => state.peopleTrustUsSection?.data);
+    const dispatch = useDispatch<AppDispatch>();
+    // const { data, loading, error } = useSelector(
+    //     (state: RootState) => state.heroSection
+    // );
+
+    useEffect(() => {
+        if(data){
+            const newArr = data?.data.map((currElem: {id: number, People_Trust_Us_video: {url: string}, People_Trust_Us_title: string, People_Trust_Us_designation: string}, index: number) => {
+                return {
+                    id : currElem.id,
+                    title: currElem.People_Trust_Us_title,
+                    designation: currElem.People_Trust_Us_designation,  
+                    video: currElem.People_Trust_Us_video.url
+                }
+            })
+
+            if(newArr.length > 0){
+                setTrustUsArray(newArr);
+            }
+        }
+    }, [data]);
+
+    console.log("This is the trust us array", trustUsArray);
+
+    useEffect(() => {
+        dispatch(fetchPeopleTrustUs_Slice());
+    }, [dispatch]);
+
+    // if (data?.loading) return <p>Loading...</p>;
+    // if (data?.error) return <p>Error: {data?.error}</p>;
+    if (data) console.log(data?.data);
 
     useEffect(() => {
         const handleResize = () => {
@@ -85,6 +124,23 @@ export default function Trust_Us() {
         setCurrentIndex((prevIndex) =>
             prevIndex - 1 < 0 ? testimonials.length - slidesPerView : prevIndex - 1
         );
+    };
+
+    const handleVideoClick = (testimonialId: number) => {
+        const video = videoRefs.current[testimonialId];
+        if (!video) return;
+
+        if (playingVideo === testimonialId) {
+            video.pause();
+            setPlayingVideo(null);
+        } else {
+            // Pause any currently playing video
+            if (playingVideo !== null && videoRefs.current[playingVideo]) {
+                videoRefs.current[playingVideo]?.pause();
+            }
+            video.play();
+            setPlayingVideo(testimonialId);
+        }
     };
 
     const headerVariants = {
@@ -135,7 +191,7 @@ export default function Trust_Us() {
     };
 
     return (
-        <div className="w-full py-16 bg-bgColor">
+        <div className="w-full pt-16 bg-bgColor">
             <motion.div
                 ref={ref}
                 className='w-[95%] md:w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue rounded-[20px] max-lg:py-10 lg:p-14'
@@ -185,36 +241,35 @@ export default function Trust_Us() {
                         className="overflow-hidden"
                     >
                         <div
-                            className="w-full flex justify-center gap-4 md:gap-8 lg:gap-20 transition-transform duration-500 ease-in-out"
+                            className="w-full flex justify-center gap-4 md:gap-8 lg:gap-10 transition-transform duration-500 ease-in-out"
                             style={{
                                 transform: `translateX(-${currentIndex * (100 / slidesPerView)}%)`
                             }}
                         >
-                            {testimonials.map((testimonial, index) => (
+                            {trustUsArray?.map((currElem:{id:number,title: string, designation: string, video: string }, index:number) => (
                                 <div
-                                    key={testimonial.id}
-                                    className={`min-w-[90%] w-[45%] max-lg:min-w-[50%] lg:min-w-[27%] px-2 md:px-4 ${index === currentIndex ? 'scale-[1.2]' : ''}`}
+                                    key={currElem?.id}
+                                    className={`min-w-[90%] w-[45%] max-lg:min-w-[50%] lg:min-w-[32%] px-2 md:px-4`}
                                 >
-                                    <div className="rounded-lg overflow-hidden">
-                                        <div className="relative bg-green-600">
-                                            <Image
-                                                width={100}
-                                                height={100}
-                                                src={testimonial.image}
-                                                alt={`Testimonial by ${testimonial.name}`}
-                                                className="w-full h-full object-cover"
-                                            />
+                                    <div className="rounded-lg w-full h-full overflow-hidden">
+                                        <div className="relative w-full">
+                                            <video
+                                                className='w-full h-[350px] max-sm:h-[280px] object-cover'
+                                                src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.video}`}
+                                                ref={el => { videoRefs.current[currElem?.id] = el; }}
+                                            ></video>
                                             <div className="video_info absolute bottom-2 md:bottom-5 w-full flex justify-between items-center text-white px-2 md:px-3">
                                                 <div className='h-full flex flex-col justify-center items-start'>
-                                                    <h3 className="text-sm md:text-base">{testimonial.name}</h3>
-                                                    <p className='text-xs'>{testimonial.position} {testimonial.company}</p>
+                                                    <h3 className="text-sm md:text-base">{currElem?.title}</h3>
+                                                    <p className='text-xs'>{currElem?.designation}</p>
                                                 </div>
                                                 <Image
                                                     width={46}
                                                     height={46}
-                                                    src='/images/pause_btn.png'
+                                                    src={playingVideo === currElem?.id ? '/images/play_btn.png' : '/images/pause_btn.png'}
                                                     alt="testimonial img"
-                                                    className="w-8 h-8 md:w-12 md:h-12"
+                                                    className="cursor-pointer w-8 h-8 md:w-12 md:h-12"
+                                                    onClick={() => handleVideoClick(currElem?.id)}
                                                 />
                                             </div>
                                         </div>

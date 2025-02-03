@@ -4,11 +4,9 @@
 // import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Unlock from "./components/Unlock";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
+import Template from "./components/Template";
 
 
 const montserrat = Montserrat({
@@ -28,15 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
         className={montserrat.className}
       >
         <Provider store={store}>
-          <Header />
-          {children}
-          <Unlock />
-          <Footer />
+          <Template>
+            {children}
+          </Template>
         </Provider>
       </body>
     </html>

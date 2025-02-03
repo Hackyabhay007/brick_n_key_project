@@ -9,6 +9,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setFilter } from '@/redux/slices/propertyItemSlice';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface ResidenceItem {
     id: number;
@@ -72,6 +73,7 @@ const Popular_Residence = () => {
     const [startIndex, setStartIndex] = useState(0);
     const data = useSelector((state: RootState) => state.popularSection?.data);
     const dispatch = useDispatch<AppDispatch>();
+    const router = useRouter();
     // const { data, loading, error } = useSelector(
     //     (state: RootState) => state.heroSection
     // );
@@ -128,8 +130,10 @@ const Popular_Residence = () => {
 
 
     const handleFilterChange = (key: string, value: string | number | undefined) => {
-        console.log(value)
-        dispatch(setFilter({ key, value }));
+        console.log(key, value);
+        if (value !== undefined) {
+            router.push(`/listing?${key}=${encodeURIComponent(value)}`);
+        }
     };
 
     return (
@@ -174,8 +178,8 @@ const Popular_Residence = () => {
                                 className="min-w-[calc((100%-5*1.5rem)/6)] flex-shrink-0 
                                     lg:min-w-[calc((100%-5*1.5rem)/6)]
                                     md:min-w-[calc((100%-4*1.5rem)/5.5)]
-                                    max-md:min-w-[calc((100%-3*1.5rem)/4.5)]"
-                                    onClick={(e) => handleFilterChange('property_Construction_status', item.property_Location || undefined)}
+                                    max-md:min-w-[calc((100%-3*1.5rem)/4.5)] cursor-pointer"
+                                    onClick={(e) => handleFilterChange('property_Location', item.property_Location || undefined)}
                             >
                                 
                                 <div className="rounded-lg overflow-hidden flex flex-col justify-start items-start text-[16px] font-[500] leading-[19.5px]">
@@ -184,7 +188,7 @@ const Popular_Residence = () => {
                                         height={100}
                                         src={`http://localhost:1337${item.property_Images.url}`}
                                         alt="imsdf"
-                                        className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full max-[400px]:w-auto max-[400px]:h-auto object-cover rounded-[10px]"
+                                        className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full object-cover rounded-[10px]"
                                     />
                                     <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-[7px]">{item.property_Type}</h3>
                                     <p className="text-[#ADADAD] mt-2 max-sm:mt-0 max-sm:text-[10px]">{item.property_Location}</p>

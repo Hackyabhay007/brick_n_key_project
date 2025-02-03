@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPopular_Listing } from '../../../redux/slices/popularListingSlice';
+import { AppDispatch, RootState } from "../../../redux/store";
+
+
 
 interface SlideItem {
   id: number;
@@ -9,7 +14,44 @@ interface SlideItem {
   image: string;
 }
 
-const Popular_Listing = () => {
+const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
+  const [propertyItemArray, setPropertyItemArray] = useState([]);
+  const data = useSelector((state: RootState) => state.popularListingSection?.data);
+  const dispatch = useDispatch<AppDispatch>();
+  // const { data, loading, error } = useSelector(
+  //     (state: RootState) => state.heroSection
+  // );
+
+  const fetchListings = (propertyType: string) => {
+    dispatch(fetchPopular_Listing({ propertyType: propertyType }));
+  };
+
+  useEffect(() => {
+    if (propertyType) fetchListings(propertyType);
+  }, [propertyType]);
+
+  useEffect(() => {
+    if (data?.data) {
+      const newArr = data.data.map((currElem: any) => ({
+        id: currElem.id,
+        property_price: currElem.property_price,
+        propertyFeature: currElem.propertyFeature,
+        property_Location: currElem.property_Location,
+        property_Images: currElem?.property_Images[0]?.url,
+      }));
+      setPropertyItemArray(newArr);
+    }
+  }, [data]);
+
+  console.log("This is the Slice Item ", propertyItemArray); 
+
+  // if (data?.loading) return <p>Loading...</p>;
+  // if (data?.error) return <p>Error: {data?.error}</p>;
+  if (data) console.log("This is the Popular Listing data ", data?.data);
+
+
+
+
   const items: SlideItem[] = [
     { id: 1, title: "Item 1", image: "/images/detail_popular_listing_img.png" },
     { id: 2, title: "Item 2", image: "/images/detail_popular_listing_img.png" },
@@ -42,7 +84,7 @@ const Popular_Listing = () => {
 
   const handleNext = () => {
     if (isAnimating || currentIndex >= items.length - itemsPerSlide) return;
-    
+
     setIsAnimating(true);
     setDirection('right');
     setCurrentIndex(prev => prev + 1);
@@ -51,14 +93,14 @@ const Popular_Listing = () => {
 
   const handlePrev = () => {
     if (isAnimating || currentIndex === 0) return;
-    
+
     setIsAnimating(true);
     setDirection('left');
     setCurrentIndex(prev => prev - 1);
     setTimeout(() => setIsAnimating(false), 500);
   };
 
-  const visibleItems = items.slice(currentIndex, currentIndex + itemsPerSlide);
+  const visibleItems = propertyItemArray?.slice(currentIndex, currentIndex + itemsPerSlide);
 
   return (
     <div className="w-[90%] max-sm:w-[95%] mx-auto bg-bgBlue text-white p-16 max-lg:py-8 max-lg:px-6 max-lg:rounded-[5px]">
@@ -78,40 +120,42 @@ const Popular_Listing = () => {
           <div
             className={`flex gap-12 max-lg:gap-6 transition-transform duration-500 ease-in-out`}
             style={{
-              transform: isAnimating 
-                ? (direction === 'right' 
-                    ? `translateX(-${100 / itemsPerSlide}%)` 
-                    : `translateX(${100 / itemsPerSlide}%)`)
+              transform: isAnimating
+                ? (direction === 'right'
+                  ? `translateX(-${100 / itemsPerSlide}%)`
+                  : `translateX(${100 / itemsPerSlide}%)`)
                 : 'translateX(0)',
               opacity: isAnimating ? 0.7 : 1,
               width: '100%',
             }}
           >
-            {visibleItems.map((item, index) => (
+            {visibleItems?.map((currElem:{id:number, property_price: number, propertyFeature: [{id: number, item : string}], property_Location: string, property_Images: [{url: string}]}, index:number) => (
               <div
-                key={item.id}
+                key={currElem.id}
                 className={`flex-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 
-                  ${isAnimating 
-                    ? (direction === 'right' 
-                        ? 'translate-x-[-100%] scale-95' 
-                        : 'translate-x-[100%] scale-95')
+                  ${isAnimating
+                    ? (direction === 'right'
+                      ? 'translate-x-[-100%] scale-95'
+                      : 'translate-x-[100%] scale-95')
                     : 'translate-x-0 scale-100'}`}
               >
                 <img
-                  src={item.image}
-                  alt={item.title}
+                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images}`}
+                  alt="property_image"
                   className="w-full h-[300px] max-lg:h-auto object-cover rounded-[20px] transition-transform duration-500 
                     hover:scale-105"
                 />
-                <h3 className='max-lg:text-xs max-md:text-[10px]'>103/143 West Street, Crows Nest</h3>
+                <h3 className='max-lg:text-xs max-md:text-[10px]'>{currElem.property_Location}</h3>
                 <div className='w-full flex justify-between items-start'>
                   <div className='w-full flex flex-col text-[16px] max-sm:text-[6px] font-[500] leading-[19.5px text-[#8F90A6]'>
-                    <p>10 Bedroom</p>
-                    <p>2 Garage</p>
-                    <p>150 M</p>
+                    {
+                      (currElem.propertyFeature).map((currElem:{id:number, item:string}) => (
+                        <p key={currElem.id}>{currElem.item}</p>
+                      ))
+                    }
                   </div>
                   <div className='w-full h-full flex justify-end items-end max-lg:items-start'>
-                    <button className='w-[136px] h-[35.53px] max-lg:w-fit max-lg:h-fit max-lg:py-1 max-lg:px-3 rounded-[10px] flex justify-center items-center bg-[#8F90A6] text-white max-lg:text-xs'>$45,545</button>
+                    <button className='w-[136px] h-[35.53px] max-lg:w-fit max-lg:h-fit max-lg:py-1 max-lg:px-3 rounded-[10px] flex justify-center items-center bg-[#8F90A6] text-white max-lg:text-xs'>${currElem.property_price}</button>
                   </div>
                 </div>
               </div>
@@ -133,9 +177,8 @@ const Popular_Listing = () => {
           {Array.from({ length: items.length - (itemsPerSlide - 1) }).map((_, index) => (
             <button
               key={index}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentIndex ? 'bg-blue-500' : 'bg-gray-300'
-              }`}
+              className={`w-2 h-2 rounded-full transition-colors ${index === currentIndex ? 'bg-blue-500' : 'bg-gray-300'
+                }`}
               onClick={() => {
                 if (!isAnimating) {
                   setIsAnimating(true);

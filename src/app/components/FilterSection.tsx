@@ -1,16 +1,35 @@
 "use client"
 
-
 import React, { useState } from "react";
 import { LuClockArrowDown } from "react-icons/lu";
 import { FaPlus } from "react-icons/fa6";
-
-
-
+import { p } from "framer-motion/client";
+import { useRouter } from 'next/navigation';
 
 const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter: boolean }) => {
-
+  const [filterData, setFilterData] = useState({
+    property_Bedroom: "",
+    property_Construction_status: "",
+  });
+  const router = useRouter();
   const [range, setRange] = useState({ min: 0, max: 100 });
+  const properties = ["Flat/Appartment", "Independent/Builder Floor", "Independent House/Villa", "Residential Land", "1 RK/ Studio Apartment", "Farm House", "Serviced Apartment", "Other"];
+
+  interface FilterData {
+    property_Type: string;
+    bedroom: string;
+    construction_Status: string;
+  }
+
+  interface Range {
+    min: number;
+    max: number;
+  }
+
+  const handleFilterData = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { name, value } = e.currentTarget;
+    setFilterData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.min(Number(e.target.value), range.max);
@@ -22,8 +41,21 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
     setRange({ ...range, max: value });
   };
 
+  const handleSeeAllProperties = () => {
+    const queryParams = new URLSearchParams();
+    
+    if (filterData.property_Bedroom) {
+      queryParams.append('property_Bedroom', filterData.property_Bedroom);
+    }
+    if (filterData.property_Construction_status) {
+      queryParams.append('property_Construction_status', filterData.property_Construction_status);
+    }
+
+    router.push(`/listing?${queryParams.toString()}`);
+  };
+
   return (
-    <div className={`absolute lg:hidden ${(showFilter)?"":"hidden"} top-14 p-4 bg-gray-100 rounded-lg w-full flex flex-col justify-start items-start gap-3`}>
+    <div className={` lg:hidden px-4 bg-bgColor rounded-lg w-full flex flex-col justify-start items-start gap-3`}>
 
       {/* Last Searched */}
       <div className=" w-full bg-white py-2 px-4 rounded-lg">
@@ -33,7 +65,6 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
           <input type="text" placeholder="Patna, Bihar" />
         </div>
       </div>
-
 
       {/* Popular Localities */}
       <div className="w-full pt-2 pb-8 px-4 rounded-lg flex flex-col gap-3 bg-white">
@@ -46,44 +77,70 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       </div>
 
       {/* Property Types */}
-      <div className="w-full pt-2 pb-8 px-4 rounded-lg flex flex-col gap-3">
-        <h3 className="font-semibold">Property Types</h3>
-        <div className="grid grid-cols-2 justify-items-start gap-y-6 text-xs">
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" className="form-checkbox" />
-            <span>Flat/Apartment</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" className="form-checkbox" />
-            <span>Independent House/Villa</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" className="form-checkbox" />
-            <span>Residential Land</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" className="form-checkbox" />
-            <span>1 RK/Studio Apartment</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" className="form-checkbox" />
-            <span>Serviced Apartment</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" className="form-checkbox" />
-            <span>Farm House</span>
-          </label>
-        </div>
+      <div className="grid grid-cols-2 gap-3 text-sm text-[#8F90A6]">
+        {/* {
+            (properties)?.map((currElem, index) => {
+                return (
+                    <label key={currElem} htmlFor={`checkbox-${index}`} className="flex items-center space-x-2">
+                        <input
+                            name={currElem}
+                            value={property_Type}
+                            onChange={(e) => handleCheckBoxChange(e, 'property_Type', e.target.value || undefined)}
+                            checked={(property_Type == currElem) ? true : false}
+                            type="checkbox"
+                            className="form-checkbox"
+                            id={`checkbox-${index}`} />
+                        <span>{currElem}</span>
+                    </label>
+                )
+            })
+        } */}
       </div>
 
       {/* Number of Bedrooms */}
       <div className=" w-full pb-4 pt-6 px-4 rounded-lg flex flex-col gap-3 bg-white">
         <h3 className="text-gray-700 font-semibold mb-2">Number of Bedrooms</h3>
         <div className="flex flex-wrap gap-4">
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"> <FaPlus className="text-lg" /> 1 RK/1 BHK</button>
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"> <FaPlus className="text-lg" /> 2 BHK</button>
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"> <FaPlus className="text-lg" /> 3 BHK</button>
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"> <FaPlus className="text-lg" /> 4 BHK</button>
+          <button 
+            name="property_Bedroom"
+            value="OneRK_OneBHK"
+            onClick={handleFilterData} 
+            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "OneRK_OneBHK" ? "bg-red-500 text-white" : ""}`}
+          >
+            <FaPlus className="text-lg" /> 1 RK/1 BHK
+          </button>
+          <button 
+            name="property_Bedroom"
+            value="TwoBHK"
+            onClick={handleFilterData} 
+            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "TwoBHK" ? "bg-red-500 text-white" : ""}`}
+          >
+            <FaPlus className="text-lg" /> 2 BHK
+          </button>
+          <button 
+            name="property_Bedroom"
+            value="ThreeBHK"
+            onClick={handleFilterData} 
+            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "ThreeBHK" ? "bg-red-500 text-white" : ""}`}
+          >
+            <FaPlus className="text-lg" /> 3 BHK
+          </button>
+          <button 
+            name="property_Bedroom"
+            value="FourBHK"
+            onClick={handleFilterData} 
+            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "FourBHK" ? "bg-red-500 text-white" : ""}`}
+          >
+            <FaPlus className="text-lg" /> 4 BHK
+          </button>
+          <button 
+            name="property_Bedroom"
+            value="FourPlusBHK"
+            onClick={handleFilterData} 
+            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "FourPlusBHK" ? "bg-red-500 text-white" : ""}`}
+          >
+            <FaPlus className="text-lg" /> 4+ BHK
+          </button>
         </div>
       </div>
 
@@ -91,24 +148,35 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       <div className="w-full pb-4 pt-8 px-4 rounded-lg flex flex-col gap-3 bg-white">
         <h3 className="text-gray-700 font-semibold mb-2">Construction Status</h3>
         <div className="flex flex-wrap gap-4">
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"> <FaPlus className="text-lg" />New Launch</button>
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"> <FaPlus className="text-lg" />Ready to move</button>
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"> <FaPlus className="text-lg" />Under Construction</button>
-        </div>
-      </div>
-
-      {/* Posted By */}
-      <div className="w-full pb-4 pt-8 px-4 rounded-lg flex flex-col gap-3 bg-white">
-        <h3 className="text-gray-700 font-semibold mb-2">Posted By</h3>
-        <div className="flex flex-wrap gap-4">
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"><FaPlus className="text-lg" />Owner</button>
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"><FaPlus className="text-lg" />Builder</button>
-          <button className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"><FaPlus className="text-lg" />Dealer</button>
+          <button 
+            name="property_Construction_status"
+            value="New Launch"
+            onClick={handleFilterData} 
+            className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"
+          >
+            <FaPlus className="text-lg" />New Launch
+          </button>
+          <button 
+            name="property_Construction_status"
+            value="Ready to move"
+            onClick={handleFilterData} 
+            className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"
+          >
+            <FaPlus className="text-lg" />Ready to move
+          </button>
+          <button 
+            name="property_Construction_status"
+            value="Under Construction"
+            onClick={handleFilterData} 
+            className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"
+          >
+            <FaPlus className="text-lg" />Under Construction
+          </button>
         </div>
       </div>
 
       {/* Price */}
-      <div className="w-full max-w-md pt-6 pb-4 px-4 bg-white rounded-lg shadow-sm">
+      <div className="w-full pt-6 pb-4 px-4 bg-white rounded-lg shadow-sm">
         <div className="mb-4">
           <h3 className="text-lg font-medium text-gray-900">Price</h3>
         </div>
@@ -170,7 +238,12 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       {/* Buttons */}
       <div className=" w-full py-6 px-10 flex justify-between items-center rounded-t-lg rounded-b-full bg-white">
         <button className="text-red-500">Clear All</button>
-        <button className="p-2 bg-red-500 text-white rounded-lg">See all 67 Properties</button>
+        <button 
+          onClick={handleSeeAllProperties}
+          className="p-2 bg-red-500 text-white rounded-lg"
+        >
+          See all Properties
+        </button>
       </div>
     </div>
   );

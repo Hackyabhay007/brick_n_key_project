@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 // import { X } from 'lucide-react';
 // import Buy_Section from './Buy_Section';
 import { useDispatch } from 'react-redux';
-import { setFilter } from '@/redux/slices/propertyItemSlice';
+import { clearFilters, setFilter } from '@/redux/slices/propertyItemSlice';
 import { AppDispatch } from "../../redux/store";
 
 
@@ -24,17 +24,24 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
 
     const dispatch = useDispatch<AppDispatch>();
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>, key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
         setProperty_Type(e.target.name);
-        console.log(property_Type);
+        dispatch(setFilter({ key, value }));
+        onClose();
     }
+
 
     const handleFilterChange = (key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
         console.log(key, value)
         dispatch(setFilter({ key, value }));
+        onClose();
     };
 
+
     const handleOnClose = () => {
+        console.log('Clear filters triggered');
+        dispatch(clearFilters());
         onClose();
     }
 
@@ -47,8 +54,14 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
         const value = Math.max(Number(e.target.value), range.min);
         setRange({ ...range, max: value });
     };
-    const properties = ["Flat/Appartment", "Independent/Builder Floor", "Independent House/Villa", "Residential Land", "1 RK/ Studio Apartment", "Farm House", "Serviced Apartment", "Other"];
-    const priceRanges = ['OneRK_OneBHK', 'TwoBHK', 'ThreeBHK', 'FourBHK', 'FourPlusBHK'];
+    // const properties = ["Flat/Appartment", "Independent/Builder Floor", "Independent House/Villa", "Residential Land", "1 RK/ Studio Apartment", "Farm House", "Serviced Apartment", "Other"];
+
+    const properties=[{text: "Flat/Appartment", value: 'FlatApartment'}, {text: "Independent/Builder Floor", value: 'IndependentBuilderFloor'}, {text: "Independent House/Villa", value: 'IndependentHouseVilla'}, {text: "Residential Land", value: 'ResidentialLand'}, {text: "1 RK/ Studio Apartment", value: 'OneRKStudioApartment'}, {text: "Farm House", value: 'FarmHouse'}, {text: "Serviced Apartment", value: 'ServicedApartment'}, {text: "Other", value: 'Other'}];
+
+
+    const bedrooms = [{ text: "1 RK/1 BHK", value: 'OneRK_OneBHK' }, { text: "2 BHK", value: 'TwoBHK' }, { text: "3 BHK", value: 'ThreeBHK' }, { text: "4 BHK", value: 'FourBHK' }, { text: "4+ BHK", value: 'FourPlusBHK' }];
+
+
     const constructionStatus = ['New Launch', 'Ready to move', 'Under Construction'];
     // const postedBy = ['Owner', 'Dealer'];
 
@@ -65,18 +78,18 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                         </div>
                         <div className="grid grid-cols-3 gap-3 text-sm text-[#8F90A6]">
                             {
-                                (properties)?.map((currElem, index) => {
+                                (properties)?.map((currElem:{text:string, value:string}, index) => {
                                     return (
-                                        <label key={currElem} htmlFor={`checkbox-${index}`} className="flex items-center space-x-2">
+                                        <label key={index} htmlFor={`checkbox-${index}`} className="flex items-center space-x-2">
                                             <input
-                                                name={currElem}
-                                                onChange={handleInputChange}
+                                                name={currElem?.text}
                                                 value={property_Type}
-                                                checked={(property_Type == currElem) ? true : false}
+                                                onChange={(e) => handleCheckBoxChange(e, 'property_Type', currElem?.value || undefined)}
+                                                checked={(property_Type == currElem?.value) ? true : false}
                                                 type="checkbox"
                                                 className="form-checkbox"
                                                 id={`checkbox-${index}`} />
-                                            <span>{currElem}</span>
+                                            <span>{currElem?.text}</span>
                                         </label>
                                     )
                                 })
@@ -165,14 +178,14 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                             <div className="my-6 text-[#8F90A6]">
                                 <h3 className="text-lg font-semibold mb-4 text-black">Number of Bedrooms</h3>
                                 <div className="flex flex-wrap gap-2">
-                                    {priceRanges.map((range) => (
+                                    {bedrooms?.map((currElem: {text:string, value:string}, index:number) => (
                                         <button
-                                            key={range}
-                                            onClick={(e) => handleFilterChange('property_Bedroom', range || undefined)}
+                                            key={index}
+                                            onClick={(e) => handleFilterChange('property_Bedroom', currElem?.value || undefined)}
                                             className="px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm hover:bg-gray-100"
                                         >
                                             <img src="/images/buy_section_icon_5.svg" alt="" />
-                                            {range}
+                                            {currElem?.text}
                                         </button>
                                     ))}
                                 </div>

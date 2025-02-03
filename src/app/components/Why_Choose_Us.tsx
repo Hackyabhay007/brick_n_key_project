@@ -59,7 +59,7 @@ export default function Why_Choose_Us() {
                     variants={containerVariants}
                     initial="hidden"
                     animate={isInView ? "visible" : "hidden"}
-                    className="why_choose_us_inner_container relative 2xl:w-[80%] w-[95%] md:w-[90%] z-10 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 bg-bgBlue p-6 md:p-8 lg:p-12 text-white rounded-[20px] overflow-hidden"
+                    className="why_choose_us_inner_container relative 2xl:w-[80%] w-[95%] md:w-[90%] z-10 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 bg-bgBlue p-6 md:p-8 lg:py-12 text-white rounded-[20px] overflow-hidden"
                 >
                     <div className="diagonal_img_container absolute hidden lg:block -translate-x-[100px] -translate-y-[80px]" style={{ backgroundImage: "url('/images/why_choose_us_img_2.png')" }}>
                         <img className="" src="/images/why_choose_us_img_2.png" alt="" />

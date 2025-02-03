@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plane } from 'lucide-react';
 
-const Places_Nearby = () => {
+const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, nearBy_Array: [{id :number, item: string}]}) => {
   const airports = [
     "New York (JFK)",
     "London (LHR)",
@@ -74,16 +74,16 @@ const Places_Nearby = () => {
             transition: 'transform 0.5s ease-in-out'
           }}
         >
-          {getVisibleAirports().map((airport, index) => (
+          {nearBy_Array?.map((currElem, index) => (
             <div
-              key={`${airport}-${index}`}
+              key={currElem?.id}
               className="flex-1 min-w-0"
             >
               <button
                 className="product_itemBtn w-full bg-gray-900 text-white py-2 px-4 rounded-full flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors whitespace-nowrap overflow-hidden"
               >
                 <Plane className="w-4 h-4" />
-                <span className="text-sm">Airport</span>
+                <span className="text-sm">{currElem?.item}</span>
               </button>
             </div>
           ))}

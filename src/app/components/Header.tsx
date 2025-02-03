@@ -138,7 +138,7 @@ export default function Header() {
                                 animate="visible"
                                 exit="hidden"
                                 variants={dropdownVariants}
-                                className="absolute right-0 mt-2 w-max rounded-lg shadow-lg z-50"
+                                className="absolute right-0 mt-2 w-max z-50"
                             >
                                 <ul className="pt-2 flex flex-col items-end">
                                     {(data?.data?.header_container?.navLinks as NavLink[])?.map(
