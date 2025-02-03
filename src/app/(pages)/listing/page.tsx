@@ -101,7 +101,7 @@ const Page = () => {
                     }
                    
 
-                    <div className="filter_data_container_and_pagination mt-12 w-full flex flex-col items-center justify-start gap-16 bg-bgBlue p-16 max-lg:px-6 max-lg:py-10 rounded-[20px]">
+                    <div className={`filter_data_container_and_pagination ${(newDataValue)?"mt-0":"mt-12"} w-full flex flex-col items-center justify-start gap-16 bg-bgBlue p-16 max-lg:px-6 max-lg:py-10 rounded-[20px]`}>
 
 
                         <div className="filter_data_container grid grid-cols-2 max-lg:grid-cols-1 justify-items-center gap-12 ">

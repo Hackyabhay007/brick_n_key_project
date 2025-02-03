@@ -29,15 +29,15 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
     const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>, key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
         setProperty_Type(e.target.name);
         dispatch(setFilter({ key, value }));
-        // onClose(); 
+        onClose(); 
     }
 
 
     const handleFilterChange = (key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
         console.log(key, value);
-        // setProperty_Construction_status(value);
-        // dispatch(setFilter({ key, value }));
-        // onClose();
+        setProperty_Construction_status(value);
+        dispatch(setFilter({ key, value }));
+        onClose();
     };
 
 
