@@ -15,11 +15,12 @@ import Popular_Listing from "./Popular_Listing";
 export default function page() {
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(true);
-    const images = [
-        "/images/detail_page_img_1.png",
-        "/images/explore_img_2.png",  // Add more image paths as needed
-        "/images/detail_page_img_1.png"
-    ];
+    const [images, setImages] = useState([]);
+    // const images = [
+    //     "/images/detail_page_img_1.png",
+    //     "/images/explore_img_2.png",  // Add more image paths as needed
+    //     "/images/detail_page_img_1.png"
+    // ];
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -38,6 +39,15 @@ export default function page() {
         }
     }, [searchParams, dispatch]);
 
+    useEffect(() => {
+        if(data) {
+            console.log("This is the property Image Array of the detail page", data?.property_Images);
+        }
+
+        const image_Data = data?.property_Images.map((currElem: {url: string, id: number}) => currElem?.url);
+        setImages(image_Data);
+    }, [data]);
+
     const handleDotClick = (index: number) => {
         setCurrentImageIndex(index);
     };
@@ -51,7 +61,7 @@ export default function page() {
             <div className="detail_container w-full bg-bgColor">
                 <div className="detail_inner_container relative w-[90%] max-sm:w-[95%] z-10 mx-auto">
                     <img
-                        src={images[currentImageIndex]}
+                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${images[currentImageIndex]}`}
                         alt={`Carousel image ${currentImageIndex + 1}`}
                         className="w-full h-auto"
                     />
