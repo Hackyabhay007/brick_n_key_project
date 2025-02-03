@@ -1,10 +1,10 @@
-"use client" 
+"use client"
 
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, SlidersHorizontal } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import { useDispatch, useSelector } from "react-redux";
-import { clearFilters, fetchPropertyItems, setFilter } from "../../../redux/slices/propertyItemSlice";
+import { clearFilters, fetchPropertyItems, setFilter, fetchNewPropertyItems } from "../../../redux/slices/propertyItemSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import Buy_Section from '@/app/components/Buy_Section';
 import { useRouter } from 'next/navigation';
@@ -18,6 +18,7 @@ const Page = () => {
     const [priceRange, setPriceRange] = useState('₹1 Cr - ₹5 Cr');
     const [searchQuery, setSearchQuery] = useState('');
     const [isSticky, setIsSticky] = useState(false);
+    const [newDataValue, setNewDataValue] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
@@ -32,9 +33,11 @@ const Page = () => {
         const propertyBedroom = searchParams.get('property_Bedroom');
         const constructionStatus = searchParams.get('property_Construction_status');
         const isLuxury = searchParams.get('isLuxury');
+        const newData = searchParams.get('new');
+        console.log("new Data: ", newData);
 
         dispatch(clearFilters());
-        
+
         if (propertyLocation) {
             dispatch(setFilter({ key: 'property_Location', value: propertyLocation }));
         }
@@ -46,6 +49,13 @@ const Page = () => {
         }
         if (isLuxury) {
             dispatch(setFilter({ key: 'isLuxury', value: isLuxury }));
+        }
+
+        if (newData) {
+            console.log("afklljsfdljdfsaljlfsddslfkjldsfkldfjsljdflfaslkjlfsdjljsdfajslad")
+            // In your component
+            setNewDataValue(newData === 'true');
+            dispatch(fetchNewPropertyItems());
         }
     }, [searchParams, dispatch]);
 
@@ -86,17 +96,19 @@ const Page = () => {
         <>
             <div className="listing_container w-full bg-bgColor pb-20">
                 <div className="listing_inner_container w-[90%] mx-auto">
-
-                    <Buy_Section component='listing' />
+                    {
+                        !(newDataValue) &&  <Buy_Section component='listing' />
+                    }
+                   
 
                     <div className="filter_data_container_and_pagination mt-12 w-full flex flex-col items-center justify-start gap-16 bg-bgBlue p-16 max-lg:px-6 max-lg:py-10 rounded-[20px]">
 
 
                         <div className="filter_data_container grid grid-cols-2 max-lg:grid-cols-1 justify-items-center gap-12 ">
                             {
-                                (data?.data)?.map((currElem: {id: number, property_Images: [{url: String}], property_Location: String, propertyFeature:[{id : number, item: string}]}, index:number) => {
+                                (data?.data)?.map((currElem: { id: number, property_Images: [{ url: String }], property_Location: String, propertyFeature: [{ id: number, item: string }] }, index: number) => {
                                     return (
-                                        <div key={index} onClick={()=>{router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`);}} className='flex flex-col justify-start items-start gap-1 cursor-pointer'>
+                                        <div key={index} onClick={() => { router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`); }} className='flex flex-col justify-start items-start gap-1 cursor-pointer'>
                                             <img src={`http://localhost:1337${currElem?.property_Images[0]?.url}`} className='rounded-[20px] max-lg:rounded-[5px]' alt="" />
                                             <div className=' w-full h-full flex justify-between'>
                                                 <div className='text-white'>
@@ -105,9 +117,9 @@ const Page = () => {
                                                 </div>
                                                 <div className='text-[#8F90A6] text-[16px]'>
                                                     {
-                                                        (currElem?.propertyFeature).map((currElem, index)=>{
-                                                            return(
-                                                                <p key={"propertyFeature"+index}>{currElem?.item}</p>
+                                                        (currElem?.propertyFeature).map((currElem, index) => {
+                                                            return (
+                                                                <p key={"propertyFeature" + index}>{currElem?.item}</p>
                                                             )
                                                         })
                                                     }

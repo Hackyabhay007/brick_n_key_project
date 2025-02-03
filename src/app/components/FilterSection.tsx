@@ -5,12 +5,21 @@ import { LuClockArrowDown } from "react-icons/lu";
 import { FaPlus } from "react-icons/fa6";
 import { p } from "framer-motion/client";
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
+import { setFilter, clearFilters } from '@/redux/slices/propertyItemSlice';
+
+type PropertyFilters = {
+  property_Bedroom: string;
+  property_Construction_status: string;
+};
 
 const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter: boolean }) => {
   const [filterData, setFilterData] = useState({
     property_Bedroom: "",
     property_Construction_status: "",
   });
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const [range, setRange] = useState({ min: 0, max: 100 });
   const properties = ["Flat/Appartment", "Independent/Builder Floor", "Independent House/Villa", "Residential Land", "1 RK/ Studio Apartment", "Farm House", "Serviced Apartment", "Other"];
@@ -29,6 +38,7 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
   const handleFilterData = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
     setFilterData(prev => ({ ...prev, [name]: value }));
+    dispatch(setFilter({ key: name as keyof PropertyFilters, value }));
   };
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,20 +52,26 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
   };
 
   const handleSeeAllProperties = () => {
-    const queryParams = new URLSearchParams();
     
-    if (filterData.property_Bedroom) {
-      queryParams.append('property_Bedroom', filterData.property_Bedroom);
-    }
-    if (filterData.property_Construction_status) {
-      queryParams.append('property_Construction_status', filterData.property_Construction_status);
+    if(filterData?.property_Bedroom){
+      router.push(`/listing?property_Bedroom=${filterData?.property_Bedroom}`);
     }
 
-    router.push(`/listing?${queryParams.toString()}`);
+    if(filterData?.property_Construction_status){
+      router.push(`/listing?property_Construction_status=${filterData?.property_Construction_status}`);
+    }
+  };
+
+  const handleClearAll = () => {
+    setFilterData({
+      property_Bedroom: "",
+      property_Construction_status: "",
+    });
+    dispatch(clearFilters());
   };
 
   return (
-    <div className={` lg:hidden px-4 bg-bgColor rounded-lg w-full flex flex-col justify-start items-start gap-3`}>
+    <div className={`lg:hidden px-4 bg-bgColor rounded-lg w-full flex flex-col justify-start items-start gap-3`}>
 
       {/* Last Searched */}
       <div className=" w-full bg-white py-2 px-4 rounded-lg">
@@ -152,7 +168,7 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
             name="property_Construction_status"
             value="New Launch"
             onClick={handleFilterData} 
-            className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"
+            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Construction_status === "New Launch" ? "bg-red-500 text-white" : ""}`}
           >
             <FaPlus className="text-lg" />New Launch
           </button>
@@ -160,7 +176,7 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
             name="property_Construction_status"
             value="Ready to move"
             onClick={handleFilterData} 
-            className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"
+            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1  ${filterData.property_Construction_status === "Ready to move" ? "bg-red-500 text-white" : ""}`}
           >
             <FaPlus className="text-lg" />Ready to move
           </button>
@@ -168,7 +184,7 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
             name="property_Construction_status"
             value="Under Construction"
             onClick={handleFilterData} 
-            className="px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1"
+            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1  ${filterData.property_Construction_status === "Under Construction" ? "bg-red-500 text-white" : ""}`}
           >
             <FaPlus className="text-lg" />Under Construction
           </button>
@@ -237,7 +253,12 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
 
       {/* Buttons */}
       <div className=" w-full py-6 px-10 flex justify-between items-center rounded-t-lg rounded-b-full bg-white">
-        <button className="text-red-500">Clear All</button>
+        <button 
+          onClick={handleClearAll}
+          className="text-red-500"
+        >
+          Clear All
+        </button>
         <button 
           onClick={handleSeeAllProperties}
           className="p-2 bg-red-500 text-white rounded-lg"

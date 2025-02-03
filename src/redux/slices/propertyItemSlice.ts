@@ -1,30 +1,31 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
-
-
 interface PropertyFilters {
   property_Construction_status?: string | undefined;
   property_Bedroom?: string | undefined;
   property_price?: number | undefined;
   property_Type?: string | undefined;
   isLuxury?: boolean | undefined;
-  property_Location?: string | undefined; // Added location filter
+  property_Location?: string | undefined;
   page?: number | undefined;
   pageSize?: number | undefined;
 }
 
 interface PopularSectionSlice {
   data: any;
+  newItems: any;
   loading: boolean;
+  newItemsLoading: boolean;
   error: string | null;
   activeFilters: { [key in keyof PropertyFilters]: string | number | undefined };
 }
 
 const initialState: PopularSectionSlice = {
   data: null,
+  newItems: null,
   loading: false,
+  newItemsLoading: false,
   error: null,
   activeFilters: {}
 };
@@ -59,17 +60,13 @@ const buildApiUrl = (filters: PropertyFilters): string => {
     filterParams.push(`filters[property_Type][$eq]=${encodeURIComponent(filters.property_Type)}`);
   }
 
-  // Add advanced location search with containsi operator
   if (filters.property_Location) {
-    // Split search query into words for more flexible matching
     const locationWords = filters.property_Location.trim().split(/\s+/);
     
-    // Create an OR condition for each word
     const locationFilters = locationWords.map(word => 
       `filters[property_Location][$containsi]=${encodeURIComponent(word)}`
     );
     
-    // Add location filters to the params
     filterParams.push(...locationFilters);
   }
 
@@ -81,6 +78,32 @@ const buildApiUrl = (filters: PropertyFilters): string => {
   return url;
 };
 
+// New function to fetch newly added items
+export const fetchNewPropertyItems = createAsyncThunk<
+  any,
+  void,
+  { state: { propertyItems: PopularSectionSlice }, rejectValue: string }
+>(
+  "propertyItems/fetchNewPropertyItems",
+  async (_, { rejectWithValue }) => {
+    try {
+      // Use sorting by createdAt in descending order to get the newest items
+      const url = `http://localhost:1337/api/detail-pages?populate=*&pagination[start]=0&pagination[limit]=5&sort[0]=createdAt:desc`;
+      
+      const response = await axios.get(url);
+      console.log('New Items API Response:', response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('New Items API Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || "Failed to fetch new items");
+      }
+      console.error('Unknown Error:', error);
+      return rejectWithValue("Failed to fetch new items");
+    }
+  }
+);
+
 export const fetchPropertyItems = createAsyncThunk<
   any,
   void,
@@ -91,7 +114,7 @@ export const fetchPropertyItems = createAsyncThunk<
     try {
       const state = getState();
       console.log('Current filters:', state.propertyItems.activeFilters);
-      const url = buildApiUrl(state.propertyItems.activeFilters);
+      const url = buildApiUrl(state?.propertyItems?.activeFilters);
       const response = await axios.get(url);
       console.log('API Response:', response.data);
       return response.data;
@@ -114,7 +137,6 @@ const propertyItemsSlice = createSlice({
       const { key, value } = action.payload;
       console.log('Setting filter:', key, value);
       
-      // Create a new activeFilters object
       const newFilters = { ...state.activeFilters };
       
       if (value === undefined || value === '') {
@@ -123,7 +145,6 @@ const propertyItemsSlice = createSlice({
         newFilters[key] = value;
       }
       
-      // Update the state with the new filters object
       state.activeFilters = newFilters;
       
       console.log('Updated filters:', state.activeFilters);
@@ -146,6 +167,17 @@ const propertyItemsSlice = createSlice({
       .addCase(fetchPropertyItems.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'An error occurred';
+      })
+      .addCase(fetchNewPropertyItems.pending, (state) => {
+        state.newItemsLoading = true;
+      })
+      .addCase(fetchNewPropertyItems.fulfilled, (state, action) => {
+        state.newItemsLoading = false;
+        state.newItems = action.payload;
+      })
+      .addCase(fetchNewPropertyItems.rejected, (state, action) => {
+        state.newItemsLoading = false;
+        state.error = action.payload || 'Failed to fetch new items';
       });
   },
 });

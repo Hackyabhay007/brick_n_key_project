@@ -87,7 +87,7 @@ export default function ContactForm({ component, listingId }: { component: strin
             <input
               type="text"
               placeholder="First Name"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white outline-none"
+              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
               value={formData.first_name}
               onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
             />
@@ -97,7 +97,7 @@ export default function ContactForm({ component, listingId }: { component: strin
             <input
               type="text"
               placeholder="Last Name"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white outline-none"
+              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
               value={formData.last_name}
               onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
             />
@@ -110,7 +110,7 @@ export default function ContactForm({ component, listingId }: { component: strin
             <input
               type="number"
               placeholder="Phone Number"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white outline-none"
+              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: Number(e.target.value) })}
             />
@@ -120,7 +120,7 @@ export default function ContactForm({ component, listingId }: { component: strin
             <input
               type="text"
               placeholder="Buy Property"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white outline-none"
+              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
               value={formData.I_want_to}
               onChange={(e) => setFormData({ ...formData, I_want_to: e.target.value })}
             />
@@ -132,7 +132,7 @@ export default function ContactForm({ component, listingId }: { component: strin
           <textarea
             placeholder="Notes"
             rows={6}
-            className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white outline-none"
+            className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
             value={formData.Notes}
             onChange={(e) => setFormData({ ...formData, Notes: e.target.value })}
           />

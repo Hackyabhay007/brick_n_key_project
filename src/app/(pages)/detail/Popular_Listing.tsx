@@ -49,22 +49,11 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
   // if (data?.error) return <p>Error: {data?.error}</p>;
   if (data) console.log("This is the Popular Listing data ", data?.data);
 
-
-
-
-  const items: SlideItem[] = [
-    { id: 1, title: "Item 1", image: "/images/detail_popular_listing_img.png" },
-    { id: 2, title: "Item 2", image: "/images/detail_popular_listing_img.png" },
-    { id: 3, title: "Item 3", image: "/images/detail_popular_listing_img.png" },
-    { id: 4, title: "Item 4", image: "/images/detail_popular_listing_img.png" },
-    { id: 5, title: "Item 5", image: "/images/detail_popular_listing_img.png" },
-    { id: 6, title: "Item 6", image: "/images/detail_popular_listing_img.png" },
-  ];
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
+  const [totalSlides, setTotalSlides] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -82,8 +71,14 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    if (propertyItemArray?.length) {
+      setTotalSlides(Math.ceil(propertyItemArray.length / itemsPerSlide));
+    }
+  }, [propertyItemArray, itemsPerSlide]);
+
   const handleNext = () => {
-    if (isAnimating || currentIndex >= items.length - itemsPerSlide) return;
+    if (isAnimating || currentIndex >= propertyItemArray.length - itemsPerSlide) return;
 
     setIsAnimating(true);
     setDirection('right');
@@ -120,16 +115,13 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
           <div
             className={`flex gap-12 max-lg:gap-6 transition-transform duration-500 ease-in-out`}
             style={{
-              transform: isAnimating
-                ? (direction === 'right'
-                  ? `translateX(-${100 / itemsPerSlide}%)`
-                  : `translateX(${100 / itemsPerSlide}%)`)
-                : 'translateX(0)',
-              opacity: isAnimating ? 0.7 : 1,
-              width: '100%',
+              transform: `translateX(-${currentIndex * (100 / itemsPerSlide)}%)`,
+              display: 'grid',
+              gridTemplateColumns: `repeat(${propertyItemArray?.length}, ${100 / itemsPerSlide}%)`,
+              transition: 'transform 0.5s ease-in-out'
             }}
           >
-            {visibleItems?.map((currElem:{id:number, property_price: number, propertyFeature: [{id: number, item : string}], property_Location: string, property_Images: [{url: string}]}, index:number) => (
+            {propertyItemArray?.map((currElem:{id:number, property_price: number, propertyFeature: [{id: number, item : string}], property_Location: string, property_Images: [{url: string}]}, index:number) => (
               <div
                 key={currElem.id}
                 className={`flex-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 
@@ -166,7 +158,7 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
         {/* Next Button */}
         <button
           onClick={handleNext}
-          disabled={currentIndex >= items.length - itemsPerSlide || isAnimating}
+          disabled={currentIndex >= totalSlides - 1 || isAnimating}
           className="absolute top-1/2 -right-5 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronRight className="w-6 h-6 text-black" />
@@ -174,14 +166,16 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
 
         {/* Navigation Dots */}
         <div className="flex justify-center mt-6 gap-2">
-          {Array.from({ length: items.length - (itemsPerSlide - 1) }).map((_, index) => (
+          {Array.from({ length: totalSlides }).map((_, index) => (
             <button
               key={index}
-              className={`w-2 h-2 rounded-full transition-colors ${index === currentIndex ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === currentIndex ? 'bg-blue-500' : 'bg-gray-300'
+              }`}
               onClick={() => {
                 if (!isAnimating) {
                   setIsAnimating(true);
+                  setDirection(index > currentIndex ? 'right' : 'left');
                   setCurrentIndex(index);
                   setTimeout(() => setIsAnimating(false), 500);
                 }

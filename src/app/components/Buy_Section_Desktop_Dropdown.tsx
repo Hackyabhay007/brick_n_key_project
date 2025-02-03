@@ -20,6 +20,7 @@ interface Buy_Section_Desktop_Dropdown {
 const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
     const [openSection, setOpenSection] = useState("");
     const [property_Type, setProperty_Type] = useState("");
+    const [property_Construction_status, setProperty_Construction_status] = useState("");
     const [range, setRange] = useState({ min: 0, max: 100 });
 
     const dispatch = useDispatch<AppDispatch>();
@@ -28,14 +29,15 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
     const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>, key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
         setProperty_Type(e.target.name);
         dispatch(setFilter({ key, value }));
-        onClose();
+        // onClose(); 
     }
 
 
     const handleFilterChange = (key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
-        console.log(key, value)
-        dispatch(setFilter({ key, value }));
-        onClose();
+        console.log(key, value);
+        // setProperty_Construction_status(value);
+        // dispatch(setFilter({ key, value }));
+        // onClose();
     };
 
 
@@ -204,7 +206,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                                         <button
                                             key={status}
                                             onClick={(e) => handleFilterChange('property_Construction_status', status || undefined)}
-                                            className="px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm hover:bg-gray-100"
+                                            className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm hover:bg-gray-100 ${(property_Construction_status == status) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                                         >
                                             <img src="/images/buy_section_icon_5.svg" alt="" />
                                             {status}

@@ -10,33 +10,41 @@ import { setFilter } from '@/redux/slices/propertyItemSlice';
 import { useRouter } from 'next/navigation';
 
 const Buy_Section = ({ component }: { component: string }) => {
-  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
-  const [showPropertyTypeDropdown, setShowPropertyTypeDropdown] = useState(false);
-  const [property_Location, setProperty_Location] = useState('');
   const [showFilter, setShowFilter] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [property_Location, setProperty_Location] = useState('');
   const dispatch = useDispatch();
   const router = useRouter();
 
+  console.log(component)
+
   const handleInputSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (component === "herosection") {
-      if (property_Location.trim() !== "") {
+    if (property_Location.trim() !== "") {
+      dispatch(setFilter({ key: 'property_Location', value: property_Location }));
+      if (component === "herosection") {
         router.push(`/listing?property_Location=${encodeURIComponent(property_Location)}`);
       }
-      else {
-        router.push(`/listing`);
-      }
-    } else {
-      dispatch(setFilter({ key: 'property_Location', value: property_Location }));
     }
-    console.log('Search query:', property_Location);
-  }
+    setProperty_Location('');
+  };
 
-  const handleDropdownClick = () => {
-    if (component !== "herosection") {
-      setShowLocationDropdown(!showLocationDropdown);
+  const handleAllResidentialClick = () => {
+    console.log("All Residential Click");
+    console.log("Component: ", component);
+    if(component === "herosection") {
+      router.push('/listing');
     }
-  }
+    else{
+      setShowDropdown(!showDropdown);
+    }
+  };
+
+  const handleInputClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowFilterSection(false);
+  };
 
   return (
     <>
@@ -44,11 +52,11 @@ const Buy_Section = ({ component }: { component: string }) => {
       <div className="w-full max-lg:hidden relative">
         <div className="buySection bg-[#F1EFE7] bg-opacity-100 w-[102px] h-[39px] flex justify-center items-center rounded-t-[15px] text-[14px] text-[#ED371C] leading-[36px] tracking-[0.2em] font-[500]">Buy</div>
         <form onSubmit={handleInputSearch} className="w-full h-[102px] bg-white bg-opacity-80 rounded-b-[20px] rounded-tr-[20px] shadow-lg p-2 flex justify-center items-center gap-2">
-          {/* All Residential Dropdown */}
+          {/* All Residential Section */}
           <div className="w-full relative">
-            <button
-              onClick={handleDropdownClick}
-              className="w-full flex items-center gap-2 p-2"
+            <div
+              onClick={handleAllResidentialClick}
+              className="w-full flex items-center gap-2 p-2 cursor-pointer"
             >
               <div className='w-full'>
                 <div className="location_section w-full flex justify-center items-center gap-3 border-r-2 border-[#DCDCEB] pr-4 max-xl:pr-0">
@@ -56,20 +64,27 @@ const Buy_Section = ({ component }: { component: string }) => {
                   <img src="/images/buy_section_icon_1.svg" alt="" />
                 </div>
               </div>
-            </button>
+            </div>
 
-            {component !== "herosection" && (
-              <Buy_Section_Desktop_Dropdown
-                isOpen={showLocationDropdown}
-                onClose={() => setShowLocationDropdown(false)}
+            {showDropdown && (
+              <Buy_Section_Desktop_Dropdown 
+              onClose={() => setShowDropdown(false)} 
+                isOpen={showDropdown} 
               />
             )}
           </div>
 
-          {/* Rest of the desktop view remains the same */}
+          {/* Search Input Section */}
           <div className='w-full flex justify-start items-center gap-2'>
             <img src="/images/buy_section_icon_2.svg" alt="" />
-            <input type="text" onChange={(e) => { setProperty_Location(e.target.value) }} value={property_Location} className='font-[400] text-sm leading-[36px] bg-transparent outline-none w-full' placeholder='Search "Flats for rent in sector 77 Noida"' />
+            <input 
+              type="text" 
+              onClick={handleInputClick}
+              onChange={(e) => setProperty_Location(e.target.value)} 
+              value={property_Location} 
+              className='font-[400] text-sm leading-[36px] bg-transparent outline-none w-full' 
+              placeholder='Search "Flats for rent in sector 77 Noida"' 
+            />
           </div>
 
           <div className='flex justify-center items-center gap-4'>
@@ -91,8 +106,6 @@ const Buy_Section = ({ component }: { component: string }) => {
           <button className='bg-bgRed p-1.5 mx-1 rounded-lg'><Search /></button>
         </div>
         </Link>
-
-        <FilterSection hidden={() => setShowFilter(false)} showFilter={showFilter} />
       </div>
     </>
   );
