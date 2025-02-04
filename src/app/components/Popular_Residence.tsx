@@ -190,8 +190,8 @@ const Popular_Residence = () => {
                                         alt="imsdf"
                                         className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full object-cover rounded-[10px]"
                                     />
-                                    <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-[7px]">{item.property_Type}</h3>
-                                    <p className="text-[#ADADAD] mt-2 max-sm:mt-0 max-sm:text-[10px]">{item.property_Location}</p>
+                                    <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-xs">{item.property_Type}</h3>
+                                    <p className="text-[#ADADAD] mt-2 max-sm:mt-0 max-sm:text-xs">{item.property_Location}</p>
                                 </div>
                             </div>
                         ))}
