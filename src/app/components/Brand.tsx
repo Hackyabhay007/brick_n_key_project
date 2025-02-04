@@ -29,6 +29,7 @@ const Brand = () => {
   const [cardIndex, setCardIndex] = useState(3);
   const [isItemsVisible, setIsItemsVisible] = useState(false);
   const [showPropertyCard, setShowPropertyCard] = useState(false);
+  const [brand_name, setBrand_name] = useState<string | null>(null);
   const brandTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const propertyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -75,12 +76,22 @@ const Brand = () => {
   const containerVariants = {
     hidden: {
       opacity: 0,
+      scale: 0.95,
     },
     visible: {
       opacity: 1,
+      scale: 1,
       transition: {
         staggerChildren: 0.2,
         delayChildren: 0.1,
+        duration: 0.5,
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.9,
+      transition: {
+        duration: 0.3,
       }
     }
   };
@@ -89,27 +100,28 @@ const Brand = () => {
     hidden: {
       opacity: 0,
       scale: 0.8,
-      y: 50,
-      rotateX: -15,
+      y: 30,
+      filter: 'blur(10px)',
     },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
-      rotateX: 0,
+      filter: 'blur(0px)',
       transition: {
         type: "spring",
         stiffness: 100,
-        damping: 12,
-        duration: 0.6,
+        damping: 15,
+        duration: 0.7,
       }
     },
     exit: {
       opacity: 0,
-      scale: 0.8,
+      scale: 0.9,
       y: -20,
+      filter: 'blur(5px)',
       transition: {
-        duration: 0.3,
+        duration: 0.4,
       }
     }
   };
@@ -154,30 +166,40 @@ const Brand = () => {
   };
 
   useEffect(() => {
-    resetBrandTimeout();
-    brandTimeoutRef.current = setTimeout(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === brandLogos.length - 5 ? 0 : prevIndex + 1
-      );
-    }, 10000);
+    if ((data?.data || []).length > 5) {  // Only auto-scroll if more than 5 items
+      resetBrandTimeout();
+      brandTimeoutRef.current = setTimeout(() => {
+        setCurrentIndex((prevIndex) =>
+          prevIndex === brandLogos.length - 5 ? 0 : prevIndex + 1
+        );
+      }, 10000);
+    }
 
     return () => {
       resetBrandTimeout();
     };
-  }, [currentIndex, brandLogos.length]);
+  }, [currentIndex, brandLogos.length, data]);
 
   useEffect(() => {
-    resetPropertyTimeout();
-    propertyTimeoutRef.current = setTimeout(() => {
-      setPropertyIndex((prevIndex) =>
-        prevIndex === properties.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 10000);
+    if ((data?.data[cardIndex]?.brand_relations || []).length > 1) {
+      resetPropertyTimeout();
+      propertyTimeoutRef.current = setTimeout(() => {
+        setPropertyIndex((prevIndex) =>
+          prevIndex === properties.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 10000);
+    }
+
+    if (data) {
+      console.log("This is the data", data);
+      const brandName = data?.data[cardIndex]?.brand_name;
+      setBrand_name(brandName);
+    }
 
     return () => {
       resetPropertyTimeout();
     };
-  }, [propertyIndex, properties.length]);
+  }, [propertyIndex, properties.length, data, cardIndex]);
 
   const nextBrandSlide = () => {
     setCurrentIndex((prevIndex) =>
@@ -294,24 +316,35 @@ const Brand = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                exit="hidden"
+                exit="exit"
               >
                 {(data?.data[cardIndex]?.brand_relations || [])?.map((currElem: { id: number, property_Location: string, propertyFeature: [{ id: number, item: string }], property_Images: [{ url: string }] }, index: number) => (
                   <motion.div
                     key={currElem?.id}
                     className='flex flex-col justify-start items-start gap-1'
                     variants={cardVariants}
-                    layout
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    transition={{
+                      delay: index * 0.15,
+                    }}
                   >
-                    <motion.img
-                      src="/images/explore_img_2.png"
-                      className='rounded-[20px]'
-                      alt=""
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.1 }}
-                    />
-                    <div className='w-full h-full flex justify-between'>
+                    <motion.div
+                      className="relative w-full overflow-hidden rounded-[20px] flex items-center justify-center"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <motion.img
+                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images[0].url}`}
+                        className='w-full h-full object-cover bg-center'
+                        alt=""
+                        initial={{ scale: 1.2, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5, delay: index * 0.2 }}
+                      />
+                    </motion.div>
+                    <div className='w-full flex justify-between'>
                       <div className='text-white'>
                         <motion.h1
                           className='font-[700]'
@@ -319,7 +352,7 @@ const Brand = () => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.2 + index * 0.1 }}
                         >
-                          AKJ Complex
+                          {(brand_name) ? brand_name : ""}
                         </motion.h1>
                         <motion.p
                           className='flex justify-start items-center gap-2 text-sm'
@@ -330,29 +363,17 @@ const Brand = () => {
                           <MapPin />{currElem.property_Location}
                         </motion.p>
                       </div>
-                      <AnimatePresence>
-                        {isItemsVisible && (
-                          <motion.div
-                            className='text-[#8F90A6] text-[16px]'
-                            variants={featureVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                          >
-                            {(currElem?.propertyFeature)?.map((feature, featureIndex) => (
-                              <motion.p
-                                key={feature.id}
-                                className='text-xs'
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.4 + featureIndex * 0.1 }}
-                              >
-                                {feature.item}
-                              </motion.p>
-                            ))}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      {/* <AnimatePresence> */}
+
+                      <div
+                        className='text-[#8F90A6] text-[16px]'
+                      >
+                        {(currElem?.propertyFeature)?.map((feature, featureIndex) => (
+                          <p key={feature.id} className='text-xs' > {feature.item} </p>
+                        ))}
+                      </div>
+
+                      {/* </AnimatePresence> */}
                     </div>
                   </motion.div>
                 ))}
@@ -362,24 +383,46 @@ const Brand = () => {
 
           {/* Tablet and Mobile Slider View */}
           <div className="relative lg:hidden w-full">
-            <button
-              onClick={prevPropertySlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-            >
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
+            {(data?.data[cardIndex]?.brand_relations || []).length > 1 && (
+              <>
+                <button
+                  onClick={prevPropertySlide}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={nextPropertySlide}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </>
+            )}
 
             <div className="overflow-hidden w-full">
               <div
@@ -388,16 +431,17 @@ const Brand = () => {
                   transform: `translateX(-${propertyIndex * 100}%)`
                 }}
               >
+                {console.log("This is the property Info", data?.data[cardIndex])}
                 {(data?.data[cardIndex]?.brand_relations || [])?.map((currElem: { id: number, property_Location: string, propertyFeature: [{ id: number, item: string }], property_Images: [{ url: string }] }, index: number) => (
                   <div
                     key={currElem?.id}
                     className="flex-shrink-0 w-full px-4"
                   >
                     <div className='flex flex-col justify-start items-start gap-1'>
-                      <img src="/images/explore_img_2.png" className='rounded-[20px] w-full' alt="" />
+                      <img src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images[0].url}`} className='rounded-[20px] w-full' alt="" />
                       <div className='w-full h-full flex justify-between'>
                         <div className='text-white'>
-                          <h1 className='font-[700] text-[28px]'>"AKJ Complex"</h1>
+                          <h1 className='font-[700] text-[28px]'>{(brand_name) ? brand_name : ""}</h1>
                           <p className='flex justify-start items-center gap-3 text-[14px]'><MapPin />{currElem?.property_Location}</p>
                         </div>
                         <div className='text-[#8F90A6] text-[16px]'>
@@ -415,25 +459,6 @@ const Brand = () => {
                 ))}
               </div>
             </div>
-
-            <button
-              onClick={nextPropertySlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-            >
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
           </div>
         </div>
       </div>
