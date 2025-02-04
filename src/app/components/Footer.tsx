@@ -77,7 +77,7 @@ export default function Footer() {
                                 </div>
                             </div>
                         </motion.div>
-                    <div className="grid grid-cols-[4fr_2fr_2fr_3fr] max-lg:grid-cols-[3fr_2fr_2fr] place-items-end items-start gap-2 md:gap-2">
+                    <div className="grid grid-cols-[4fr_2fr_2fr_3fr] max-lg:grid-cols-[3fr_2fr_2fr] place-items-end items-start gap-2 lg:gap-6 md:gap-2">
                         <motion.div
                             variants={panelVariants}
                             custom={0}
@@ -167,8 +167,8 @@ export default function Footer() {
                             animate={isInView ? "visible" : "hidden"}
                             className="footer_panel_2"
                         >
-                            <ul className="flex flex-col justify-between items-start md:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white">
-                                <li className="font-[600] text-[20px] max-md:text-sm mb-2">Take a tour</li>
+                            <ul className="flex flex-col justify-between items-start max-sm:leading-[45px] sm:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white">
+                                <li className="font-[600] max-md:font-medium text-[20px] max-md:text-base mb-2 text-start">Take a tour</li>
                                 <li>Features</li>
                                 <li>Partners</li>
                                 <li>Pricing</li>
@@ -184,8 +184,8 @@ export default function Footer() {
                             animate={isInView ? "visible" : "hidden"}
                             className="footer_panel_3"
                         >
-                            <ul className="flex flex-col justify-between items-start md:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white">
-                                <li className="font-[600] text-[20px] max-md:text-sm mb-2">Our Company</li>
+                            <ul className="flex flex-col justify-between items-start max-sm:leading-[45px] sm:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white">
+                                <li className="font-[600] max-md:font-medium text-[20px] max-md:text-base mb-2 text-start">Our Company</li>
                                 <li>About Us</li>
                                 <li>Agents</li>
                                 <li>Blog</li>
