@@ -25,7 +25,6 @@ export default function HeroSection() {
     // if (data?.error) return <p>Error: {data?.error}</p>;
     if(data) console.log(data?.data);
 
-
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });
 
@@ -60,10 +59,46 @@ export default function HeroSection() {
         }
     };
 
+    const textVariants = {
+        hidden: {
+            opacity: 0,
+            y: 30
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                ease: "easeOut"
+            }
+        }
+    };
+
     return (
         <>
             <div className="heroSection_container relative z-10 w-full bg-bgColor">
                 <div ref={ref} className="heroSection_inner_container h-[575px] relative mx-auto flex flex-col justify-center items-center bg-center w-[95%] md:w-[90%] 2xl:w-[80%]">
+                    {/* Mobile and Tablet Text Overlay */}
+                    <motion.div 
+                        variants={textVariants}
+                        initial="hidden"
+                        animate={isInView ? "visible" : "hidden"}
+                        className="absolute z-20 text-white lg:hidden w-full h-full flex flex-col items-center text-center px-6 bg-black/40 pt-36"
+                    >
+                        <motion.h1 
+                            variants={textVariants}
+                            className="text-2xl max-[400px]:text-xl md:text-4xl font-bold mb-3"
+                        >
+                            {data?.data?.data[0]?.heading || "Find Your Dream Property"}
+                        </motion.h1>
+                        <motion.p 
+                            variants={textVariants}
+                            className="text-xs max-sm:px-0 sm:text-base mb-4 max-w-2xl px-4"
+                        >
+                            {data?.data?.data[0]?.description || "Discover the perfect property that matches your lifestyle and aspirations. Start your journey with us today."}
+                        </motion.p>
+                    </motion.div>
+
                     <motion.div
                         variants={videoVariants}
                         initial="hidden"
@@ -83,7 +118,7 @@ export default function HeroSection() {
                         variants={buyButtonVariants}
                         initial="hidden"
                         animate={isInView ? "visible" : "hidden"}
-                        className="absolute z-10 flex justify-center items-center w-[80%] max-sm:w-[90%] -mt-4 sm:-mt-6 md:-mt-8 lg:-mt-10"
+                        className="absolute z-30 flex justify-center items-center w-[80%] max-sm:w-[90%] -mt-4 sm:-mt-6 md:-mt-8 lg:-mt-10"
                     >
                         <Buy_Section component="herosection"/>
                     </motion.div>
