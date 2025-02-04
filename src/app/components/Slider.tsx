@@ -9,6 +9,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 
 const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) => void }) => {
   const data = useSelector((state: RootState) => state.luxuryListingItems?.data);
+  console.log("This is the SLider data", data);
   const dispatch = useDispatch<AppDispatch>();
   const [isClient, setIsClient] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -20,8 +21,8 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
     dispatch(fetchLuxuryListingItem());
   }, [dispatch]);
 
-  const slides = data?.data?.map((currElem:{property_Location: String, property_Description: String, property_Images: [{url: String}]}) => ({
-    title: "AJK Complex",
+  const slides = data?.data?.map((currElem:{property_Location: String, property_Description: String, property_Images: [{url: String}], brand: {brand_name: string}}) => ({
+    title: currElem?.brand?.brand_name || "",
     location: currElem?.property_Location || "",
     description: currElem?.property_Description || "",
     url: currElem?.property_Images?.[0]?.url || "/placeholder.jpg",
@@ -85,71 +86,70 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
     <div className="w-full relative">
       <style jsx>{`
         @keyframes slideLeft {
-          0% { 
-            transform: translateX(0) scale(1);
+          from { 
+            transform: translateX(0);
             opacity: 1;
           }
-          100% { 
-            transform: translateX(-100%) scale(0.75);
-            opacity: 0.5;
+          to { 
+            transform: translateX(-100%);
+            opacity: 0;
           }
         }
         
         @keyframes slideRight {
-          0% { 
-            transform: translateX(0) scale(1);
+          from { 
+            transform: translateX(0);
             opacity: 1;
           }
-          100% { 
-            transform: translateX(100%) scale(0.75);
-            opacity: 0.5;
+          to { 
+            transform: translateX(100%);
+            opacity: 0;
           }
         }
 
         @keyframes slideFromLeft {
-          0% { 
-            transform: translateX(-100%) scale(0.75);
-            opacity: 0.5;
+          from { 
+            transform: translateX(-100%);
+            opacity: 0;
           }
-          100% { 
-            transform: translateX(0) scale(1);
+          to { 
+            transform: translateX(0);
             opacity: 1;
           }
         }
 
         @keyframes slideFromRight {
-          0% { 
-            transform: translateX(100%) scale(0.75);
-            opacity: 0.5;
+          from { 
+            transform: translateX(100%);
+            opacity: 0;
           }
-          100% { 
-            transform: translateX(0) scale(1);
+          to { 
+            transform: translateX(0);
             opacity: 1;
           }
         }
         
         .animate-slide-left {
-          animation: slideLeft 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: slideLeft 500ms ease-in-out forwards;
         }
         
         .animate-slide-right {
-          animation: slideRight 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: slideRight 500ms ease-in-out forwards;
         }
 
         .animate-slide-from-left {
-          animation: slideFromLeft 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: slideFromLeft 500ms ease-in-out forwards;
         }
 
         .animate-slide-from-right {
-          animation: slideFromRight 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: slideFromRight 500ms ease-in-out forwards;
         }
       `}</style>
 
-      {/* Rest of your JSX remains the same */}
       <div className="relative w-full overflow-hidden">
-        <div className="w-full flex items-start justify-start gap-4 max-sm:gap-1">
+        <div className="w-full flex items-start justify-start gap-4 max-sm:gap-0 transition-all duration-700">
           {/* Previous Slide */}
-          <div className={`relative w-[45%] max-sm:w-[20%] -translate-x-4 max-sm:-translate-x-4 md:-translate-x-10 h-full ${getAnimationClasses('prev')}`}>
+          <div className={`relative w-[45%] max-lg:w-[20%] -translate-x-4 max-sm:-translate-x-4 md:-translate-x-10 h-full transform-gpu ${getAnimationClasses('prev')}`}>
             <div className="w-full rounded-lg duration-300">
               <div className="relative w-full flex flex-col items-center justify-center min-h-[100px] bg-center group">
                 <img
@@ -174,7 +174,7 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
           </div>
 
           {/* Current Slide */}
-          <div className={`relative w-[50%] max-sm:w-[70%] ${getAnimationClasses('current')}`}>
+          <div className={`relative w-[50%] max-lg:w-[70%] transform-gpu ${getAnimationClasses('current')}`}>
             <div className="rounded-lg transition-shadow duration-300">
               <div className="relative flex flex-col items-center justify-center min-h-[200px] group">
                 <img
@@ -202,7 +202,7 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
           </div>
 
           {/* Next Slide */}
-          <div className={`relative w-[45%] max-sm:w-[20%] translate-x-4 max-sm:translate-x-4 md:translate-x-10 ${getAnimationClasses('next')}`}>
+          <div className={`relative w-[45%] max-lg:w-[20%] translate-x-4 max-sm:translate-x-4 md:translate-x-10 transform-gpu ${getAnimationClasses('next')}`}>
             <div className="rounded-lg transition-shadow duration-300">
               <div className="relative flex flex-col items-center justify-center min-h-[100px] group">
                 <img

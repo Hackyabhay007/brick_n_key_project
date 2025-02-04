@@ -12,31 +12,45 @@ const Explore = () => {
     const [currentLocation, setCurrentLocation] = useState("White Field, Bangalore");
 
     const containerVariants = {
-        hidden: { opacity: 0 },
+        hidden: { opacity: 0, y: 50 },
         visible: {
             opacity: 1,
+            y: 0,
             transition: {
-                duration: 0.5,
-                staggerChildren: 0.2
+                duration: 0.8,
+                ease: "easeOut",
+                staggerChildren: 0.3
             }
         }
     };
 
     const headerVariants = {
-        hidden: { opacity: 0, y: 30 },
+        hidden: { opacity: 0, y: -30 },
         visible: {
             opacity: 1,
             y: 0,
-            transition: { duration: 0.6 }
+            transition: { 
+                duration: 0.8,
+                ease: "easeOut",
+                type: "spring",
+                stiffness: 100
+            }
         }
     };
 
     const locationVariants = {
-        hidden: { opacity: 0, scale: 0.8 },
+        hidden: { opacity: 0, scale: 0.95, x: -20 },
         visible: {
             opacity: 1,
             scale: 1,
-            transition: { duration: 0.5, delay: 2000 }
+            x: 0,
+            transition: { 
+                duration: 0.6,
+                delay: 0.4,
+                ease: "easeOut",
+                type: "spring",
+                stiffness: 200
+            }
         }
     };
 
@@ -46,7 +60,8 @@ const Explore = () => {
                 ref={ref}
                 variants={containerVariants}
                 initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
                 className="w-[90%] 2xl:w-[80%] max-sm:w-[95%] mx-auto py-12 border-2 border-black rounded-[20px]"
             >
                 {/* Header */}
@@ -65,7 +80,7 @@ const Explore = () => {
                     </motion.p>
 
                     <motion.div
-                        // variants={locationVariants}
+                        variants={locationVariants}
                         className="flex w-fit items-center gap-2 my-12 max-lg:my-8 py-2 pl-2 pr-6 border-2 border-black rounded-full shadow-sm"
                     >
                         <MapPin className="text-xl text-gray-500" />
@@ -75,7 +90,18 @@ const Explore = () => {
 
                 {/* Slider */}
                 <motion.div
-                    variants={headerVariants}
+                    variants={{
+                        hidden: { opacity: 0, y: 30 },
+                        visible: {
+                            opacity: 1,
+                            y: 0,
+                            transition: { 
+                                duration: 0.8,
+                                delay: 0.6,
+                                ease: "easeOut"
+                            }
+                        }
+                    }}
                 >
                     <Slider onLocationChange={setCurrentLocation} />
                 </motion.div>
