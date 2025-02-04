@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { LuClockArrowDown } from "react-icons/lu";
 import { FaPlus } from "react-icons/fa6";
-import { p } from "framer-motion/client";
+import { filter, p } from "framer-motion/client";
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { setFilter, clearFilters } from '@/redux/slices/propertyItemSlice';
+import { IoClose } from "react-icons/io5";
 
 type PropertyFilters = {
   property_Bedroom: string;
@@ -35,10 +36,21 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
     max: number;
   }
 
+  const bedrooms = [{ text: "1 RK/1 BHK", value: 'OneRK_OneBHK' }, { text: "2 BHK", value: 'TwoBHK' }, { text: "3 BHK", value: 'ThreeBHK' }, { text: "4 BHK", value: 'FourBHK' }, { text: "4+ BHK", value: 'FourPlusBHK' }];
+
+  const constructionStatus = [{ text: "New Launch", value: 'New Launch' }, { text: "Ready to move", value: 'Ready to move' }, { text: "Under Construction", value: 'Under Construction' }];
+
+
   const handleFilterData = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
-    setFilterData(prev => ({ ...prev, [name]: value }));
-    dispatch(setFilter({ key: name as keyof PropertyFilters, value }));
+    console.log("This is the Filter Data", filterData, name, value);
+    if (filterData?.property_Bedroom === value || filterData?.property_Construction_status === value) {
+      setFilterData(prev => ({ ...prev, [name]: "" }));
+      // dispatch(setFilter({ key: name as keyof PropertyFilters, value: "" }));
+    } else {
+      setFilterData(prev => ({ ...prev, [name]: value }));
+      // dispatch(setFilter({ key: name as keyof PropertyFilters, value }));
+    }
   };
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,12 +64,16 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
   };
 
   const handleSeeAllProperties = () => {
-    
-    if(filterData?.property_Bedroom){
+
+    if(filterData?.property_Bedroom && filterData?.property_Construction_status) {  
+      router.push(`/listing?property_Bedroom=${filterData?.property_Bedroom}&property_Construction_status=${filterData?.property_Construction_status}`);
+    }
+
+    if (filterData?.property_Bedroom) {
       router.push(`/listing?property_Bedroom=${filterData?.property_Bedroom}`);
     }
 
-    if(filterData?.property_Construction_status){
+    if (filterData?.property_Construction_status) {
       router.push(`/listing?property_Construction_status=${filterData?.property_Construction_status}`);
     }
   };
@@ -117,46 +133,24 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       <div className=" w-full pb-4 pt-6 px-4 rounded-lg flex flex-col gap-3 bg-white">
         <h3 className="text-gray-700 font-semibold mb-2">Number of Bedrooms</h3>
         <div className="flex flex-wrap gap-4">
-          <button 
-            name="property_Bedroom"
-            value="OneRK_OneBHK"
-            onClick={handleFilterData} 
-            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "OneRK_OneBHK" ? "bg-red-500 text-white" : ""}`}
-          >
-            <FaPlus className="text-lg" /> 1 RK/1 BHK
-          </button>
-          <button 
-            name="property_Bedroom"
-            value="TwoBHK"
-            onClick={handleFilterData} 
-            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "TwoBHK" ? "bg-red-500 text-white" : ""}`}
-          >
-            <FaPlus className="text-lg" /> 2 BHK
-          </button>
-          <button 
-            name="property_Bedroom"
-            value="ThreeBHK"
-            onClick={handleFilterData} 
-            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "ThreeBHK" ? "bg-red-500 text-white" : ""}`}
-          >
-            <FaPlus className="text-lg" /> 3 BHK
-          </button>
-          <button 
-            name="property_Bedroom"
-            value="FourBHK"
-            onClick={handleFilterData} 
-            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "FourBHK" ? "bg-red-500 text-white" : ""}`}
-          >
-            <FaPlus className="text-lg" /> 4 BHK
-          </button>
-          <button 
-            name="property_Bedroom"
-            value="FourPlusBHK"
-            onClick={handleFilterData} 
-            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === "FourPlusBHK" ? "bg-red-500 text-white" : ""}`}
-          >
-            <FaPlus className="text-lg" /> 4+ BHK
-          </button>
+          {
+            (bedrooms)?.map((currElem: { text: string, value: string }, index: number) => {
+              return (
+                <button
+                  key={index}
+                  name="property_Bedroom"
+                  value={currElem.value}
+                  onClick={handleFilterData}
+                  className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Bedroom === currElem.value ? "bg-red-500 text-white" : ""}`}
+                >
+                  {
+                    (filterData.property_Bedroom === currElem.value) ? <IoClose className="text-lg" /> : <FaPlus className="text-xl" />
+                  }
+                  {currElem.text}
+                </button>
+              )
+            })
+          }
         </div>
       </div>
 
@@ -164,30 +158,24 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       <div className="w-full pb-4 pt-8 px-4 rounded-lg flex flex-col gap-3 bg-white">
         <h3 className="text-gray-700 font-semibold mb-2">Construction Status</h3>
         <div className="flex flex-wrap gap-4">
-          <button 
-            name="property_Construction_status"
-            value="New Launch"
-            onClick={handleFilterData} 
-            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Construction_status === "New Launch" ? "bg-red-500 text-white" : ""}`}
-          >
-            <FaPlus className="text-lg" />New Launch
-          </button>
-          <button 
-            name="property_Construction_status"
-            value="Ready to move"
-            onClick={handleFilterData} 
-            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1  ${filterData.property_Construction_status === "Ready to move" ? "bg-red-500 text-white" : ""}`}
-          >
-            <FaPlus className="text-lg" />Ready to move
-          </button>
-          <button 
-            name="property_Construction_status"
-            value="Under Construction"
-            onClick={handleFilterData} 
-            className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1  ${filterData.property_Construction_status === "Under Construction" ? "bg-red-500 text-white" : ""}`}
-          >
-            <FaPlus className="text-lg" />Under Construction
-          </button>
+          {
+            (constructionStatus)?.map((currElem: { text: string, value: string }, index: number) => {
+              return (
+                <button
+                  key={index}
+                  name="property_Construction_status"
+                  value={currElem.value}
+                  onClick={handleFilterData}
+                  className={`px-3 py-1 border border-black rounded-full text-sm flex items-center justify-start gap-1 ${filterData.property_Construction_status === currElem.value ? "bg-red-500 text-white" : ""}`}
+                >
+                  {
+                    (filterData.property_Construction_status === currElem.value) ? <IoClose className="text-lg" /> : <FaPlus className="text-xl" />
+                  }
+                  {currElem.text}
+                </button>
+              )
+            })
+          }
         </div>
       </div>
 
@@ -253,13 +241,13 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
 
       {/* Buttons */}
       <div className=" w-full py-6 px-10 flex justify-between items-center rounded-t-lg rounded-b-full bg-white">
-        <button 
+        <button
           onClick={handleClearAll}
           className="text-red-500"
         >
           Clear All
         </button>
-        <button 
+        <button
           onClick={handleSeeAllProperties}
           className="p-2 bg-red-500 text-white rounded-lg"
         >
