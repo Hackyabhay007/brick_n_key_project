@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Search, MapPin, SlidersHorizontal } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +11,7 @@ import Buy_Section from '@/app/components/Buy_Section';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import Loader from '../../components/Loader';
+import PropertySkeleton from '../../components/PropertySkeleton';
 
 const Page = () => {
     const searchParams = useSearchParams();
@@ -52,11 +54,10 @@ const Page = () => {
         }
 
         if (newData) {
-            console.log("afklljsfdljdfsaljlfsddslfkjldsfkldfjsljdflfaslkjlfsdjljsdfajslad")
-            // In your component
             setNewDataValue(newData === 'true');
             dispatch(fetchNewPropertyItems());
         }
+
     }, [searchParams, dispatch]);
 
     useEffect(() => {
@@ -88,58 +89,108 @@ const Page = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    if (loading) {
-        return <Loader />;
-    }
+    const fadeInUp = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: 20 }
+    };
 
-    return (
-        <>
+    if (loading) {
+        return (
             <div className="listing_container w-full bg-bgColor pb-20">
                 <div className="listing_inner_container w-[90%] mx-auto">
-                    {
-                        !(newDataValue) &&  <Buy_Section component='listing' />
-                    }
-                   
-
-                    <div className={`filter_data_container_and_pagination ${(newDataValue)?"mt-0":"mt-12"} w-full flex flex-col items-center justify-start gap-16 bg-bgBlue p-16 max-lg:px-6 max-lg:py-10 rounded-[20px]`}>
-
-
-                        <div className="filter_data_container grid grid-cols-2 max-lg:grid-cols-1 justify-items-center gap-12 ">
-                            {
-                                (data?.data)?.map((currElem: { id: number, property_Images: [{ url: String }], property_Location: String, propertyFeature: [{ id: number, item: string }] }, index: number) => {
-                                    return (
-                                        <div key={index} onClick={() => { router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`); }} className='flex flex-col justify-start items-start gap-1 cursor-pointer'>
-                                            <img src={`http://localhost:1337${currElem?.property_Images[0]?.url}`} className='rounded-[20px] max-lg:rounded-[5px]' alt="" />
-                                            <div className=' w-full h-full flex justify-between'>
-                                                <div className='text-white'>
-                                                    <h1 className='font-[700] text-[28px]'>AJK Complex</h1>
-                                                    <p className='flex justify-start items-center gap-3 text-[14px]'><span><MapPin /></span>{currElem?.property_Location}</p>
-                                                </div>
-                                                <div className='text-[#8F90A6] text-[16px]'>
-                                                    {
-                                                        (currElem?.propertyFeature).map((currElem, index) => {
-                                                            return (
-                                                                <p key={"propertyFeature" + index}>{currElem?.item}</p>
-                                                            )
-                                                        })
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                        <Pagination
-                            currentPage={currentPage}
-                            totalItems={data?.meta?.pagination?.total || 0}
-                            itemsPerPage={itemsPerPage}
-                            onPageChange={handlePageChange}
-                        />
+                    <div className="grid grid-cols-2 max-lg:grid-cols-1 gap-12 mt-12">
+                        {[1, 2, 3, 4].map((i) => (
+                            <PropertySkeleton key={i} />
+                        ))}
                     </div>
                 </div>
             </div>
-        </>
+        );
+    }
+
+    return (
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="listing_container w-full bg-bgColor pb-20"
+        >
+            <div className="listing_inner_container w-[90%] mx-auto">
+                <Buy_Section component='listing' />
+
+                <motion.div 
+                    className={`filter_data_container_and_pagination mt-12 w-full flex flex-col items-center justify-start gap-16 bg-bgBlue p-16 max-lg:px-6 max-lg:py-10 rounded-[20px]`}
+                    variants={fadeInUp}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                >
+                    <div className="filter_data_container grid grid-cols-2 max-lg:grid-cols-1 justify-items-center gap-12">
+                        {data?.data?.map((currElem:any, index:number) => (
+                            <motion.div
+                                key={index}
+                                variants={fadeInUp}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                whileHover={{ scale: 1.02 }}
+                                transition={{ duration: 0.2 }}
+                                onClick={() => router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`)}
+                                className='flex flex-col justify-start items-start gap-1 cursor-pointer hover:shadow-xl rounded-[20px] transition-all duration-300'
+                            >
+                                <motion.img 
+                                    src={`http://localhost:1337${currElem?.property_Images[0]?.url}`}
+                                    className='rounded-[20px] max-lg:rounded-[5px] w-full object-cover'
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.5 }}
+                                    alt=""
+                                />
+                                <div className='w-full h-full flex justify-between p-4'>
+                                    <div className='text-white'>
+                                        <motion.h1 
+                                            className='font-[700] text-[28px]'
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.2 }}
+                                        >
+                                            AJK Complex
+                                        </motion.h1>
+                                        <motion.p 
+                                            className='flex justify-start items-center gap-3 text-[14px]'
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.3 }}
+                                        >
+                                            <MapPin />{currElem?.property_Location}
+                                        </motion.p>
+                                    </div>
+                                    <div className='text-[#8F90A6] text-[16px]'>
+                                        {currElem?.propertyFeature.map((feature:any, idx:number) => (
+                                            <motion.p 
+                                                key={`propertyFeature${idx}`}
+                                                initial={{ opacity: 0, y: 5 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.4 + (idx * 0.1) }}
+                                            >
+                                                {feature?.item}
+                                            </motion.p>
+                                        ))}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={data?.meta?.pagination?.total || 0}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={handlePageChange}
+                    />
+                </motion.div>
+            </div>
+        </motion.div>
     );
 };
 

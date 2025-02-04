@@ -7,6 +7,9 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { clearFilters, setFilter } from '@/redux/slices/propertyItemSlice';
 import { AppDispatch } from "../../redux/store";
+import { IoClose } from "react-icons/io5";
+
+
 
 
 // Define the filter types
@@ -20,6 +23,7 @@ interface Buy_Section_Desktop_Dropdown {
 const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
     const [openSection, setOpenSection] = useState("");
     const [property_Type, setProperty_Type] = useState("");
+    const [property_Bedroom, setProperty_Bedroom] = useState("");
     const [property_Construction_status, setProperty_Construction_status] = useState("");
     const [range, setRange] = useState({ min: 0, max: 100 });
 
@@ -27,18 +31,37 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
 
 
     const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>, key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
-        setProperty_Type(e.target.name);
-        dispatch(setFilter({ key, value }));
-        onClose(); 
+        setProperty_Type(e.target.value);
+        console.log(e.target.value);
+        // dispatch(setFilter({ key, value }));
+        // onClose(); 
     }
 
 
-    const handleFilterChange = (key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
+    const handleFilterChange = (key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined, section:string) => {
         console.log(key, value);
-        setProperty_Construction_status(value);
-        dispatch(setFilter({ key, value }));
-        onClose();
+        if(section == "bedroom"){
+            if(property_Bedroom == value) setProperty_Bedroom("");
+            else setProperty_Bedroom(value as string);
+        }
+        else if(section == "construction_status"){
+            if(property_Construction_status == value) setProperty_Construction_status("");
+            else setProperty_Construction_status(value as string);
+        }
+        // setProperty_Construction_status(value as string);
+        // dispatch(setFilter({ key, value }));
+        // onClose();
     };
+
+
+    const handleApplyFilter=()=>{
+        console.log('Apply filters triggered');
+        console.log(property_Type, property_Bedroom, property_Construction_status);
+        dispatch(setFilter({ key: 'property_Type', value: property_Type }));
+        dispatch(setFilter({ key: 'property_Bedroom', value: property_Bedroom }));
+        dispatch(setFilter({ key: 'property_Construction_status', value: property_Construction_status }));
+        onClose();
+    }
 
 
     const handleOnClose = () => {
@@ -58,7 +81,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
     };
     // const properties = ["Flat/Appartment", "Independent/Builder Floor", "Independent House/Villa", "Residential Land", "1 RK/ Studio Apartment", "Farm House", "Serviced Apartment", "Other"];
 
-    const properties=[{text: "Flat/Appartment", value: 'FlatApartment'}, {text: "Independent/Builder Floor", value: 'IndependentBuilderFloor'}, {text: "Independent House/Villa", value: 'IndependentHouseVilla'}, {text: "Residential Land", value: 'ResidentialLand'}, {text: "1 RK/ Studio Apartment", value: 'OneRKStudioApartment'}, {text: "Farm House", value: 'FarmHouse'}, {text: "Serviced Apartment", value: 'ServicedApartment'}, {text: "Other", value: 'Other'}];
+    const properties = [{ text: "Flat/Appartment", value: 'FlatApartment' }, { text: "Independent/Builder Floor", value: 'IndependentBuilderFloor' }, { text: "Independent House/Villa", value: 'IndependentHouseVilla' }, { text: "Residential Land", value: 'ResidentialLand' }, { text: "1 RK/ Studio Apartment", value: 'OneRKStudioApartment' }, { text: "Farm House", value: 'FarmHouse' }, { text: "Serviced Apartment", value: 'ServicedApartment' }, { text: "Other", value: 'Other' }];
 
 
     const bedrooms = [{ text: "1 RK/1 BHK", value: 'OneRK_OneBHK' }, { text: "2 BHK", value: 'TwoBHK' }, { text: "3 BHK", value: 'ThreeBHK' }, { text: "4 BHK", value: 'FourBHK' }, { text: "4+ BHK", value: 'FourPlusBHK' }];
@@ -70,22 +93,27 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
     return (
         <>
             {isOpen && (
-                <div className="absolute top-16 -left-2 mt-2 w-[89vw] bg-white rounded-lg shadow-lg z-50 py-4 px-8">
+                <div className="absolute top-20 -left-2 mt-2 w-[89vw] bg-white rounded-lg shadow-lg z-50 py-4 px-8">
                     {/* Property Type Checkboxes */}
                     <div className="mb-6">
                         <div className="flex justify-end items-center mb-4">
-                            <button onClick={handleOnClose} className="text-bgRed">
-                                Clear
-                            </button>
+                            <div className='flex gap-6 text-sm'>
+                                <button onClick={handleApplyFilter} className="text-blue-600">
+                                    Apply Filter
+                                </button>
+                                <button onClick={handleOnClose} className="text-bgRed">
+                                    Clear
+                                </button>
+                            </div>
                         </div>
                         <div className="grid grid-cols-3 gap-3 text-sm text-[#8F90A6]">
                             {
-                                (properties)?.map((currElem:{text:string, value:string}, index) => {
+                                (properties)?.map((currElem: { text: string, value: string }, index) => {
                                     return (
                                         <label key={index} htmlFor={`checkbox-${index}`} className="flex items-center space-x-2">
                                             <input
                                                 name={currElem?.text}
-                                                value={property_Type}
+                                                value={currElem?.value}
                                                 onChange={(e) => handleCheckBoxChange(e, 'property_Type', currElem?.value || undefined)}
                                                 checked={(property_Type == currElem?.value) ? true : false}
                                                 type="checkbox"
@@ -102,8 +130,11 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                     <p className='border-b-2 border-[#DCDCEB] pb-4 mb-3'>Looking for commercial properties? <span className='text-bgRed'>Click Here</span></p>
 
                     <div className="budget_bedroom_construction_postedby_section text-[#8F90A6] flex justify-start items-center gap-2">
+
                         <button onClick={() => { if (openSection == "budget") { setOpenSection("") } else { setOpenSection("budget") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(openSection == "budget" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>Budget <img src="/images/buy_section_icon_1.svg" alt="" /></button>
+
                         <button onClick={() => { if (openSection == "bedroom") { setOpenSection("") } else { setOpenSection("bedroom") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(openSection == "bedroom" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>Bedroom <img src="/images/buy_section_icon_1.svg" alt="" /></button>
+
                         <button onClick={() => { if (openSection == "construction_status") { setOpenSection("") } else { setOpenSection("construction_status") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(openSection == "construction_status" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>Construction Status <img src="/images/buy_section_icon_1.svg" alt="" /></button>
                         {/* <button onClick={() => { if (openSection == "postedBy") { setOpenSection("") } else { setOpenSection("postedBy") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(openSection == "postedBy" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>Posted By <img src="/images/buy_section_icon_1.svg" alt="" /></button> */}
                     </div>
@@ -180,13 +211,18 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                             <div className="my-6 text-[#8F90A6]">
                                 <h3 className="text-lg font-semibold mb-4 text-black">Number of Bedrooms</h3>
                                 <div className="flex flex-wrap gap-2">
-                                    {bedrooms?.map((currElem: {text:string, value:string}, index:number) => (
+                                    {bedrooms?.map((currElem: { text: string, value: string }, index: number) => (
                                         <button
                                             key={index}
-                                            onClick={(e) => handleFilterChange('property_Bedroom', currElem?.value || undefined)}
-                                            className="px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm hover:bg-gray-100"
+                                            value={currElem?.value}
+                                            onClick={(e) => handleFilterChange('property_Bedroom', currElem?.value || undefined, "bedroom")}
+                                            className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(property_Bedroom == currElem?.value) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                                         >
-                                            <img src="/images/buy_section_icon_5.svg" alt="" />
+                                            {
+                                                (property_Bedroom == currElem?.value) ? <IoClose onClick={()=>{setProperty_Bedroom("")}} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> :  <img src="/images/buy_section_icon_5.svg" alt="" />
+                                            }
+                                            {/* <img src="/images/buy_section_icon_5.svg" alt="" /> */}
+                                            {/* <img src="/images/buy_section_icon_5.svg" alt="" /> */}
                                             {currElem?.text}
                                         </button>
                                     ))}
@@ -205,10 +241,13 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                                     {constructionStatus.map((status) => (
                                         <button
                                             key={status}
-                                            onClick={(e) => handleFilterChange('property_Construction_status', status || undefined)}
-                                            className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm hover:bg-gray-100 ${(property_Construction_status == status) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
+                                            onClick={(e) => handleFilterChange('property_Construction_status', status || undefined, "construction_status")}
+                                            className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(property_Construction_status == status) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                                         >
-                                            <img src="/images/buy_section_icon_5.svg" alt="" />
+                                            {
+                                                (property_Construction_status == status) ? <IoClose onClick={()=>{setProperty_Construction_status("")}} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> :  <img src="/images/buy_section_icon_5.svg" alt="" />
+                                                
+                                            }
                                             {status}
                                         </button>
                                     ))}

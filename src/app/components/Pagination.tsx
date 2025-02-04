@@ -34,8 +34,13 @@ const Pagination = ({
 
   return (
     <div className="w-full flex items-center justify-center gap-3">
+
+      {/* This is the Prev Button */}
       <button 
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => {
+          onPageChange(currentPage - 1);
+          document.querySelector('.listing_container')?.scrollIntoView({ behavior: 'smooth' });
+        }}
         disabled={currentPage === 1}
         className="w-8 h-8 rounded border border-white/40 flex items-center justify-center text-white hover:bg-white/10 transition-colors disabled:opacity-50"
       >
@@ -44,6 +49,7 @@ const Pagination = ({
         </svg>
       </button>
 
+      {/* This is the Page Number Buttons */}
       {getPageNumbers().map((number) => (
         <button
           key={number}
@@ -58,8 +64,12 @@ const Pagination = ({
 
       {totalPages > maxVisiblePages && <span className="text-white text-lg">...</span>}
 
+      {/* This is the Next Button */}
       <button 
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => {
+          onPageChange(currentPage + 1);
+          document.querySelector('.listing_container')?.scrollIntoView({ behavior: 'smooth' });
+        }}
         disabled={currentPage === totalPages}
         className="w-8 h-8 rounded border border-white/40 flex items-center justify-center text-white hover:bg-white/10 transition-colors disabled:opacity-50"
       >
