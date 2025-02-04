@@ -58,7 +58,6 @@ const testimonials: Testimonial[] = [
 
 export default function Trust_Us() {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [slidesPerView, setSlidesPerView] = useState(3);
     const [playingVideo, setPlayingVideo] = useState<number | null>(null);
     const [trustUsArray, setTrustUsArray] = useState([]);
     const videoRefs = useRef<{ [key: number]: HTMLVideoElement | null }>({});
@@ -98,32 +97,18 @@ export default function Trust_Us() {
     // if (data?.error) return <p>Error: {data?.error}</p>;
     if (data) console.log(data?.data);
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth < 768) {
-                setSlidesPerView(1);
-            } else if (window.innerWidth < 1024) {
-                setSlidesPerView(2);
-            } else {
-                setSlidesPerView(3);
-            }
-        };
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
     const nextSlide = () => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex + 1 >= testimonials.length - (slidesPerView - 1) ? 0 : prevIndex + 1
-        );
+        setCurrentIndex((prevIndex) => {
+            const maxIndex = trustUsArray.length - 3;
+            return prevIndex >= maxIndex ? 0 : prevIndex + 1;
+        });
     };
 
     const prevSlide = () => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex - 1 < 0 ? testimonials.length - slidesPerView : prevIndex - 1
-        );
+        setCurrentIndex((prevIndex) => {
+            const maxIndex = trustUsArray.length - 3;
+            return prevIndex <= 0 ? maxIndex : prevIndex - 1;
+        });
     };
 
     const handleVideoClick = (testimonialId: number) => {
@@ -241,41 +226,56 @@ export default function Trust_Us() {
                         className="overflow-hidden"
                     >
                         <div
-                            className="w-full flex justify-center gap-4 md:gap-8 lg:gap-10 transition-transform duration-500 ease-in-out"
+                            className="w-full flex gap-8 max-xl:gap-4 max-sm:gap-2 transition-all duration-500 ease-in-out"
                             style={{
-                                transform: `translateX(-${currentIndex * (100 / slidesPerView)}%)`
+                                transform: `translateX(-${currentIndex * 33.333}%)`,
                             }}
                         >
-                            {trustUsArray?.map((currElem:{id:number,title: string, designation: string, video: string }, index:number) => (
-                                <div
-                                    key={currElem?.id}
-                                    className={`min-w-[90%] w-[45%] max-lg:min-w-[50%] lg:min-w-[32%] px-2 md:px-4`}
-                                >
-                                    <div className="rounded-lg w-full h-full overflow-hidden">
-                                        <div className="relative w-full">
-                                            <video
-                                                className='w-full h-[350px] max-sm:h-[280px] object-cover'
-                                                src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.video}`}
-                                                ref={el => { videoRefs.current[currElem?.id] = el; }}
-                                            ></video>
-                                            <div className="video_info absolute bottom-2 md:bottom-5 w-full flex justify-between items-center text-white px-2 md:px-3">
-                                                <div className='h-full flex flex-col justify-center items-start'>
-                                                    <h3 className="text-sm md:text-base">{currElem?.title}</h3>
-                                                    <p className='text-xs'>{currElem?.designation}</p>
+                            {trustUsArray?.map((currElem:{id:number,title: string, designation: string, video: string }, index:number) => {
+                                const isVisible = index >= currentIndex && index < currentIndex + 3;
+                                const isCenterSlide = index === currentIndex + 1;
+                                
+                                return (
+                                    <div
+                                        key={currElem?.id}
+                                        className={`
+                                            transition-all duration-500 
+                                            lg:min-w-[31.333%] 
+                                            ${isVisible ? 'opacity-100' : 'opacity-0'}
+                                            ${isCenterSlide ? 
+                                                'max-lg:min-w-[45%] max-lg:z-20' : 
+                                                'max-lg:min-w-[27.8%] max-lg:opacity-75'
+                                            }
+                                        `}
+                                    >
+                                        <div className={`
+                                            mx-2 rounded-lg overflow-hidden
+                                        `}>
+                                            <div className="relative w-full">
+                                                <video
+                                                    className="w-full h-[240px] sm:h-[350px] lg:h-[400px] 2xl:h-[500px] object-cover"
+                                                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.video}`}
+                                                    ref={el => { videoRefs.current[currElem?.id] = el; }}
+                                                ></video>
+                                                <div className="video_info absolute bottom-2 md:bottom-5 w-full flex justify-between items-center text-white px-2 md:px-3">
+                                                    <div className='h-full flex flex-col justify-center items-start'>
+                                                        <h3 className="text-sm md:text-base">{currElem?.title}</h3>
+                                                        <p className='text-xs'>{currElem?.designation}</p>
+                                                    </div>
+                                                    <Image
+                                                        width={46}
+                                                        height={46}
+                                                        src={playingVideo === currElem?.id ? '/images/play_btn.png' : '/images/pause_btn.png'}
+                                                        alt="testimonial img"
+                                                        className="cursor-pointer w-8 h-8 md:w-12 md:h-12"
+                                                        onClick={() => handleVideoClick(currElem?.id)}
+                                                    />
                                                 </div>
-                                                <Image
-                                                    width={46}
-                                                    height={46}
-                                                    src={playingVideo === currElem?.id ? '/images/play_btn.png' : '/images/pause_btn.png'}
-                                                    alt="testimonial img"
-                                                    className="cursor-pointer w-8 h-8 md:w-12 md:h-12"
-                                                    onClick={() => handleVideoClick(currElem?.id)}
-                                                />
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </motion.div>
                 </div>
