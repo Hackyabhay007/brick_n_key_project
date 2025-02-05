@@ -11,7 +11,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import Link from "next/link";
 
 export default function Why_Choose_Us() {
-    const data = useSelector((state: RootState)=>state.whyChooseUsSection?.data);
+    const data = useSelector((state: RootState) => state.whyChooseUsSection?.data);
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
@@ -59,7 +59,7 @@ export default function Why_Choose_Us() {
     };
 
     const [currentPositions, setCurrentPositions] = useState([0, 1, 2, 3]);
-    
+
     const positions = {
         desktop: [
             { x: 0, y: -120 },    // top
@@ -162,37 +162,29 @@ export default function Why_Choose_Us() {
 
                     <motion.div
                         variants={imageVariants}
-                        className=" rightSideImage_container w-full h-full bg-red-600 flex justify-center items-start bg-center"
+                        className=" rightSideImage_container w-full h-full flex justify-center items-start bg-center"
                     >
-                        <div className="relative w-full bg-green-600 h-[250px] text-white text-xs">
-                            <div className="absolute w-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                {currentPositions.map((posIndex, i) => (
-                                    <motion.button
-                                        key={i}
-                                        className="absolute uppercase bg-bgRed w-[150px] sm:w-[175px] md:w-[200px] h-[40px] sm:h-[45px] md:h-[50px] flex justify-center items-center rounded-[10px] text-[11px] sm:text-[12px] md:text-[14px]"
-                                        animate={{
-                                            x: getCurrentPositions()[posIndex].x,
-                                            y: getCurrentPositions()[posIndex].y,
-                                            transition: {
-                                                type: "spring",
-                                                stiffness: 70,
-                                                damping: 20,
-                                                duration: 1
-                                            }
-                                        }}
-                                        whileHover={{ 
-                                            scale: 1.1,
-                                            transition: { duration: 0.2 }
-                                        }}
-                                        style={{
-                                            left: "50%",
-                                            top: "50%",
-                                            transform: 'translate(-50%, -50%)',
-                                        }}
-                                    >
-                                        {buttonTexts[i]}
-                                    </motion.button>
-                                ))}
+                        <div className="relative w-full h-[280px]"> {/* Adjust height as needed */}
+                            <div className="absolute w-full h-full"> {/* Centered container */}
+                                <div className="relative w-full h-full">
+                                    {buttonTexts.map((text, index) => (
+                                        <motion.button
+                                            key={index}
+                                            className={`
+                absolute uppercase bg-red-600 text-white 
+                w-[200px] h-[50px] 
+                flex justify-center items-center 
+                rounded-[10px] text-sm
+                ${index === 0 ? 'top-0 left-1/2 -translate-x-1/2' : ''}
+                ${index === 1 ? 'right-0 top-1/2 -translate-y-1/2' : ''}
+                ${index === 2 ? 'bottom-0 left-1/2 -translate-x-1/2' : ''}
+                ${index === 3 ? 'left-0 top-1/2 -translate-y-1/2' : ''}
+              `}
+                                        >
+                                            {text}
+                                        </motion.button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </motion.div>

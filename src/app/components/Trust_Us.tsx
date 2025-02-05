@@ -265,9 +265,9 @@ export default function Trust_Us() {
                                                     <Image
                                                         width={46}
                                                         height={46}
-                                                        src={playingVideo === currElem?.id ? '/images/play_btn.png' : '/images/pause_btn.png'}
+                                                        src={playingVideo === currElem?.id ?  '/images/pause_btn.png' : '/images/play_btn.png'}
                                                         alt="testimonial img"
-                                                        className="cursor-pointer w-8 h-8 md:w-12 md:h-12"
+                                                        className={`cursor-pointer w-8 h-8 md:w-12 md:h-12 ${isCenterSlide ? "max-lg:absolute left-1/2 bottom-0":""}`}
                                                         onClick={() => handleVideoClick(currElem?.id)}
                                                     />
                                                 </div>

@@ -1,15 +1,53 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 import Slider from './Slider';
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
 
 const Explore = () => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });
     const [currentLocation, setCurrentLocation] = useState("White Field, Bangalore");
+    const [activeIndex, setActiveIndex] = useState(0);
+    const sliderRef = useRef<HTMLDivElement>(null);
+    const [isScrolling, setIsScrolling] = useState(false);
+
+    const handleScroll = (direction: 'left' | 'right') => {
+        if (isScrolling || !sliderRef.current) return;
+
+        setIsScrolling(true);
+        const container = sliderRef.current;
+        const scrollAmount = container.clientWidth;
+        
+        const newScrollPosition = direction === 'left' 
+            ? container.scrollLeft - scrollAmount
+            : container.scrollLeft + scrollAmount;
+
+        container.scrollTo({
+            left: newScrollPosition,
+            behavior: 'smooth'
+        });
+
+        // Update active index
+        const newIndex = direction === 'left'
+            ? (activeIndex - 1 + 3) % 3
+            : (activeIndex + 1) % 3;
+        setActiveIndex(newIndex);
+
+        // Reset scrolling state after animation
+        setTimeout(() => setIsScrolling(false), 500);
+    };
+
+    const handleNext = () => handleScroll('right');
+    const handlePrev = () => handleScroll('left');
+
+    useEffect(() => {
+        if (sliderRef.current) {
+            const container = sliderRef.current;
+            container.scrollLeft = container.clientWidth * activeIndex;
+        }
+    }, []);
 
     const containerVariants = {
         hidden: { opacity: 0, y: 50 },
@@ -102,8 +140,24 @@ const Explore = () => {
                             }
                         }
                     }}
+                    className="relative overflow-hidden"
                 >
-                    <Slider onLocationChange={setCurrentLocation} />
+                    <div 
+                        ref={sliderRef}
+                        className="flex transition-all duration-500 ease-out"
+                        style={{
+                            scrollSnapType: 'x mandatory',
+                            WebkitOverflowScrolling: 'touch',
+                            scrollBehavior: 'smooth'
+                        }}
+                    >
+                        <Slider 
+                            onLocationChange={setCurrentLocation}
+                            activeIndex={activeIndex}
+                            onNext={handleNext}
+                            onPrev={handlePrev}
+                        />
+                    </div>
                 </motion.div>
             </motion.div>
         </div>

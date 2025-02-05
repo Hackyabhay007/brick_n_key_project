@@ -42,11 +42,11 @@ export default function page() {
     }, [searchParams, dispatch]);
 
     useEffect(() => {
-        if(data) {
+        if (data) {
             console.log("This is the property Image Array of the detail page", data?.property_Images);
         }
 
-        const image_Data = data?.property_Images.map((currElem: {url: string, id: number}) => currElem?.url);
+        const image_Data = data?.property_Images.map((currElem: { url: string, id: number }) => currElem?.url);
         setImages(image_Data);
     }, [data]);
 
@@ -56,7 +56,7 @@ export default function page() {
             const timer = setInterval(() => {
                 setIsTransitioning(true);
                 setTimeout(() => {
-                    setCurrentImageIndex((prevIndex) => 
+                    setCurrentImageIndex((prevIndex) =>
                         prevIndex === images.length - 1 ? 0 : prevIndex + 1
                     );
                     setIsTransitioning(false);
@@ -74,7 +74,7 @@ export default function page() {
     const handlePrevClick = () => {
         setIsTransitioning(true);
         setTimeout(() => {
-            setCurrentImageIndex((prevIndex) => 
+            setCurrentImageIndex((prevIndex) =>
                 prevIndex === 0 ? images.length - 1 : prevIndex - 1
             );
             setIsTransitioning(false);
@@ -84,7 +84,7 @@ export default function page() {
     const handleNextClick = () => {
         setIsTransitioning(true);
         setTimeout(() => {
-            setCurrentImageIndex((prevIndex) => 
+            setCurrentImageIndex((prevIndex) =>
                 prevIndex === images.length - 1 ? 0 : prevIndex + 1
             );
             setIsTransitioning(false);
@@ -99,34 +99,38 @@ export default function page() {
         <>
             <div className="detail_container w-full bg-bgColor">
                 <div className="detail_inner_container relative w-[90%] max-sm:w-[95%] 2xl:w-[80%] z-10 mx-auto">
-                    <img
-                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${images[currentImageIndex]}`}
-                        alt={`Carousel image ${currentImageIndex + 1}`}
-                        className={`w-full h-auto lg:max-h-[450px] max-lg:h-[400px] transition-opacity duration-500 ${
-                            isTransitioning ? 'opacity-0' : 'opacity-100'
-                        }`}
-                    />
+                    <div className="carousel_container relative w-[80%] max-lg:w-[90%] mx-auto h-[450px] max-lg:h-[450px] rounded-[20px] overflow-hidden">
+                        <img
+                            src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${images[currentImageIndex]}`}
+                            alt={`Carousel image ${currentImageIndex + 1}`}
+                            className={`w-full h-full object-cover transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'
+                                }`}
+                        />
+
+                        <div className="feature_container absolute top-6 left-0 w-[200px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
+                            Featured
+                        </div>
+                    </div>
+
+
                     {/* Add Navigation Buttons */}
-                    <button 
+                    <button
                         onClick={handlePrevClick}
                         className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
                         aria-label="Previous image"
                     >
                         <IoIosArrowBack size={24} />
                     </button>
-                    <button 
+                    <button
                         onClick={handleNextClick}
                         className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
                         aria-label="Next image"
                     >
                         <IoIosArrowForward size={24} />
                     </button>
-                    <div className="feature_container absolute top-6 -left-2 w-[200px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
-                        Featured
-                    </div>
 
                     {/* Dot Navigation */}
-                    <div className="dot_navigation absolute bottom-1/2 max-lg:bottom-1/3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    <div className="dot_navigation absolute lg:bottom-1/3 max-lg:bottom-1/4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                         {(images).map((_, index: number) => (
                             <button
                                 key={index}
@@ -140,28 +144,44 @@ export default function page() {
                     </div>
                 </div>
 
-                <div className="estimated_EMI relative w-full xl:h-[200px] max-lg:h-[200px] max-md:h-[150px] bg-bgBlue -mt-48 max-lg:-mt-24 z-20 pb-8 pt-16 text-white flex justify-center max-lg:justify-between items-center max-lg:px-16 rounded-t-[80px] max-lg:rounded-t-[40px] rounded-b-[10px] max-lg:rounded-b-[5px] gap-3 max-md:gap-0">
-                    <div className="h-full flex flex-col items-start justify-center gap-8 max-2xl:gap-0">
-                        <h3 className="font-[600] xl:text-7xl max-2xl:text-8xl max-lg:text-4xl max-md:text-2xl leading-[36px] tracking-[0.05em]">₹{data?.property_price} Cr</h3>
-                        <p className="mt-3 2xl:text-4xl max-2xl:text-3xl max-lg:text-sm max-md:text-xs leading-[36px] max-md:leading-0 tracking-[0.05em] text-bgRed">Estimated EMI ₹{data?.estimated_emi_price}</p>
+                <div className="estimated_EMI_bar relative w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue -mt-32 max-lg:-mt-24 z-20 py-6 text-white flex justify-center max-lg:justify-between items-center px-8 rounded-t-[40px] rounded-b-[10px] gap-6 max-md:gap-4">
+                    <div className="flex flex-col items-start justify-center gap-2">
+                        <h3 className="font-[600] text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-base leading-tight tracking-[0.05em]">
+                            ₹{data?.property_price} Cr
+                        </h3>
+                        <p className="text-xl max-lg:text-base max-md:text-sm max-sm:text-base tracking-[0.05em] text-bgRed">
+                            Estimated EMI ₹{data?.estimated_emi_price}
+                        </p>
                     </div>
-                    <div className="border-r-2 border-[#FFFFFF] h-full max-lg:h-[50%] flex flex-col justify-center  bg-opacity-50 py-12 px-4">
-                        <p className="text-xl 2xl:text-4xl max-lg:text-base max-md:text-xs font-[400] leading-[36px] tracking-[0.05em] text-white text-opacity-50">@ {data?.per_sqm_price} Per Sq.M.</p>
+
+                    <div className="border-r-2 border-[#FFFFFF] h-12 opacity-50" />
+
+                    <div className="flex flex-col gap-1">
+                        <p className="text-base max-lg:text-sm font-[400] tracking-[0.05em] text-white/50">
+                            @ {data?.per_sqm_price} Per Sq.M.
+                        </p>
                     </div>
-                    <div className="text-2xl 2xl:text-5xl max-lg:text-xs flex flex-col gap-3 max-2xl:gap-1">
-                        <p className="text-white text-opacity-70">
+
+                    <div className="flex flex-col gap-1">
+                        <p className="text-base max-lg:text-sm max-sm:text-xs text-white/70">
                             {
-                                data?.propertyFeature?.slice(0, 2)?.map((currElem: {item: string, id: number}, index: number) => {
-                                    return (
-                                        <span key={currElem?.id}>{currElem?.item}{index < data?.propertyFeature?.length - 1 ? " " : ""}</span>  // Add comma if not the last element   
-                                    )
-                            })
+                                data?.propertyFeature?.slice(0, 2)?.map((currElem: { item: string, id: number }, index: number) => (
+                                    <span key={currElem?.id}>
+                                        {currElem?.item}
+                                        {index < data?.propertyFeature?.length - 1 ? " " : ""}
+                                    </span>
+                                ))
                             }
                         </p>
-                        <p className="text-white text-opacity-50 2xl:text-2xl max-lg:text-xs text-sm font-[400] leading-[36px]">{data?.property_Type}</p>
-                        <p className=" text-white text-opacity-50 2xl:text-2xl max-lg:text-xs text-xs">{data?.property_Location}</p>
+                        <p className="text-sm max-lg:text-xs max-sm:text-[10px] text-white/50">
+                            {data?.property_Type}
+                        </p>
+                        <p className="text-sm max-lg:text-xs text-white/50">
+                            {data?.property_Location}
+                        </p>
                     </div>
                 </div>
+
                 <Overview overViewArray={data?.property_Overview_container} />
 
                 <About_the_Property propertyDescription={data?.property_Description} propertyAddress={data?.property_Location} />

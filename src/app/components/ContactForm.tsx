@@ -82,7 +82,7 @@ export default function ContactForm({ component, listingId }: { component: strin
   };
 
   return (
-    <div className={`bg-bgBlue w-full h-full flex flex-col justify-center items-center text-white py-16 px-8 ${(component === "contact") ? "rounded-3xl" : ""}`}>
+    <div className={`bg-bgBlue w-full h-full flex flex-col justify-center items-center max-2xl:gap-12 max-lg:gap-4 text-white py-16 px-8 ${(component === "contact") ? "rounded-3xl" : ""}`}>
       <Toast 
         message={toastConfig.message}
         type={toastConfig.type}
@@ -90,10 +90,10 @@ export default function ContactForm({ component, listingId }: { component: strin
         onClose={() => setToastConfig(prev => ({ ...prev, isVisible: false }))}
       />
       
-      <h2 className="text-3xl font-[400]">Still haven't found what you're looking for?</h2>
+      <h2 className="text-3xl font-[400] text-center">Still haven't found what you're looking for?</h2>
 
       <form onSubmit={handleSubmit} className="pt-10">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 max-2xl:mt-3 max-lg:mt-0">
           <div>
             <label className="font-[400] text-[20px]">First Name</label>
             <input
@@ -116,7 +116,7 @@ export default function ContactForm({ component, listingId }: { component: strin
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 max-2xl:mt-3 max-lg:mt-0">
           <div className="my-3">
             <label className="font-[400] text-[20px]">Phone Number</label>
             <input
@@ -139,7 +139,7 @@ export default function ContactForm({ component, listingId }: { component: strin
           </div> 
         </div>
 
-        <div>
+        <div className="max-2xl:mt-4 max-lg:mt-0">
           <label className="font-[400] text-[20px]">Notes</label>
           <textarea
             placeholder="Notes"
@@ -150,7 +150,7 @@ export default function ContactForm({ component, listingId }: { component: strin
           />
         </div>
 
-        <button type="submit" className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors">
+        <button type="submit" className="bg-red-500 text-white px-6 py-2 rounded max-2xl:mt-4 max-lg:mt-0 hover:bg-red-600 transition-colors">
           Submit
         </button>
       </form>

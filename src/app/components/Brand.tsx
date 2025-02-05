@@ -33,6 +33,10 @@ const Brand = () => {
   const [brand_name, setBrand_name] = useState<string | null>(null);
   const brandTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const propertyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [direction, setDirection] = useState<'left' | 'right'>('right');
+  const [isImageTransitioning, setIsImageTransitioning] = useState<{ [key: string]: boolean }>({});
 
   const data = useSelector((state: RootState) => state.brandSection?.data);
   const dispatch = useDispatch<AppDispatch>();
@@ -194,9 +198,8 @@ const Brand = () => {
     }
 
     if (data) {
-      console.log("This is the data", data);
+      console.log("This is the Brand data", data);
       const brandName = data?.data[cardIndex]?.brand_name;
-      setBrand_name(brandName);
     }
 
     return () => {
@@ -233,6 +236,23 @@ const Brand = () => {
     setIsItemsVisible(true);
     setTimeout(() => setIsItemsVisible(false), 5000);
   };
+
+
+  const cycleImage = (propertyId: string, imagesLength: number) => {
+    setIsImageTransitioning(prev => ({ ...prev, [propertyId]: true }));
+    
+    setTimeout(() => {
+        setImageIndices(prev => ({
+            ...prev,
+            [propertyId]: ((prev[propertyId] || 0) + 1) % imagesLength
+        }));
+        
+        setTimeout(() => {
+            setIsImageTransitioning(prev => ({ ...prev, [propertyId]: false }));
+        }, 300);
+    }, 200);
+};
+
 
   return (
     <div className="brand_container w-full bg-bgColor pt-16">
@@ -274,7 +294,7 @@ const Brand = () => {
                 <div
                   key={"brand" + currElem.id}
                   className="flex-shrink-0 w-1/5 px-4 cursor-pointer"
-                  onClick={() => { handleBrandClick(index); setShowPropertyCard(true); }}
+                  onClick={() => { handleBrandClick(index); setShowPropertyCard(true); setBrand_name(currElem?.brand_name); }}
                 >
                   <div className="flex flex-col items-center justify-center h-20">
                     <img
@@ -308,8 +328,43 @@ const Brand = () => {
           </button>
         </div>
 
+        <h3 className={`max-lg:text-xs max-md:text-[10px] text-white font-semibold text-4xl ${(brand_name)?"":"hidden"} `}>{brand_name}</h3>
         {/* Replace Property Cards Section with new component */}
-        <Property_Card 
+                    <AnimatePresence mode="wait">
+                        {showPropertyCard && (
+                            <motion.div
+                                className="hidden lg:grid grid-cols-3 justify-items-center gap-6"
+                                variants={containerVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                            >
+                                {(data?.data[cardIndex]?.brand_relations).map((currElem:any, index:number) => (
+                                    <Property_Card
+                                        key={currElem.id}
+                                        currElem={currElem}
+                                        index={index}
+                                        imageIndex={imageIndices[currElem.id] || 0}
+                                        isImageTransitioning={isImageTransitioning[currElem.id]}
+                                        onHoverStart={() => {
+                                            if (currElem?.property_Images.length > 1) {
+                                                const interval = setInterval(() => {
+                                                    cycleImage(currElem.id, currElem.property_Images.length);
+                                                }, 300);
+                                                (window as any)[`interval_${currElem.id}`] = interval;
+                                            }
+                                        }}
+                                        onHoverEnd={() => {
+                                            clearInterval((window as any)[`interval_${currElem.id}`]);
+                                            setImageIndices(prev => ({ ...prev, [currElem.id]: 0 }));
+                                            setIsImageTransitioning(prev => ({ ...prev, [currElem.id]: false }));
+                                        }}
+                                    />
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+        {/* <Property_Card 
           showPropertyCard={showPropertyCard}
           cardIndex={cardIndex}
           data={data}
@@ -318,7 +373,89 @@ const Brand = () => {
           nextPropertySlide={nextPropertySlide}
           prevPropertySlide={prevPropertySlide}
           component="brand"
-        />
+        /> */}
+
+                    {/* Mobile View */}
+                    <div className="relative lg:hidden w-full">
+                {Array.isArray(data?.data[cardIndex]?.brand_relations) && 
+                 data.data[cardIndex].brand_relations.length > 1 && (
+                    <>
+                        <button
+                            onClick={prevPropertySlide}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                        >
+                            <svg
+                                className="w-6 h-6 text-white"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 19l-7-7 7-7"
+                                />
+                            </svg>
+                        </button>
+                        <button
+                            onClick={nextPropertySlide}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                        >
+                            <svg
+                                className="w-6 h-6 text-white"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 5l7 7-7 7"
+                                />
+                            </svg>
+                        </button>
+                    </>
+                )}
+
+                <div className="overflow-hidden w-full">
+                    <div
+                        className="w-full flex transition-transform duration-500 ease-in-out"
+                        style={{
+                            transform: `translateX(-${propertyIndex * 100}%)`
+                        }}
+                    >
+                        {(data?.data[cardIndex]?.brand_relations || [])?.map((currElem: any) => (
+                            <div
+                                key={currElem?.id}
+                                className="flex-shrink-0 w-full px-4"
+                            >
+                                <div className='flex flex-col justify-start items-start gap-1'>
+                                    <img 
+                                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images[0].url}`} 
+                                        className='rounded-[20px] w-full' 
+                                        alt="" 
+                                    />
+                                    <div className='w-full h-full flex justify-between'>
+                                        <div className='text-white'>
+                                            <h1 className='font-[700] text-[28px]'>{brand_name || ""}</h1>
+                                            <p className='flex justify-start items-center gap-3 text-[14px]'>
+                                                <MapPin />{currElem?.property_Location}
+                                            </p>
+                                        </div>
+                                        <div className='text-[#8F90A6] text-[16px]'>
+                                            {currElem?.propertyFeature?.map((feature: any) => (
+                                                <p key={feature.id}>{feature.item}</p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
       </div>
     </div>
   );

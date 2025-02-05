@@ -9,10 +9,10 @@ import { useDispatch } from 'react-redux';
 import { setFilter } from '@/redux/slices/propertyItemSlice';
 import { useRouter } from 'next/navigation';
 
-const Buy_Section = ({ component }: { component: string }) => {
+const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boolean }) => {
   const [showFilter, setShowFilter] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  // const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [property_Location, setProperty_Location] = useState('');
   const dispatch = useDispatch();
   const router = useRouter();
@@ -70,6 +70,7 @@ const Buy_Section = ({ component }: { component: string }) => {
               <Buy_Section_Desktop_Dropdown 
               onClose={() => setShowDropdown(false)} 
                 isOpen={showDropdown} 
+                isLuxury={isLuxury}
               />
             )}
           </div>

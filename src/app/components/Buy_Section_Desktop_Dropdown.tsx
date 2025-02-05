@@ -1,6 +1,5 @@
 "use client"
 
-
 import React, { useState } from 'react';
 // import { X } from 'lucide-react';
 // import Buy_Section from './Buy_Section';
@@ -9,18 +8,16 @@ import { clearFilters, fetchPropertiesByPriceRange, setFilter, setPriceRange } f
 import { AppDispatch } from "../../redux/store";
 import { IoClose } from "react-icons/io5";
 
-
-
-
 // Define the filter types
 interface Buy_Section_Desktop_Dropdown {
     property_Construction_status?: string;
     property_Bedroom?: string;
     property_price?: number;
     property_Type?: string;
+    isLuxury?: string;
 }
 
-const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: boolean, onClose: () => void, isLuxury: boolean }) => {
     const [openSection, setOpenSection] = useState("");
     const [property_Type, setProperty_Type] = useState("");
     const [property_Bedroom, setProperty_Bedroom] = useState("");
@@ -30,14 +27,12 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
 
     const dispatch = useDispatch<AppDispatch>();
 
-
     const handleCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>, key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined) => {
         setProperty_Type(e.target.value);
         console.log(e.target.value);
         // dispatch(setFilter({ key, value }));
         // onClose(); 
     }
-
 
     const handleFilterChange = (key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined, section:string) => {
         console.log(key, value);
@@ -54,18 +49,17 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
         // onClose();
     };
 
-
     const handleApplyFilter=()=>{
         console.log('Apply filters triggered');
-        console.log(property_Type, property_Bedroom, property_Construction_status);
+        console.log(property_Type, property_Bedroom, property_Construction_status, isLuxury);
         dispatch(setFilter({ key: 'property_Type', value: property_Type }));
         dispatch(setFilter({ key: 'property_Bedroom', value: property_Bedroom }));
         dispatch(setFilter({ key: 'property_Construction_status', value: property_Construction_status }));
+        // dispatch(setFilter({ key: 'isLuxury', value: isLuxury }));
         // Add these lines to apply budget filter
         dispatch(setPriceRange({ minPrice: budgetRange.minPrice, maxPrice: budgetRange?.maxPrice }));
         onClose();
     }
-
 
     const handleOnClose = () => {
         console.log('Clear filters triggered');
@@ -99,9 +93,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
 
     const properties = [{ text: "Flat/Appartment", value: 'FlatApartment' }, { text: "Independent/Builder Floor", value: 'IndependentBuilderFloor' }, { text: "Independent House/Villa", value: 'IndependentHouseVilla' }, { text: "Residential Land", value: 'ResidentialLand' }, { text: "1 RK/ Studio Apartment", value: 'OneRKStudioApartment' }, { text: "Farm House", value: 'FarmHouse' }, { text: "Serviced Apartment", value: 'ServicedApartment' }, { text: "Other", value: 'Other' }];
 
-
     const bedrooms = [{ text: "1 RK/1 BHK", value: 'OneRK_OneBHK' }, { text: "2 BHK", value: 'TwoBHK' }, { text: "3 BHK", value: 'ThreeBHK' }, { text: "4 BHK", value: 'FourBHK' }, { text: "4+ BHK", value: 'FourPlusBHK' }];
-
 
     const constructionStatus = ['New Launch', 'Ready to move', 'Under Construction'];
     // const postedBy = ['Owner', 'Dealer'];
@@ -112,7 +104,18 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                 <div className="absolute top-20 -left-2 mt-2 w-[89vw] bg-white rounded-lg shadow-lg z-50 py-4 px-8">
                     {/* Property Type Checkboxes */}
                     <div className="mb-6">
-                        <div className="flex justify-end items-center mb-4">
+                        <div className="flex justify-between items-center mb-4">
+                            {/* Add Luxury Chip */}
+                            <button 
+                                className={`px-4 py-1 rounded-full transition-all duration-300 ${
+                                    isLuxury == true 
+                                    ? "bg-green-500 text-white" 
+                                    : "bg-white text-black border border-gray-300"
+                                }`}
+                            >
+                                Luxury
+                            </button>
+                            
                             <div className='flex gap-6 text-sm'>
                                 <button onClick={handleApplyFilter} className="text-blue-600">
                                     Apply Filter
@@ -219,7 +222,6 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                         )
                     }
 
-
                     {/* Number of Bedrooms */}
                     {
                         (openSection == "bedroom") && (
@@ -246,7 +248,6 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                         )
                     }
 
-
                     {/* Construction Status */}
                     {
                         (openSection == "construction_status") && (
@@ -271,7 +272,6 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                         )
                     }
 
-
                     {/* Posted By */}
                     {/* {
                         (openSection == "postedBy") && (
@@ -291,11 +291,6 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                             </div>
                         )
                     } */}
-
-
-
-
-
                 </div>
             )}
         </>

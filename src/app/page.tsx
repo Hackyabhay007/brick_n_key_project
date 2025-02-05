@@ -37,7 +37,7 @@ export default function Page() {
         <Popular_Residence />
         <Brand />
         <Explore_Section />
-        {/* <Why_Choose_Us /> */}
+        <Why_Choose_Us />
         <Trust_Us />
     </>
   )

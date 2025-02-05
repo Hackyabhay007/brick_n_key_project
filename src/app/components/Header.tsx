@@ -113,7 +113,7 @@ export default function Header() {
                                         initial="hidden"
                                         animate={isInView ? "visible" : "hidden"}
                                         onClick={() => setSelectedNavLink(currElem?.label)}
-                                        className={`cursor-pointer font-[500] transition-colors ${(selectedNavLink === currElem.label)? "text-bgRed": ""}`}
+                                        className={`cursor-pointer font-[500] transition-colors ${(selectedNavLink === currElem.label) ? "text-bgRed" : ""}`}
                                     >
                                         <Link href={currElem?.link}>
                                             {currElem.label}
@@ -151,10 +151,12 @@ export default function Header() {
                                                 custom={index}
                                                 initial="hidden"
                                                 animate="visible"
-                                                className="px-4 py-1.5"
+                                                className={`px-4 py-1.5  ${(selectedNavLink === item?.label) ? "text-bgRed" : ""}`}
                                             >
-                                                <div className="bg-gray-800 rounded-full py-2 px-6 w-fit text-center text-white font-medium tracking-wide hover:bg-gray-700 transition-colors whitespace-nowrap">
-                                                    {item.label}
+                                                <div onClick={()=>{setIsMenuOpen(false)}} className="bg-gray-800 rounded-full py-2 px-6 w-fit text-center text-white font-medium tracking-wide hover:bg-gray-700 transition-colors whitespace-nowrap">
+                                                    <Link href={item?.link}>
+                                                        {item.label}
+                                                    </Link>
                                                 </div>
                                             </motion.li>
                                         )

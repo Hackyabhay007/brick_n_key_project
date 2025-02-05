@@ -63,16 +63,18 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
   };
 
   const getAnimationClasses = (position: 'prev' | 'current' | 'next') => {
-    if (!slideDirection) return '';
-
-    const baseClasses = 'transition-transform duration-500 ease-in-out';
+    const baseClasses = 'transition-all duration-700 ease-out';
+    
+    if (!slideDirection) {
+      return `${baseClasses} opacity-100 transform translate-y-0`;
+    }
 
     if (position === 'current') {
-      return `${baseClasses} ${slideDirection === 'left' ? 'animate-slide-left' : 'animate-slide-right'}`;
-    } else if (position === 'prev' && slideDirection === 'right') {
-      return `${baseClasses} animate-slide-from-left`;
-    } else if (position === 'next' && slideDirection === 'left') {
-      return `${baseClasses} animate-slide-from-right`;
+      return `${baseClasses} animate-slide-up-current`;
+    } else if (position === 'prev') {
+      return `${baseClasses} animate-slide-up-side`;
+    } else if (position === 'next') {
+      return `${baseClasses} animate-slide-up-side`;
     }
 
     return baseClasses;
@@ -85,71 +87,41 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
   return (
     <div className="w-full relative">
       <style jsx>{`
-        @keyframes slideLeft {
-          from { 
-            transform: translateX(0);
-            opacity: 1;
-          }
-          to { 
-            transform: translateX(-100%);
+        @keyframes slideUpCurrent {
+          0% {
+            transform: translateY(50px);
             opacity: 0;
           }
-        }
-        
-        @keyframes slideRight {
-          from { 
-            transform: translateX(0);
-            opacity: 1;
-          }
-          to { 
-            transform: translateX(100%);
-            opacity: 0;
-          }
-        }
-
-        @keyframes slideFromLeft {
-          from { 
-            transform: translateX(-100%);
-            opacity: 0;
-          }
-          to { 
-            transform: translateX(0);
+          100% {
+            transform: translateY(0);
             opacity: 1;
           }
         }
 
-        @keyframes slideFromRight {
-          from { 
-            transform: translateX(100%);
+        @keyframes slideUpSide {
+          0% {
+            transform: translateY(30px);
             opacity: 0;
           }
-          to { 
-            transform: translateX(0);
-            opacity: 1;
+          100% {
+            transform: translateY(0);
+            opacity: 0.8;
           }
         }
-        
-        .animate-slide-left {
-          animation: slideLeft 500ms ease-in-out forwards;
-        }
-        
-        .animate-slide-right {
-          animation: slideRight 500ms ease-in-out forwards;
+
+        .animate-slide-up-current {
+          animation: slideUpCurrent 0.7s ease-out forwards;
         }
 
-        .animate-slide-from-left {
-          animation: slideFromLeft 500ms ease-in-out forwards;
-        }
-
-        .animate-slide-from-right {
-          animation: slideFromRight 500ms ease-in-out forwards;
+        .animate-slide-up-side {
+          animation: slideUpSide 0.5s ease-out forwards;
         }
       `}</style>
 
       <div className="relative w-full overflow-hidden">
-        <div className="w-full flex items-start justify-start gap-4 max-sm:gap-0 transition-all duration-700">
+        <div className="w-full flex items-start justify-start gap-4 max-sm:gap-0">
           {/* Previous Slide */}
-          <div className={`relative w-[45%] max-lg:w-[20%] -translate-x-4 max-sm:-translate-x-4 md:-translate-x-10 h-full transform-gpu ${getAnimationClasses('prev')}`}>
+          <div className={`relative w-[45%] max-lg:w-[20%] -translate-x-4 max-sm:-translate-x-4 md:-translate-x-10 h-full ${getAnimationClasses('prev')}`}>
             <div className="w-full rounded-lg duration-300">
               <div className="relative w-full flex flex-col items-center justify-center min-h-[100px] bg-center group">
                 <img
@@ -174,7 +146,7 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
           </div>
 
           {/* Current Slide */}
-          <div className={`relative w-[50%] max-lg:w-[70%] transform-gpu ${getAnimationClasses('current')}`}>
+          <div className={`relative w-[50%] max-lg:w-[70%] ${getAnimationClasses('current')}`}>
             <div className="rounded-lg transition-shadow duration-300">
               <div className="relative flex flex-col items-center justify-center min-h-[200px] group">
                 <img
@@ -202,7 +174,7 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
           </div>
 
           {/* Next Slide */}
-          <div className={`relative w-[45%] max-lg:w-[20%] translate-x-4 max-sm:translate-x-4 md:translate-x-10 transform-gpu ${getAnimationClasses('next')}`}>
+          <div className={`relative w-[45%] max-lg:w-[20%] translate-x-4 max-sm:translate-x-4 md:translate-x-10 ${getAnimationClasses('next')}`}>
             <div className="rounded-lg transition-shadow duration-300">
               <div className="relative flex flex-col items-center justify-center min-h-[100px] group">
                 <img

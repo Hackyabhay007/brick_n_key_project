@@ -22,6 +22,7 @@ const Page = () => {
     const [isSticky, setIsSticky] = useState(false);
     const [newDataValue, setNewDataValue] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [luxury, setLuxury] = useState(false);
     const itemsPerPage = 5;
     const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
 
@@ -59,6 +60,7 @@ const Page = () => {
         }
         if (isLuxury) {
             dispatch(setFilter({ key: 'isLuxury', value: isLuxury }));
+            setLuxury(true);
         }
 
         if (newData) {
@@ -132,7 +134,7 @@ const Page = () => {
             className="listing_container w-full bg-bgColor pb-20"
         >
             <div className="listing_inner_container w-[90%] mx-auto">
-                <Buy_Section component='listing' />
+                <Buy_Section component='listing' isLuxury={luxury}/>
 
                 <motion.div
                     className={`filter_data_container_and_pagination mt-12 w-full flex flex-col items-center justify-start gap-16 bg-bgBlue p-16 max-lg:px-6 max-lg:py-10 rounded-[20px]`}
