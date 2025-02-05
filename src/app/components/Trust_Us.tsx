@@ -226,7 +226,7 @@ export default function Trust_Us() {
                         className="overflow-hidden"
                     >
                         <div
-                            className="w-full flex gap-8 max-xl:gap-4 max-sm:gap-2 transition-all duration-500 ease-in-out"
+                            className="w-full flex gap-8 max-xl:gap-4 max-sm:gap-0 transition-all duration-500 ease-in-out"
                             style={{
                                 transform: `translateX(-${currentIndex * 33.333}%)`,
                             }}
@@ -243,8 +243,8 @@ export default function Trust_Us() {
                                             lg:min-w-[31.333%] 
                                             ${isVisible ? 'opacity-100' : 'opacity-0'}
                                             ${isCenterSlide ? 
-                                                'max-lg:min-w-[45%] max-lg:z-20' : 
-                                                'max-lg:min-w-[27.8%] max-lg:opacity-75'
+                                                'max-lg:min-w-[60%] max-lg:z-20' : 
+                                                'max-lg:min-w-[27.5%] max-lg:opacity-75'
                                             }
                                         `}
                                     >

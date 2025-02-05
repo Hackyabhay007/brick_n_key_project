@@ -52,6 +52,7 @@ export default function ContactForm({ component, listingId }: { component: strin
       });
     }
     if (error) {
+      console.log("This is the Error message at the Contact FOrm",error)
       setToastConfig({
         message: error,
         type: "error",

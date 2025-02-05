@@ -10,6 +10,8 @@ interface PropertyFilters {
   property_Location?: string | undefined;
   page?: number | undefined;
   pageSize?: number | undefined;
+  minPrice?: number | undefined;
+  maxPrice?: number | undefined;
 }
 
 interface PopularSectionSlice {
@@ -48,7 +50,13 @@ const buildApiUrl = (filters: PropertyFilters): string => {
     filterParams.push(`filters[property_Bedroom][$eq]=${encodeURIComponent(filters.property_Bedroom)}`);
   }
   
-  if (filters.property_price) {
+  // Updated price filtering logic
+  if (filters.minPrice !== undefined && filters.maxPrice !== undefined) {
+    filterParams.push(
+      `filters[property_price][$gte]=${filters.minPrice}`,
+      `filters[property_price][$lte]=${filters.maxPrice}`
+    );
+  } else if (filters.property_price) {
     filterParams.push(`filters[property_price][$gte]=${filters.property_price}`);
   }
 
@@ -77,6 +85,33 @@ const buildApiUrl = (filters: PropertyFilters): string => {
   console.log('Generated URL:', url);
   return url;
 };
+
+// New thunk for fetching properties by price range
+export const fetchPropertiesByPriceRange = createAsyncThunk<
+  any,
+  { minPrice: number; maxPrice: number },
+  { state: { propertyItems: PopularSectionSlice }, rejectValue: string }
+>(
+  "propertyItems/fetchPropertiesByPriceRange",
+  async ({ minPrice, maxPrice }, { dispatch, rejectWithValue }) => {
+    try {
+      // Set both price filters
+      dispatch(setPriceRange({ minPrice, maxPrice }));
+      
+      // Fetch the filtered results
+      const response = await axios.get(
+        `http://localhost:1337/api/detail-pages?populate=*&filters[property_price][$gte]=${minPrice}&filters[property_price][$lte]=${maxPrice}&pagination[start]=0&pagination[limit]=10`
+      );
+      
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data?.message || "Failed to fetch properties by price range");
+      }
+      return rejectWithValue("Failed to fetch properties by price range");
+    }
+  }
+);
 
 // New function to fetch newly added items
 export const fetchNewPropertyItems = createAsyncThunk<
@@ -149,6 +184,15 @@ const propertyItemsSlice = createSlice({
       
       console.log('Updated filters:', state.activeFilters);
     },
+    // New action for setting price range
+    setPriceRange: (state, action: PayloadAction<{ minPrice: number; maxPrice: number }>) => {
+      const { minPrice, maxPrice } = action.payload;
+      state.activeFilters = {
+        ...state.activeFilters,
+        minPrice,
+        maxPrice
+      };
+    },
     clearFilters: (state) => {
       console.log('Clearing all filters');
       state.activeFilters = {};
@@ -156,6 +200,7 @@ const propertyItemsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Existing cases remain the same
       .addCase(fetchPropertyItems.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -178,6 +223,19 @@ const propertyItemsSlice = createSlice({
       .addCase(fetchNewPropertyItems.rejected, (state, action) => {
         state.newItemsLoading = false;
         state.error = action.payload || 'Failed to fetch new items';
+      })
+      // New cases for price range filtering
+      .addCase(fetchPropertiesByPriceRange.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchPropertiesByPriceRange.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchPropertiesByPriceRange.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch properties by price range';
       });
   },
 });
@@ -185,5 +243,5 @@ const propertyItemsSlice = createSlice({
 export const selectActiveFilters = (state: { propertyItems: PopularSectionSlice }) => 
   state.propertyItems.activeFilters;
 
-export const { setFilter, clearFilters } = propertyItemsSlice.actions;
+export const { setFilter, clearFilters, setPriceRange } = propertyItemsSlice.actions;
 export default propertyItemsSlice.reducer;

@@ -20,6 +20,7 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
     property_Bedroom: "",
     property_Construction_status: "",
   });
+  const [budgetRange, setBudgetRange] = useState({ minPrice: 1, maxPrice: 100 }); // New state for budget in Crores
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const [range, setRange] = useState({ min: 0, max: 100 });
@@ -63,9 +64,27 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
     setRange({ ...range, max: value });
   };
 
+
+  const handleBudgetMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.min(Number(e.target.value), budgetRange.maxPrice);
+    setBudgetRange({ ...budgetRange, minPrice: value });
+    console.log(`Selected budget range: ${value} Cr - ${budgetRange.maxPrice} Cr`);
+  };
+
+  const handleBudgetMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.max(Number(e.target.value), budgetRange.minPrice);
+    setBudgetRange({ ...budgetRange, maxPrice: value });
+    console.log(`Selected budget range: ${budgetRange.minPrice} Cr - ${value} Cr`);
+  };
+
+
   const handleSeeAllProperties = () => {
 
-    if(filterData?.property_Bedroom && filterData?.property_Construction_status) {  
+    if(budgetRange.minPrice>1 || budgetRange.maxPrice<100){
+      router.push(`/listing?minPrice=${budgetRange.minPrice}&maxPrice=${budgetRange.maxPrice}`)
+    }
+
+    if (filterData?.property_Bedroom && filterData?.property_Construction_status) {
       router.push(`/listing?property_Bedroom=${filterData?.property_Bedroom}&property_Construction_status=${filterData?.property_Construction_status}`);
     }
 
@@ -179,35 +198,35 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
         </div>
       </div>
 
-      {/* Price */}
-      <div className="w-full pt-6 pb-4 px-4 bg-white rounded-lg shadow-sm">
-        <div className="mb-4">
-          <h3 className="text-lg font-medium text-gray-900">Price</h3>
-        </div>
 
-        <div className="relative h-8 mt-4">
-          {/* Background track */}
-          <div className="absolute w-full h-1 bg-gray-200 rounded top-1/2 -translate-y-1/2"></div>
+      {/* Budget Section */}
+      <div className="w-full pt-6 pb-4 bg-white rounded-lg shadow-sm text-[#8F90A6] px-4">
+        <h3 className="text-lg font-semibold text-black">Select Price Range</h3>
+        <p className='text-sm'>{budgetRange.minPrice} Cr - {budgetRange.maxPrice}+ Cr</p>
+        <div className="w-full pt-6 pb-4 bg-white rounded-lg shadow-sm">
+          <div className="relative h-8">
+            {/* Background track */}
+            <div className="absolute w-full h-2 bg-bgRed bg-opacity-20 rounded top-1/2 -translate-y-1/2"></div>
 
-          {/* Selected range track */}
-          <div
-            className="absolute h-1 bg-red-100 rounded top-1/2 -translate-y-1/2"
-            style={{
-              left: `${(range.min)}%`,
-              width: `${range.max - range.min}%`
-            }}
-          ></div>
+            {/* Selected range track */}
+            <div
+              className="absolute h-2 bg-bgRed rounded top-1/2 -translate-y-1/2"
+              style={{
+                left: `${((budgetRange.minPrice - 1) / 99) * 100}%`,
+                width: `${((budgetRange.maxPrice - budgetRange.minPrice) / 99) * 100}%`
+              }}
+            ></div>
 
-          {/* Slider controls wrapper */}
-          <div className="relative w-full h-full">
-            {/* Min handle */}
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={range.min}
-              onChange={handleMinChange}
-              className="absolute w-full h-full appearance-none bg-transparent pointer-events-none 
+            {/* Slider controls wrapper */}
+            <div className="relative w-full h-full">
+              {/* Min handle */}
+              <input
+                type="range"
+                min="1"
+                max="100"
+                value={budgetRange.minPrice}
+                onChange={handleBudgetMinChange}
+                className="absolute w-full h-full appearance-none bg-transparent pointer-events-none 
                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto
                      [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full 
                      [&::-webkit-slider-thumb]:bg-red-500 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white 
@@ -216,16 +235,16 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
                      [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full 
                      [&::-moz-range-thumb]:bg-red-500 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white 
                      [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
-            />
+              />
 
-            {/* Max handle */}
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={range.max}
-              onChange={handleMaxChange}
-              className="absolute w-full h-full appearance-none bg-transparent pointer-events-none
+              {/* Max handle */}
+              <input
+                type="range"
+                min="1"
+                max="100"
+                value={budgetRange.maxPrice}
+                onChange={handleBudgetMaxChange}
+                className="absolute w-full h-full appearance-none bg-transparent pointer-events-none
                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto
                      [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full 
                      [&::-webkit-slider-thumb]:bg-red-500 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white 
@@ -234,7 +253,8 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
                      [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full 
                      [&::-moz-range-thumb]:bg-red-500 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white 
                      [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
-            />
+              />
+            </div>
           </div>
         </div>
       </div>

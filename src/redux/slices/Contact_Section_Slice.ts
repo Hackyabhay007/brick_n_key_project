@@ -37,8 +37,9 @@ export const submitContactForm = createAsyncThunk(
       });
       return response.data;
     } catch (error: any) {
+      console.log("This is the error at the contact section slice", error.response?.data?.error?.details?.errors[0].message);
       return rejectWithValue(
-        error.response?.data?.error?.message || "Failed to submit contact form"
+        error.response?.data?.error?.details?.errors[0].message || "Failed to submit contact form"
       );
     }
   }

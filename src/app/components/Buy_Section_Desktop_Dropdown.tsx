@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 // import { X } from 'lucide-react';
 // import Buy_Section from './Buy_Section';
 import { useDispatch } from 'react-redux';
-import { clearFilters, setFilter } from '@/redux/slices/propertyItemSlice';
+import { clearFilters, fetchPropertiesByPriceRange, setFilter, setPriceRange } from '@/redux/slices/propertyItemSlice';
 import { AppDispatch } from "../../redux/store";
 import { IoClose } from "react-icons/io5";
 
@@ -26,6 +26,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
     const [property_Bedroom, setProperty_Bedroom] = useState("");
     const [property_Construction_status, setProperty_Construction_status] = useState("");
     const [range, setRange] = useState({ min: 0, max: 100 });
+    const [budgetRange, setBudgetRange] = useState({ minPrice: 1, maxPrice: 100 }); // New state for budget in Crores
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -60,6 +61,8 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
         dispatch(setFilter({ key: 'property_Type', value: property_Type }));
         dispatch(setFilter({ key: 'property_Bedroom', value: property_Bedroom }));
         dispatch(setFilter({ key: 'property_Construction_status', value: property_Construction_status }));
+        // Add these lines to apply budget filter
+        dispatch(setPriceRange({ minPrice: budgetRange.minPrice, maxPrice: budgetRange?.maxPrice }));
         onClose();
     }
 
@@ -79,6 +82,19 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
         const value = Math.max(Number(e.target.value), range.min);
         setRange({ ...range, max: value });
     };
+
+    const handleBudgetMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Math.min(Number(e.target.value), budgetRange.maxPrice);
+        setBudgetRange({ ...budgetRange, minPrice: value });
+        console.log(`Selected budget range: ${value} Cr - ${budgetRange.maxPrice} Cr`);
+    };
+
+    const handleBudgetMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Math.max(Number(e.target.value), budgetRange.minPrice);
+        setBudgetRange({ ...budgetRange, maxPrice: value });
+        console.log(`Selected budget range: ${budgetRange.minPrice} Cr - ${value} Cr`);
+    };
+
     // const properties = ["Flat/Appartment", "Independent/Builder Floor", "Independent House/Villa", "Residential Land", "1 RK/ Studio Apartment", "Farm House", "Serviced Apartment", "Other"];
 
     const properties = [{ text: "Flat/Appartment", value: 'FlatApartment' }, { text: "Independent/Builder Floor", value: 'IndependentBuilderFloor' }, { text: "Independent House/Villa", value: 'IndependentHouseVilla' }, { text: "Residential Land", value: 'ResidentialLand' }, { text: "1 RK/ Studio Apartment", value: 'OneRKStudioApartment' }, { text: "Farm House", value: 'FarmHouse' }, { text: "Serviced Apartment", value: 'ServicedApartment' }, { text: "Other", value: 'Other' }];
@@ -144,9 +160,8 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                         (openSection == "budget") && (
                             <div className="my-6 text-[#8F90A6]">
                                 <h3 className="text-lg font-semibold text-black">Select Price Range</h3>
-                                <p className='text-sm'>0-100+ Crore</p>
+                                <p className='text-sm'>{budgetRange.minPrice} Cr - {budgetRange.maxPrice}+ Cr</p>
                                 <div className="w-full pt-6 pb-4 bg-white rounded-lg shadow-sm">
-
                                     <div className="relative h-8">
                                         {/* Background track */}
                                         <div className="absolute w-full h-2 bg-bgRed bg-opacity-20 rounded top-1/2 -translate-y-1/2"></div>
@@ -155,8 +170,8 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                                         <div
                                             className="absolute h-2 bg-bgRed rounded top-1/2 -translate-y-1/2"
                                             style={{
-                                                left: `${(range.min)}%`,
-                                                width: `${range.max - range.min}%`
+                                                left: `${((budgetRange.minPrice - 1) / 99) * 100}%`,
+                                                width: `${((budgetRange.maxPrice - budgetRange.minPrice) / 99) * 100}%`
                                             }}
                                         ></div>
 
@@ -165,10 +180,10 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                                             {/* Min handle */}
                                             <input
                                                 type="range"
-                                                min="0"
+                                                min="1"
                                                 max="100"
-                                                value={range.min}
-                                                onChange={handleMinChange}
+                                                value={budgetRange.minPrice}
+                                                onChange={handleBudgetMinChange}
                                                 className="absolute w-full h-full appearance-none bg-transparent pointer-events-none 
                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto
                      [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full 
@@ -183,10 +198,10 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                                             {/* Max handle */}
                                             <input
                                                 type="range"
-                                                min="0"
+                                                min="1"
                                                 max="100"
-                                                value={range.max}
-                                                onChange={handleMaxChange}
+                                                value={budgetRange.maxPrice}
+                                                onChange={handleBudgetMaxChange}
                                                 className="absolute w-full h-full appearance-none bg-transparent pointer-events-none
                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto
                      [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full 
@@ -276,8 +291,6 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose }: { isOpen: boolean, on
                             </div>
                         )
                     } */}
-
-
 
 
 

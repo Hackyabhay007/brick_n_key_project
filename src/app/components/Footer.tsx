@@ -138,7 +138,7 @@ export default function Footer() {
                                 </button>
                             </form>
                         </motion.div>
-                    <div className="grid grid-cols-[4fr_2fr_2fr_3fr] max-lg:grid-cols-[3fr_2fr_2fr] place-items-end items-start gap-2 lg:gap-6 md:gap-2">
+                    <div className="grid grid-cols-[4fr_2fr_2fr] max-lg:grid-cols-[3fr_2fr_2fr] place-items-end items-start gap-2 lg:gap-6 md:gap-2">
                         <motion.div
                             variants={panelVariants}
                             custom={0}
@@ -221,7 +221,7 @@ export default function Footer() {
                         </div>
                     </motion.div>
 
-                        <motion.div
+                        {/* <motion.div
                             variants={panelVariants}
                             custom={1}
                             initial="hidden"
@@ -236,7 +236,7 @@ export default function Footer() {
                                 <li>Product</li>
                                 <li>Support</li>
                             </ul>
-                        </motion.div>
+                        </motion.div> */}
 
                         <motion.div
                             variants={panelVariants}

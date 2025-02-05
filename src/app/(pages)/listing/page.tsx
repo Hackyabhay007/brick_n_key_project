@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Search, MapPin, SlidersHorizontal } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import { useDispatch, useSelector } from "react-redux";
-import { clearFilters, fetchPropertyItems, setFilter, fetchNewPropertyItems } from "../../../redux/slices/propertyItemSlice";
+import { clearFilters, fetchPropertyItems, setFilter, fetchNewPropertyItems, fetchPropertiesByPriceRange } from "../../../redux/slices/propertyItemSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import Buy_Section from '@/app/components/Buy_Section';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,7 @@ const Page = () => {
     const [newDataValue, setNewDataValue] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
+    const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
 
     const data = useSelector((state: RootState) => state.propertyItems?.data);
     const activeFilters = useSelector((state: RootState) => state.propertyItems?.activeFilters);
@@ -34,11 +35,18 @@ const Page = () => {
         const propertyLocation = searchParams.get('property_Location');
         const propertyBedroom = searchParams.get('property_Bedroom');
         const constructionStatus = searchParams.get('property_Construction_status');
+        const minPrice = searchParams.get('minPrice');
+        const maxPrice = searchParams.get('maxPrice');
         const isLuxury = searchParams.get('isLuxury');
         const newData = searchParams.get('new');
         console.log("new Data: ", newData);
 
         dispatch(clearFilters());
+
+        if (minPrice && maxPrice) {
+            // In your component
+            dispatch(fetchPropertiesByPriceRange({ minPrice: Number(minPrice), maxPrice: Number(maxPrice) }));
+        }
 
         if (propertyLocation) {
             dispatch(setFilter({ key: 'property_Location', value: propertyLocation }));
@@ -74,7 +82,7 @@ const Page = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    if (data) console.log(data?.data[0]?.id);
+    if (data) console.log("This is the Listing data", data.data);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -95,6 +103,13 @@ const Page = () => {
         exit: { opacity: 0, y: 20 }
     };
 
+    const cycleImage = (propertyId: string, imagesLength: number) => {
+        setImageIndices(prev => ({
+            ...prev,
+            [propertyId]: ((prev[propertyId] || 0) + 1) % imagesLength
+        }));
+    };
+
     if (loading) {
         return (
             <div className="listing_container w-full bg-bgColor pb-20">
@@ -110,7 +125,7 @@ const Page = () => {
     }
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -119,7 +134,7 @@ const Page = () => {
             <div className="listing_inner_container w-[90%] mx-auto">
                 <Buy_Section component='listing' />
 
-                <motion.div 
+                <motion.div
                     className={`filter_data_container_and_pagination mt-12 w-full flex flex-col items-center justify-start gap-16 bg-bgBlue p-16 max-lg:px-6 max-lg:py-10 rounded-[20px]`}
                     variants={fadeInUp}
                     initial="initial"
@@ -127,7 +142,7 @@ const Page = () => {
                     exit="exit"
                 >
                     <div className="filter_data_container grid grid-cols-2 max-lg:grid-cols-1 justify-items-center gap-12">
-                        {data?.data?.map((currElem:any, index:number) => (
+                        {data?.data?.map((currElem: any, index: number) => (
                             <motion.div
                                 key={index}
                                 variants={fadeInUp}
@@ -137,10 +152,22 @@ const Page = () => {
                                 whileHover={{ scale: 1.02 }}
                                 transition={{ duration: 0.2 }}
                                 onClick={() => router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`)}
-                                className='flex flex-col justify-start items-start gap-1 cursor-pointer hover:shadow-xl rounded-[20px] transition-all duration-300'
+                                onHoverStart={() => {
+                                    if (currElem?.property_Images.length > 1) {
+                                        const interval = setInterval(() => {
+                                            cycleImage(currElem.id, currElem.property_Images.length);
+                                        }, 1000);
+                                        (window as any)[`interval_${currElem.id}`] = interval;
+                                    }
+                                }}
+                                onHoverEnd={() => {
+                                    clearInterval((window as any)[`interval_${currElem.id}`]);
+                                    setImageIndices(prev => ({ ...prev, [currElem.id]: 0 }));
+                                }}
+                                className='flex flex-col justify-start items-start gap-1 cursor-pointer hover:shadow-xl rounded-[20px] transition-all duration-300 group'
                             >
-                                <motion.img 
-                                    src={`http://localhost:1337${currElem?.property_Images[0]?.url}`}
+                                <motion.img
+                                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.property_Images[imageIndices[currElem.id] || 0]?.url}`}
                                     className='rounded-[20px] max-lg:rounded-[5px] w-full object-cover'
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
@@ -149,15 +176,19 @@ const Page = () => {
                                 />
                                 <div className='w-full h-full flex justify-between p-4'>
                                     <div className='text-white'>
-                                        <motion.h1 
+                                        <motion.h1
                                             className='font-[700] text-[28px]'
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.2 }}
                                         >
-                                            AJK Complex
+                                            {
+                                                (currElem?.property_Name.length > 21) ?
+                                                    currElem?.property_Name.slice(0, 20) + '...'
+                                                    : currElem?.property_Name[0].toUpperCase() + currElem?.property_Name.slice(1)
+                                            }
                                         </motion.h1>
-                                        <motion.p 
+                                        <motion.p
                                             className='flex justify-start items-center gap-3 text-[14px]'
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
@@ -167,8 +198,8 @@ const Page = () => {
                                         </motion.p>
                                     </div>
                                     <div className='text-[#8F90A6] text-[16px]'>
-                                        {currElem?.propertyFeature.map((feature:any, idx:number) => (
-                                            <motion.p 
+                                        {currElem?.propertyFeature.map((feature: any, idx: number) => (
+                                            <motion.p
                                                 key={`propertyFeature${idx}`}
                                                 initial={{ opacity: 0, y: 5 }}
                                                 animate={{ opacity: 1, y: 0 }}

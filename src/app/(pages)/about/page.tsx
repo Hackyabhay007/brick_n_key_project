@@ -18,12 +18,17 @@ export default function page() {
                             <h3 className="font-[600] text-7xl max-lg:text-4xl">About Us</h3>
                             <div className="about_us_grid_container max-lg:w-[80%] grid grid-cols-2 max-lg:grid-cols-1 mt-32 max-lg:mt-16 max-md:mt-12 max-sm:mt-8 gap-8">
                                 {
-                                    [1, 2, 3, 4].map((currElem, index) => {
+                                    [
+                                        { title: "Experienced Agents", description: "Our agents have years of experience in the real estate market." },
+                                        { title: "Wide Range of Properties", description: "We offer a wide range of properties to suit all needs." },
+                                        { title: "Customer Satisfaction", description: "We prioritize customer satisfaction above all else." },
+                                        { title: "Affordable Prices", description: "We provide properties at the most affordable prices." }
+                                    ].map((currElem, index) => {
                                         return (
                                             <div className="flex flex-col gap-1">
                                                 <div className="bg-white w-[40px] h-[40px] max-lg:w-[32px] max-lg:h-[32px] max-md:w-[28px] max-md:h-[28px] max-sm:w-[24px] max-sm:h-[24px] rounded-[10px]"></div>
-                                                <h3 className="text-[24px] max-lg:text-[18px] max-md:text-[16px] max-sm:text-[14px] font-[600]">Lorem ipsum odor</h3>
-                                                <p className="text-[13px] max-lg:text-[12px] max-md:text-[11px] max-sm:text-[10px] leading-[15.85px] max-lg:leading-[14.52px] max-md:leading-[13.39px] max-sm:leading-[12.2px] font-[400] text-[#8F90A6]">Lorem ipsum odor amet, consectetuer adipiscing elit. Vivamus finibus ridiculus laoreet donec metus sodalesLorem ipsum odor amet, consectetuer adipiscing elit.</p>
+                                                <h3 className="text-[18px] max-lg:text-[18px] max-md:text-[16px] max-sm:text-[14px] font-[600]">{currElem?.title}</h3>
+                                                <p className="text-[13px] max-lg:text-[12px] max-md:text-[11px] max-sm:text-[10px] leading-[15.85px] max-lg:leading-[14.52px] max-md:leading-[13.39px] max-sm:leading-[12.2px] font-[400] text-[#8F90A6]">{currElem?.description}</p>
                                             </div>
                                         )
                                     })

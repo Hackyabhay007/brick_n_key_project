@@ -320,7 +320,7 @@ const Brand = () => {
                 animate="visible"
                 exit="exit"
               >
-                {(data?.data[cardIndex]?.brand_relations || [])?.map((currElem: { id: number, property_Location: string, propertyFeature: [{ id: number, item: string }], property_Images: [{ url: string }] }, index: number) => (
+                {(data?.data[cardIndex]?.brand_relations || [])?.map((currElem: { id: number, property_Location: string, propertyFeature: [{ id: number, item: string }], property_Images: [{ url: string }], property_Name: string }, index: number) => (
                   <motion.div
                     key={currElem?.id}
                     className='flex flex-col justify-start items-start gap-1'
@@ -349,12 +349,12 @@ const Brand = () => {
                     <div className='w-full flex justify-between'>
                       <div className='text-white'>
                         <motion.h1
-                          className='font-[700]'
+                          className='font-[700] text-sm'
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.2 + index * 0.1 }}
                         >
-                          {(brand_name) ? brand_name : ""}
+                          {(currElem?.property_Name?.length>20) ? (currElem?.property_Name.slice(0, 19) + "...") : currElem?.property_Name}
                         </motion.h1>
                         <motion.p
                           className='flex justify-start items-center gap-2 text-sm'

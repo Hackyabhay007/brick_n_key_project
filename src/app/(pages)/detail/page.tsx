@@ -63,7 +63,7 @@ export default function page() {
                     <img
                         src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${images[currentImageIndex]}`}
                         alt={`Carousel image ${currentImageIndex + 1}`}
-                        className="w-full h-auto"
+                        className="w-full h-auto 2xl:h-[800px] max-xl:h-[750px] max-lg:h-[400px]"
                     />
                     <div className="feature_container absolute top-6 -left-2 w-[200px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
                         Featured
