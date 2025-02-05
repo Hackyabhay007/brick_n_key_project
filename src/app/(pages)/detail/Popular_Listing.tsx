@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPopular_Listing } from '../../../redux/slices/popularListingSlice';
 import { AppDispatch, RootState } from "../../../redux/store";
+import Property_Card from '@/app/components/Property_Card';
 
 
 
@@ -98,19 +99,20 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
   const visibleItems = propertyItemArray?.slice(currentIndex, currentIndex + itemsPerSlide);
 
   return (
-    <div className="w-[90%] max-sm:w-[95%] mx-auto bg-bgBlue text-white p-16 max-lg:py-8 max-lg:px-6 max-lg:rounded-[5px]">
+    <div className="w-[90%] relative max-sm:w-[95%] mx-auto bg-bgBlue text-white p-16 max-lg:py-8 max-lg:px-6 max-lg:rounded-[5px]">
       <h1 className='font-[600] text-[54px] leading-[65.83px] mb-4 max-lg:text-3xl'>Popular Listing</h1>
-      <div className="relative">
+
+      <div className="">
         {/* Previous Button */}
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0 || isAnimating}
-          className="absolute -left-5 top-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute -left-5 top-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:cursor-not-allowed"
         >
           <ChevronLeft className="w-6 h-6 text-black" />
         </button>
-
-        {/* Slider Container */}
+       
+      {/* This is the Property Card Item  */}
         <div className="relative overflow-hidden">
           <div
             className={`flex gap-12 max-lg:gap-6 transition-transform duration-500 ease-in-out`}
@@ -121,36 +123,18 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
               transition: 'transform 0.5s ease-in-out'
             }}
           >
-            {propertyItemArray?.map((currElem:{id:number, property_price: number, propertyFeature: [{id: number, item : string}], property_Location: string, property_Images: [{url: string}]}, index:number) => (
-              <div
-                key={currElem.id}
-                className={`flex-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 
-                  ${isAnimating
-                    ? (direction === 'right'
-                      ? 'translate-x-[-100%] scale-95'
-                      : 'translate-x-[100%] scale-95')
-                    : 'translate-x-0 scale-100'}`}
-              >
-                <img
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images}`}
-                  alt="property_image"
-                  className="w-full h-[300px] max-lg:h-auto object-cover rounded-[20px] transition-transform duration-500 
-                    hover:scale-105"
-                />
-                <h3 className='max-lg:text-xs max-md:text-[10px]'>{currElem.property_Location}</h3>
-                <div className='w-full flex justify-between items-start'>
-                  <div className='w-full flex flex-col text-[16px] max-sm:text-[6px] font-[500] leading-[19.5px text-[#8F90A6]'>
-                    {
-                      (currElem.propertyFeature).map((currElem:{id:number, item:string}) => (
-                        <p key={currElem.id}>{currElem.item}</p>
-                      ))
-                    }
-                  </div>
-                  <div className='w-full h-full flex justify-end items-end max-lg:items-start'>
-                    <button className='w-[136px] h-[35.53px] max-lg:w-fit max-lg:h-fit max-lg:py-1 max-lg:px-3 rounded-[10px] flex justify-center items-center bg-[#8F90A6] text-white max-lg:text-xs'>${currElem.property_price}</button>
-                  </div>
-                </div>
-              </div>
+            {propertyItemArray?.map((currElem, index) => (
+              <Property_Card
+                key={index}
+                showPropertyCard={true}
+                cardIndex={0}
+                data={currElem}
+                brand_name={null}
+                propertyIndex={0}
+                nextPropertySlide={() => {}}
+                prevPropertySlide={() => {}}
+                component="popular_listing"
+              />
             ))}
           </div>
         </div>
@@ -159,7 +143,7 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
         <button
           onClick={handleNext}
           disabled={currentIndex >= totalSlides - 1 || isAnimating}
-          className="absolute top-1/2 -right-5 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute top-1/2 -right-5 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:cursor-not-allowed"
         >
           <ChevronRight className="w-6 h-6 text-black" />
         </button>

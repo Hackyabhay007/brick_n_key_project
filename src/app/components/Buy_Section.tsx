@@ -50,7 +50,7 @@ const Buy_Section = ({ component }: { component: string }) => {
     <>
       {/* Desktop view */}
       <div className="w-full max-lg:hidden relative">
-        <div className="buySection bg-[#F1EFE7] bg-opacity-100 w-[102px] h-[39px] flex justify-center items-center rounded-t-[15px] text-[14px] text-[#ED371C] leading-[36px] tracking-[0.2em] font-[500]">Buy</div>
+        <div className="buySection bg-[#F1EFE7] bg-opacity-100 w-[102px] h-[39px] flex justify-center items-center rounded-t-[15px] text-[14px] text-[#ED371C] leading-[36px] tracking-[0.2em] font-[500] bg-white">Buy</div>
         <form onSubmit={handleInputSearch} className="w-full h-[102px] bg-white bg-opacity-80 rounded-b-[20px] rounded-tr-[20px] shadow-lg p-2 flex justify-center items-center gap-2">
           {/* All Residential Section */}
           <div className="w-full relative">

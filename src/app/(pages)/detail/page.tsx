@@ -63,7 +63,7 @@ export default function page() {
                     <img
                         src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${images[currentImageIndex]}`}
                         alt={`Carousel image ${currentImageIndex + 1}`}
-                        className="w-full h-auto 2xl:h-[800px] max-xl:h-[750px] max-lg:h-[400px]"
+                        className="w-full h-auto xl:h-[500px] max-xl:h-[150px] max-lg:h-[400px]"
                     />
                     <div className="feature_container absolute top-6 -left-2 w-[200px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
                         Featured
@@ -84,9 +84,9 @@ export default function page() {
                     </div>
                 </div>
 
-                <div className="estimated_EMI relative w-full 2xl:h-[400px] max-lg:h-[200px] max-md:h-[150px] bg-bgBlue -mt-56 max-lg:-mt-24 z-20 pb-8 pt-16 text-white flex justify-center max-lg:justify-between items-center max-lg:px-16 rounded-t-[80px] max-lg:rounded-t-[40px] rounded-b-[10px] max-lg:rounded-b-[5px] gap-3 max-md:gap-0">
+                <div className="estimated_EMI relative w-full xl:h-[200px] max-lg:h-[200px] max-md:h-[150px] bg-bgBlue -mt-56 max-lg:-mt-24 z-20 pb-8 pt-16 text-white flex justify-center max-lg:justify-between items-center max-lg:px-16 rounded-t-[80px] max-lg:rounded-t-[40px] rounded-b-[10px] max-lg:rounded-b-[5px] gap-3 max-md:gap-0">
                     <div className="h-full flex flex-col items-start justify-center gap-8 max-2xl:gap-0">
-                        <h3 className="font-[600] 2xl:text-9xl max-2xl:text-8xl max-lg:text-4xl max-md:text-2xl leading-[36px] tracking-[0.05em]">₹{data?.property_price} Cr</h3>
+                        <h3 className="font-[600] xl:text-7xl max-2xl:text-8xl max-lg:text-4xl max-md:text-2xl leading-[36px] tracking-[0.05em]">₹{data?.property_price} Cr</h3>
                         <p className="mt-3 2xl:text-4xl max-2xl:text-3xl max-lg:text-sm max-md:text-xs leading-[36px] max-md:leading-0 tracking-[0.05em] text-bgRed">Estimated EMI ₹{data?.estimated_emi_price}</p>
                     </div>
                     <div className="border-r-2 border-[#FFFFFF] h-full max-lg:h-[50%] flex flex-col justify-center  bg-opacity-50 py-12 px-4">
