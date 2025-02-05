@@ -11,6 +11,7 @@ import detailPageReducer from "./slices/detailSlice";
 import popularListingReducer from "./slices/popularListingSlice";
 import peopleTrustUsReducer from "./slices/peopleTrust_usSlice";
 import contactSectionReducer from "./slices/Contact_Section_Slice";
+import subscribeSectionReducer from "./slices/subscribeSlice";
 
 
 
@@ -28,6 +29,7 @@ export const store = configureStore({
     popularListingSection: popularListingReducer,
     peopleTrustUsSection: peopleTrustUsReducer,
     contactSection: contactSectionReducer,
+    subscribeSection: subscribeSectionReducer,
   },
 });
 

@@ -1,13 +1,66 @@
 "use client"
-
+import Toast from './Toast';
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { subscribeToNewsletter, resetSubscribeState } from '@/redux/slices/subscribeSlice';
+import { RootState, AppDispatch } from '@/redux/store';
 
 export default function Footer() {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });
+    const [email, setEmail] = useState("");
+    const dispatch = useDispatch<AppDispatch>();
+    const { loading, success, error } = useSelector((state: RootState) => state?.subscribeSection);
+
+    const [toastConfig, setToastConfig] = useState({
+        isVisible: false,
+        message: '',
+        type: 'success' as 'success' | 'error'
+    });
+
+    useEffect(() => {
+        if (success) {
+            setToastConfig({
+                isVisible: true,
+                message: 'Successfully subscribed to newsletter!',
+                type: 'success'
+            });
+            setEmail('');
+            setTimeout(() => dispatch(resetSubscribeState()), 3000);
+        }
+        if (error) {
+            console.log(error)
+            setToastConfig({
+                isVisible: true,
+                message: error?.error?.message || 'An error occurred. Please try again later.',
+                type: 'error'
+            });
+            setTimeout(() => dispatch(resetSubscribeState()), 3000);
+        }
+    }, [success, error, dispatch]);
+
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(email);
+        console.log(error)
+        if (!email) {
+            setToastConfig({
+                isVisible: true,
+                message: 'Please enter an email address',
+                type: 'error'
+            });
+            return;
+        }
+        dispatch(subscribeToNewsletter({ email }));
+    };
+
+    const closeToast = () => {
+        setToastConfig(prev => ({ ...prev, isVisible: false }));
+    };
 
     const panelVariants = {
         hidden: {
@@ -56,6 +109,12 @@ export default function Footer() {
 
     return (
         <>
+            <Toast 
+                message={toastConfig.message}
+                type={toastConfig.type}
+                isVisible={toastConfig.isVisible}
+                onClose={closeToast}
+            />
             <div className="footer_container rel w-full bg-bgColor relative -mt-4 z-10">
                 <div ref={ref} className="footer_inner_container w-[90%] max-sm:w-[95%] 2xl:w-[80%] mx-auto py-12 max-lg:py-10 px-4 md:px-8  bg-bgBlue rounded-b-[20px] max-lg:flex max-lg:flex-col max-lg:gap-12">
                 <motion.div
@@ -66,16 +125,18 @@ export default function Footer() {
                         >
                             <h3 className=" w-full font-[600] text-[20px] max-lg:text-lg">Subscribe</h3>
                             <p className=" w-full text-center text-[14px] max-md:text-sm max-md:font-[400] leading-[23px] text-[#8F90A6]">Subscribe to get latest property, blog news from us</p>
-                            <div className="panel_4_search_bar w-full mt-4 flex justify-between items-center gap-2">
+                            <form onSubmit={handleFormSubmit} className="panel_4_search_bar w-full mt-4 flex justify-between items-center gap-2">
                                 <input
                                     type="text"
                                     placeholder="Email Address"
+                                    value={email}
+                                    onChange={(e)=>{setEmail(e.target.value)}}
                                     className="w-full h-full bg-white p-4 max-md:py-0 max-md:h-[38.93px] rounded-[15px] outline-none text-black text-xs"
                                 /> 
-                                 <div className="bg-[#ED371C] px-6 max-sm:px-2 max-sm:py-2 max-sm:text-xs rounded-full mr-3 flex justify-center items-center whitespace-nowrap">
+                                 <button type="submit" className="bg-[#ED371C] px-6 max-sm:px-2 max-sm:py-2 max-sm:text-xs rounded-full mr-3 flex justify-center items-center whitespace-nowrap">
                                     Subscribe
-                                </div>
-                            </div>
+                                </button>
+                            </form>
                         </motion.div>
                     <div className="grid grid-cols-[4fr_2fr_2fr_3fr] max-lg:grid-cols-[3fr_2fr_2fr] place-items-end items-start gap-2 lg:gap-6 md:gap-2">
                         <motion.div
@@ -165,10 +226,10 @@ export default function Footer() {
                             custom={1}
                             initial="hidden"
                             animate={isInView ? "visible" : "hidden"}
-                            className="footer_panel_2"
+                            className="footer_panel_2 max-[450px]:w-full"
                         >
                             <ul className="flex flex-col justify-between items-start max-sm:leading-[45px] sm:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white">
-                                <li className="font-[600] max-md:font-medium text-[20px] max-md:text-base mb-2 text-start">Take a tour</li>
+                                <li className="font-[600] max-md:font-semibold text-[20px] max-md:text-base mb-2 text-start">Take a tour</li>
                                 <li>Features</li>
                                 <li>Partners</li>
                                 <li>Pricing</li>
@@ -185,7 +246,7 @@ export default function Footer() {
                             className="footer_panel_3"
                         >
                             <ul className="flex flex-col justify-between items-start max-sm:leading-[45px] sm:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white">
-                                <li className="font-[600] max-md:font-medium text-[20px] max-md:text-base mb-2 text-start">Our Company</li>
+                                <li className="font-[600] max-md:font-semibold text-[20px] max-md:text-base mb-2 text-start">Our Company</li>
                                 <li>About Us</li>
                                 <li>Agents</li>
                                 <li>Blog</li>
@@ -202,16 +263,18 @@ export default function Footer() {
                         >
                             <h3 className="font-[600] text-[20px] max-md:text-[12px]">Subscribe</h3>
                             <p className="text-[14px] max-md:text-[10px] max-md:font-[400] leading-[23px] text-[#8F90A6]">Subscribe to get latest property, blog news from us</p>
-                            <div className="panel_4_search_bar w-full bg-white flex justify-between items-center rounded-[15px]">
+                            <form onSubmit={handleFormSubmit} className="panel_4_search_bar w-full bg-white flex justify-between items-center rounded-[15px]">
                                 <input
                                     type="text"
                                     placeholder="Email Address"
+                                    value={email}
+                                    onChange={(e)=>{setEmail(e.target.value)}}
                                     className="w-full h-full p-4 max-md:py-0 max-md:h-[38.93px] rounded-tl-[15px] outline-none text-black rounded-bl-[15px] text-xs"
                                 /> 
-                                 <div className="bg-[#ED371C] p-2 max-sm:px-1 max-sm:py-0 rounded-full mr-3 flex justify-center items-center text-xs whitespace-nowrap">
+                                 <button type='submit' className="bg-[#ED371C] p-2 max-sm:px-1 max-sm:py-0 rounded-full mr-3 flex justify-center items-center text-xs whitespace-nowrap">
                                     Subscribe
-                                </div>
-                            </div>
+                                </button>
+                            </form>
                         </motion.div>
                     </div>
              

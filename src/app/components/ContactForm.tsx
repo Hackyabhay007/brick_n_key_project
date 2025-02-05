@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { submitContactForm, resetFormState } from "../../redux/slices/Contact_Section_Slice";
 import { AppDispatch, RootState } from "../../redux/store";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Toast from "./Toast";
 
 interface ContactFormData {
   first_name: string;
@@ -26,12 +25,22 @@ export default function ContactForm({ component, listingId }: { component: strin
     listing_Id: listingId || undefined, // Initialize with listingId if available
   });
 
+  const [toastConfig, setToastConfig] = useState({
+    message: "",
+    type: "success" as "success" | "error",
+    isVisible: false
+  });
+
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error, successMessage } = useSelector((state: RootState) => state.contactSection);
 
   useEffect(() => {
     if (successMessage) {
-      toast.success(successMessage);
+      setToastConfig({
+        message: successMessage,
+        type: "success",
+        isVisible: true
+      });
       // Reset form after successful submission
       setFormData({
         first_name: "",
@@ -43,7 +52,11 @@ export default function ContactForm({ component, listingId }: { component: strin
       });
     }
     if (error) {
-      toast.error(error);
+      setToastConfig({
+        message: error,
+        type: "error",
+        isVisible: true
+      });
     }
     return () => {
       dispatch(resetFormState());
@@ -55,7 +68,11 @@ export default function ContactForm({ component, listingId }: { component: strin
     
     // Basic validation
     if (!formData.first_name || !formData.last_name || !formData.phone) {
-      toast.error("Please fill in all required fields");
+      setToastConfig({
+        message: "Please fill in all required fields",
+        type: "error",
+        isVisible: true
+      });
       return;
     }
     
@@ -65,19 +82,13 @@ export default function ContactForm({ component, listingId }: { component: strin
 
   return (
     <div className={`bg-bgBlue w-full h-full flex flex-col justify-center items-center text-white py-16 px-8 ${(component === "contact") ? "rounded-3xl" : ""}`}>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-        aria-label="Notification"
+      <Toast 
+        message={toastConfig.message}
+        type={toastConfig.type}
+        isVisible={toastConfig.isVisible}
+        onClose={() => setToastConfig(prev => ({ ...prev, isVisible: false }))}
       />
+      
       <h2 className="text-3xl font-[400]">Still haven't found what you're looking for?</h2>
 
       <form onSubmit={handleSubmit} className="pt-10">
@@ -124,7 +135,7 @@ export default function ContactForm({ component, listingId }: { component: strin
               value={formData.I_want_to}
               onChange={(e) => setFormData({ ...formData, I_want_to: e.target.value })}
             />
-          </div>
+          </div> 
         </div>
 
         <div>
