@@ -76,22 +76,24 @@ const Brand = () => {
   const containerVariants = {
     hidden: {
       opacity: 0,
-      scale: 0.95,
+      scale: 0.8,
     },
     visible: {
       opacity: 1,
       scale: 1,
       transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-        duration: 0.5,
+        staggerChildren: 0.5, // increased from 0.3
+        delayChildren: 0.4,   // increased from 0.2
+        duration: 1.2,        // increased from 0.8
+        ease: "easeOut"
       }
     },
     exit: {
       opacity: 0,
       scale: 0.9,
       transition: {
-        duration: 0.3,
+        duration: 0.8,        // increased from 0.4
+        ease: "easeInOut"
       }
     }
   };
@@ -99,29 +101,27 @@ const Brand = () => {
   const cardVariants = {
     hidden: {
       opacity: 0,
-      scale: 0.8,
-      y: 30,
-      filter: 'blur(10px)',
+      scale: 0,
+      rotate: -180,
     },
     visible: {
       opacity: 1,
       scale: 1,
-      y: 0,
-      filter: 'blur(0px)',
+      rotate: 0,
       transition: {
         type: "spring",
-        stiffness: 100,
-        damping: 15,
-        duration: 0.7,
+        stiffness: 200,      // decreased from 260
+        damping: 25,         // increased from 20
+        duration: 1.5,       // increased from 1
       }
     },
     exit: {
       opacity: 0,
-      scale: 0.9,
-      y: -20,
-      filter: 'blur(5px)',
+      scale: 0,
+      rotate: 180,
       transition: {
-        duration: 0.4,
+        duration: 0.8,       // increased from 0.5
+        ease: "easeInOut"
       }
     }
   };
@@ -129,26 +129,28 @@ const Brand = () => {
   const featureVariants = {
     hidden: {
       opacity: 0,
-      x: -20,
-      height: 0,
+      scale: 0,
+      y: 20,
     },
     visible: {
       opacity: 1,
-      x: 0,
-      height: "auto",
+      scale: 1,
+      y: 0,
       transition: {
         type: "spring",
-        stiffness: 150,
-        damping: 15,
-        duration: 0.4,
-        delay: 0.3,
+        stiffness: 250,      // decreased from 300
+        damping: 25,         // increased from 20
+        delay: 0.6,          // increased from 0.4
+        duration: 1,         // increased from 0.6
       }
     },
     exit: {
       opacity: 0,
-      x: 20,
+      scale: 0.5,
+      y: -20,
       transition: {
-        duration: 0.2,
+        duration: 0.6,       // increased from 0.3
+        ease: "easeOut"
       }
     }
   };
