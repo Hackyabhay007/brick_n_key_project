@@ -11,6 +11,7 @@ import MapContactForm from "./MapContactForm";
 import Overview from "./Overview";
 import Places_Nearby from "./Places_Nearby";
 import Popular_Listing from "./Popular_Listing";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 export default function page() {
     const searchParams = useSearchParams();
@@ -23,6 +24,7 @@ export default function page() {
     // ];
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
     const data = useSelector((state: RootState) => state.detailPage?.data?.data[0]);
     const loading = useSelector((state: RootState) => state.detailPage?.loading);
@@ -48,8 +50,45 @@ export default function page() {
         setImages(image_Data);
     }, [data]);
 
+    // Add auto-sliding effect
+    useEffect(() => {
+        if (images?.length > 0) {
+            const timer = setInterval(() => {
+                setIsTransitioning(true);
+                setTimeout(() => {
+                    setCurrentImageIndex((prevIndex) => 
+                        prevIndex === images.length - 1 ? 0 : prevIndex + 1
+                    );
+                    setIsTransitioning(false);
+                }, 500); // Match this with CSS transition duration
+            }, 5000); // Change slide every 5 seconds
+
+            return () => clearInterval(timer);
+        }
+    }, [images]);
+
     const handleDotClick = (index: number) => {
         setCurrentImageIndex(index);
+    };
+
+    const handlePrevClick = () => {
+        setIsTransitioning(true);
+        setTimeout(() => {
+            setCurrentImageIndex((prevIndex) => 
+                prevIndex === 0 ? images.length - 1 : prevIndex - 1
+            );
+            setIsTransitioning(false);
+        }, 500);
+    };
+
+    const handleNextClick = () => {
+        setIsTransitioning(true);
+        setTimeout(() => {
+            setCurrentImageIndex((prevIndex) => 
+                prevIndex === images.length - 1 ? 0 : prevIndex + 1
+            );
+            setIsTransitioning(false);
+        }, 500);
     };
 
     if (loading || isLoading) {
@@ -59,18 +98,35 @@ export default function page() {
     return (
         <>
             <div className="detail_container w-full bg-bgColor">
-                <div className="detail_inner_container relative w-[90%] max-sm:w-[95%] z-10 mx-auto">
+                <div className="detail_inner_container relative w-[90%] max-sm:w-[95%] 2xl:w-[80%] z-10 mx-auto">
                     <img
                         src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${images[currentImageIndex]}`}
                         alt={`Carousel image ${currentImageIndex + 1}`}
-                        className="w-full h-auto xl:h-[500px] max-xl:h-[150px] max-lg:h-[400px]"
+                        className={`w-full h-auto lg:max-h-[450px] max-lg:h-[400px] transition-opacity duration-500 ${
+                            isTransitioning ? 'opacity-0' : 'opacity-100'
+                        }`}
                     />
+                    {/* Add Navigation Buttons */}
+                    <button 
+                        onClick={handlePrevClick}
+                        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
+                        aria-label="Previous image"
+                    >
+                        <IoIosArrowBack size={24} />
+                    </button>
+                    <button 
+                        onClick={handleNextClick}
+                        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
+                        aria-label="Next image"
+                    >
+                        <IoIosArrowForward size={24} />
+                    </button>
                     <div className="feature_container absolute top-6 -left-2 w-[200px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
                         Featured
                     </div>
 
                     {/* Dot Navigation */}
-                    <div className="dot_navigation absolute bottom-1/3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    <div className="dot_navigation absolute bottom-1/2 max-lg:bottom-1/3 left-1/2 transform -translate-x-1/2 flex space-x-2">
                         {(images).map((_, index: number) => (
                             <button
                                 key={index}
@@ -84,7 +140,7 @@ export default function page() {
                     </div>
                 </div>
 
-                <div className="estimated_EMI relative w-full xl:h-[200px] max-lg:h-[200px] max-md:h-[150px] bg-bgBlue -mt-56 max-lg:-mt-24 z-20 pb-8 pt-16 text-white flex justify-center max-lg:justify-between items-center max-lg:px-16 rounded-t-[80px] max-lg:rounded-t-[40px] rounded-b-[10px] max-lg:rounded-b-[5px] gap-3 max-md:gap-0">
+                <div className="estimated_EMI relative w-full xl:h-[200px] max-lg:h-[200px] max-md:h-[150px] bg-bgBlue -mt-48 max-lg:-mt-24 z-20 pb-8 pt-16 text-white flex justify-center max-lg:justify-between items-center max-lg:px-16 rounded-t-[80px] max-lg:rounded-t-[40px] rounded-b-[10px] max-lg:rounded-b-[5px] gap-3 max-md:gap-0">
                     <div className="h-full flex flex-col items-start justify-center gap-8 max-2xl:gap-0">
                         <h3 className="font-[600] xl:text-7xl max-2xl:text-8xl max-lg:text-4xl max-md:text-2xl leading-[36px] tracking-[0.05em]">₹{data?.property_price} Cr</h3>
                         <p className="mt-3 2xl:text-4xl max-2xl:text-3xl max-lg:text-sm max-md:text-xs leading-[36px] max-md:leading-0 tracking-[0.05em] text-bgRed">Estimated EMI ₹{data?.estimated_emi_price}</p>

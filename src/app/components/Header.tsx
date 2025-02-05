@@ -18,6 +18,7 @@ interface NavLink {
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [selectedNavLink, setSelectedNavLink] = useState("");
     const ref = useRef<HTMLDivElement | null>(null);
     const isInView = useInView(ref, { once: true });
 
@@ -111,7 +112,8 @@ export default function Header() {
                                         variants={navItemVariants}
                                         initial="hidden"
                                         animate={isInView ? "visible" : "hidden"}
-                                        className="cursor-pointer font-[500] hover:text-gray-600 transition-colors"
+                                        onClick={() => setSelectedNavLink(currElem?.label)}
+                                        className={`cursor-pointer font-[500] transition-colors ${(selectedNavLink === currElem.label)? "text-bgRed": ""}`}
                                     >
                                         <Link href={currElem?.link}>
                                             {currElem.label}

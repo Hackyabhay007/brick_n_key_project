@@ -97,12 +97,21 @@ export default function Property_Card({
     const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
     const [isAnimating, setIsAnimating] = useState(false);
     const [direction, setDirection] = useState<'left' | 'right'>('right');
+    const [isImageTransitioning, setIsImageTransitioning] = useState<{ [key: string]: boolean }>({});
 
     const cycleImage = (propertyId: string, imagesLength: number) => {
-        setImageIndices(prev => ({
-            ...prev,
-            [propertyId]: ((prev[propertyId] || 0) + 1) % imagesLength
-        }));
+        setIsImageTransitioning(prev => ({ ...prev, [propertyId]: true }));
+        
+        setTimeout(() => {
+            setImageIndices(prev => ({
+                ...prev,
+                [propertyId]: ((prev[propertyId] || 0) + 1) % imagesLength
+            }));
+            
+            setTimeout(() => {
+                setIsImageTransitioning(prev => ({ ...prev, [propertyId]: false }));
+            }, 300);
+        }, 200);
     };
 
     if (component === "popular_listing") {
@@ -165,13 +174,14 @@ export default function Property_Card({
                                     if (currElem?.property_Images.length > 1) {
                                         const interval = setInterval(() => {
                                             cycleImage(currElem.id, currElem.property_Images.length);
-                                        }, 1000);
+                                        }, 2000); // Change image every 2 seconds
                                         (window as any)[`interval_${currElem.id}`] = interval;
                                     }
                                 }}
                                 onHoverEnd={() => {
                                     clearInterval((window as any)[`interval_${currElem.id}`]);
                                     setImageIndices(prev => ({ ...prev, [currElem.id]: 0 }));
+                                    setIsImageTransitioning(prev => ({ ...prev, [currElem.id]: false }));
                                 }}
                             >
                                 <motion.div
@@ -182,7 +192,9 @@ export default function Property_Card({
                                     <h1 className='text-center text-white'>{brand_name}</h1>
                                     <motion.img
                                         src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images[imageIndices[currElem.id] || 0]?.url}`}
-                                        className='w-full h-full object-cover bg-center'
+                                        className={`w-full h-full object-cover bg-center transition-opacity duration-500 ${
+                                            isImageTransitioning[currElem.id] ? 'opacity-0' : 'opacity-100'
+                                        }`}
                                         alt=""
                                         initial={{ scale: 1.2, opacity: 0 }}
                                         animate={{ scale: 1, opacity: 1 }}
