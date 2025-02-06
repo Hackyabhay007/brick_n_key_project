@@ -99,7 +99,7 @@ export default function page() {
         <>
             <div className="detail_container w-full bg-bgColor">
                 <div className="detail_inner_container relative w-[90%] max-sm:w-[95%] 2xl:w-[80%] z-10 mx-auto">
-                    <div className="carousel_container relative w-[80%] max-lg:w-[90%] mx-auto h-[450px] max-lg:h-[450px] rounded-[20px] overflow-hidden">
+                    <div className="carousel_container relative w-[80%] max-lg:w-[90%] mx-auto h-[450px] max-lg:h-[450px] rounded-[20px]">
                         <img
                             src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${images[currentImageIndex]}`}
                             alt={`Carousel image ${currentImageIndex + 1}`}
@@ -107,27 +107,31 @@ export default function page() {
                                 }`}
                         />
 
-                        <div className="feature_container absolute top-6 left-0 w-[200px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
+                        <div className="feature_container absolute top-2 left-0 w-[200px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
                             Featured
                         </div>
+
+
+                        {/* Add Navigation Buttons */}
+                        <button
+                            onClick={handlePrevClick}
+                            className="absolute -left-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
+                            aria-label="Previous image"
+                        >
+                            <IoIosArrowBack size={24} />
+                        </button>
+                        <button
+                            onClick={handleNextClick}
+                            className="absolute -right-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
+                            aria-label="Next image"
+                        >
+                            <IoIosArrowForward size={24} />
+                        </button>
+
                     </div>
 
 
-                    {/* Add Navigation Buttons */}
-                    <button
-                        onClick={handlePrevClick}
-                        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
-                        aria-label="Previous image"
-                    >
-                        <IoIosArrowBack size={24} />
-                    </button>
-                    <button
-                        onClick={handleNextClick}
-                        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
-                        aria-label="Next image"
-                    >
-                        <IoIosArrowForward size={24} />
-                    </button>
+
 
                     {/* Dot Navigation */}
                     <div className="dot_navigation absolute lg:bottom-1/3 max-lg:bottom-1/4 left-1/2 transform -translate-x-1/2 flex space-x-2">

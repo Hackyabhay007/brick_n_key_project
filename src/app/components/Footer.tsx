@@ -17,6 +17,7 @@ export default function Footer() {
     const dispatch = useDispatch<AppDispatch>();
     const { loading, success, error } = useSelector((state: RootState) => state?.subscribeSection);
 
+
     const [toastConfig, setToastConfig] = useState({
         isVisible: false,
         message: '',

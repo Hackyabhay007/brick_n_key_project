@@ -5,10 +5,12 @@ import { Menu } from "lucide-react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { navbarData } from "@/app/data";
+import { giveCorrectImage, navbarData } from "@/app/data";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHeaderSection } from "../../redux/slices/headerSlice";
 import { AppDispatch, RootState } from "../../redux/store";
+import { usePathname, useSearchParams } from "next/navigation";
+import path from "path";
 
 interface NavLink {
     id: number;
@@ -21,22 +23,48 @@ export default function Header() {
     const [selectedNavLink, setSelectedNavLink] = useState("");
     const ref = useRef<HTMLDivElement | null>(null);
     const isInView = useInView(ref, { once: true });
+    const searchParams = useSearchParams();
 
-    // console.log(process.env.NEXT_PUBLIC_STRAPI_URL);
-
-    let url = process.env.NEXT_PUBLIC_STRAPI_URL;
-    // console.log("This is the strapiURL", url);
+    const pathname = usePathname();
+    const newData = searchParams.get('new');
+    console.log("This is the new Data of the Header", newData);
 
     const data = useSelector((state: RootState) => state.headerSection?.data);
     const dispatch = useDispatch<AppDispatch>();
 
+    // const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"; // Fallback for local dev
+    // const imagePath = data?.data?.header_container?.LogoLink?.image?.url; 
+
+    // if (!imagePath) {
+    //     console.error(" Image path is missing:", imagePath);
+    // }
+    
+    // // Ensure `imagePath` is a valid string before concatenating
+    // const imageUrl = imagePath ? `${baseUrl}${imagePath}` : ""; 
+    
+    
+
     useEffect(() => {
         dispatch(fetchHeaderSection());
-    }, [dispatch]);
+    }, [dispatch, selectedNavLink]);
 
-    const image = data?.data?.header_container?.LogoLink?.image?.url;
-    const imageURL = `${process.env.NEXT_PUBLIC_STRAPI_URL}${image || ""}`;
-    // console.log(imageURL);
+    useEffect(()=>{
+        console.log("This is the pathname", pathname)
+        if(pathname === "/"){
+
+            setSelectedNavLink("Home")
+        }
+        else if(pathname === "/map"){
+            setSelectedNavLink("Master Map")
+        }
+        else if(newData){
+            setSelectedNavLink("All Listing")
+        }
+        else{
+            setSelectedNavLink("")
+        }
+    }, [pathname])
+
 
     const logoVariants = {
         hidden: { opacity: 0, x: -50 },
@@ -89,12 +117,14 @@ export default function Header() {
                         initial="hidden"
                         animate={isInView ? "visible" : "hidden"}
                         className="nav_logo max-md:h-[200px] max-sm:w-[200px] flex justify-start items-center bg-center"
+                        onClick={()=>{setSelectedNavLink("Home")}}
                     >
                         <Link href="/">
-                            <img
+                            <Image
                                 width={276}
                                 height={56}
-                                src={imageURL}
+                                src={giveCorrectImage(data?.data?.header_container?.LogoLink?.image?.url)}
+                                onClick={()=>{setSelectedNavLink("HOME")} }
                                 className="w-auto h-[56px] max-sm:w-auto max-sm:h-auto object-cover"
                                 alt="Nav_logo"
                             />
@@ -151,7 +181,7 @@ export default function Header() {
                                                 custom={index}
                                                 initial="hidden"
                                                 animate="visible"
-                                                className={`px-4 py-1.5  ${(selectedNavLink === item?.label) ? "text-bgRed" : ""}`}
+                                                className={`px-4 py-1.5  ${(selectedNavLink == item?.label) ? "text-bgRed" : ""}`}
                                             >
                                                 <div onClick={()=>{setIsMenuOpen(false)}} className="bg-gray-800 rounded-full py-2 px-6 w-fit text-center text-white font-medium tracking-wide hover:bg-gray-700 transition-colors whitespace-nowrap">
                                                     <Link href={item?.link}>

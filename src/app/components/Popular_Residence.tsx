@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFilter } from '@/redux/slices/propertyItemSlice';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { giveCorrectImage } from '../data';
 
 interface ResidenceItem {
     id: number;
@@ -77,6 +78,7 @@ const Popular_Residence = () => {
     // const { data, loading, error } = useSelector(
     //     (state: RootState) => state.heroSection
     // );
+
 
     useEffect(() => {
         dispatch(fetchPopularSection());
@@ -172,24 +174,28 @@ const Popular_Residence = () => {
                             transform: `translateX(-${startIndex * (100 / itemsToShow)}%)`,
                         }}
                     >
-                        {(data?.data)?.map((item: { id: Number, property_Images: { url: String }, property_Location: string, property_Type: String }, index: Number) => (
+                        {(data?.data)?.map((item: { id: number, property_Images: { url: string }, property_Location: string, property_Type: String }, index: Number) => (
                             <div
                                 key={"string" + item.id}
                                 className="min-w-[calc((100%-5*1.5rem)/6)] flex-shrink-0 
                                     lg:min-w-[calc((100%-5*1.5rem)/6)]
                                     md:min-w-[calc((100%-4*1.5rem)/5.5)]
                                     max-md:min-w-[calc((100%-3*1.5rem)/4.5)] cursor-pointer"
-                                    onClick={(e) => handleFilterChange('property_Location', item.property_Location || undefined)}
+                                onClick={(e) => handleFilterChange('property_Location', item.property_Location || undefined)}
                             >
-                                
                                 <div className="rounded-lg overflow-hidden flex flex-col justify-start items-start text-[16px] font-[500] leading-[19.5px]">
-                                    <img
-                                        width={100}
-                                        height={100}
-                                        src={`http://localhost:1337${item.property_Images.url}`}
-                                        alt="imsdf"
-                                        className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full object-cover rounded-[10px]"
-                                    />
+                                    <div className="relative group">
+                                        <Image
+                                            width={100}
+                                            height={100}
+                                            src={ giveCorrectImage(item.property_Images.url)}
+                                            alt="popular_residence_img"
+                                            className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full object-cover rounded-[10px]"
+                                        />
+                                        <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-[10px]">
+                                            <span className="py-1.5 px-2 text-sm border-2 border-white text-white rounded-full">View Detail</span>
+                                        </div>
+                                    </div>
                                     <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-xs">{item.property_Type}</h3>
                                     <p className="text-[#ADADAD] mt-2 max-sm:mt-0 max-sm:text-xs">{item.property_Location}</p>
                                 </div>

@@ -65,6 +65,7 @@ const Page = () => {
 
         if (newData) {
             setNewDataValue(newData === 'true');
+            setLuxury(false);
             dispatch(fetchNewPropertyItems());
         }
 

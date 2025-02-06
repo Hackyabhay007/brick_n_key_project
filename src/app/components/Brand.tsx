@@ -8,6 +8,8 @@ import { fetchBrandSectionSlice } from "../../redux/slices/brandSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import { motion, AnimatePresence } from 'framer-motion';
 import Property_Card from './Property_Card';
+import { giveCorrectImage } from '../data';
+import Image from 'next/image';
 
 interface BrandData {
   id: number;
@@ -258,7 +260,12 @@ const Brand = () => {
     <div className="brand_container w-full bg-bgColor pt-16">
       <div className="brand_inner_container relative w-[90%] flex flex-col justify-center max-lg:justify-between items-center gap-6 max-sm:w-[95%] 2xl:w-[80%] mx-auto pb-8 bg-bgBlue rounded-[20px] px-16 max-lg:px-4">
         <div className='w-[80%] mx-auto max-lg:mt-10'>
-          <img src="/images/brand_main_img.png" className='text-center' alt="" />
+          <Image
+            width={100}
+            height={100}
+            src="/images/brand_main_img.png"
+            className='text-center w-full h-full bg-cover' 
+            alt="Brand_img" />
         </div>
 
         {/* Brands Slider */}
@@ -297,8 +304,10 @@ const Brand = () => {
                   onClick={() => { handleBrandClick(index); setShowPropertyCard(true); setBrand_name(currElem?.brand_name); }}
                 >
                   <div className="flex flex-col items-center justify-center h-20">
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.brand_logo.url}`}
+                    <Image
+                      width={100}
+                      height={100}
+                      src={giveCorrectImage(currElem.brand_logo.url)}
                       alt={currElem.brand_name}
                       className="h-14 max-lg:h-10 max-md:h-8 w-auto object-contain"
                     />
@@ -433,7 +442,9 @@ const Brand = () => {
                             >
                                 <div className='flex flex-col justify-start items-start gap-1'>
                                     <img 
-                                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images[0].url}`} 
+                                        width={100}
+                                        height={100}
+                                        src={giveCorrectImage(currElem.property_Images[0].url)} 
                                         className='rounded-[20px] w-full' 
                                         alt="" 
                                     />

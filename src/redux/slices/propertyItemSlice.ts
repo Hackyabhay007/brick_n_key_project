@@ -168,7 +168,7 @@ const propertyItemsSlice = createSlice({
   name: "propertyItems",
   initialState,
   reducers: {
-    setFilter: (state, action: PayloadAction<{ key: keyof PropertyFilters; value: string | number | undefined }>) => {
+    setFilter: (state, action: PayloadAction<{ key: keyof PropertyFilters; value: string | boolean | number | undefined }>) => {
       const { key, value } = action.payload;
       console.log('Setting filter:', key, value);
       

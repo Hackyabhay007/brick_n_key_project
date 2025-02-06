@@ -208,17 +208,17 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
       <button
         onClick={handlePrev}
         disabled={currentIndex === 0 || isAnimating}
-        className="absolute -left-5 top-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute -left-4 top-1/2 z-10 p-1.5 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:bg-opacity-50 disabled:cursor-not-allowed"
       >
-        <ChevronLeft className="w-6 h-6 text-black" />
+        <ChevronLeft className="w-5 h-5 text-black" />
       </button>
 
       <button
         onClick={handleNext}
         disabled={currentIndex >= (data?.data?.length || 0) - (window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3) || isAnimating}
-        className="absolute top-1/2 -right-5 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute top-1/2 -right-4 z-10 p-1.5 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:bg-opacity-50 disabled:cursor-not-allowed"
       >
-        <ChevronRight className="w-6 h-6 text-black" />
+        <ChevronRight className="w-5 h-5 text-black" />
       </button>
     </div>
   );
