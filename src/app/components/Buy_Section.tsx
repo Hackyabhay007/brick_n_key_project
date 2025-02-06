@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { setFilter } from '@/redux/slices/propertyItemSlice';
 import { useRouter } from 'next/navigation';
 import { FaChevronUp } from "react-icons/fa6";
+import Image from 'next/image';
 
 
 
@@ -46,7 +47,7 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
 
   const handleInputClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowFilterSection(false);
+    // setShowFilterSection(false);
   };
 
   return (
@@ -68,7 +69,7 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
                     <span>{ 
                             (showDropdown) ? 
                             <FaChevronUp />
-                            : <img src="/images/buy_section_icon_1.svg" alt="" />}
+                            : <Image width={100} height={100} className='w-4 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_down_arrowBtn" />}
                     </span>
                     </h3>
                 </div>
@@ -86,7 +87,7 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
 
           {/* Search Input Section */}
           <div className='w-full flex justify-start items-center gap-2'>
-            <img src="/images/buy_section_icon_2.svg" alt="" />
+            <Image width={100} height={100} className='w-5 h-auto' src="/images/buy_section_icon_2.svg" alt="buy_section_searchBtn" />
             <input 
               type="text" 
               onClick={handleInputClick}
@@ -99,10 +100,10 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
 
           <div className='flex justify-center items-center gap-4'>
             <div className='flex justify-center items-center w-12 h-12 rounded-full bg-bgRed bg-opacity-20'>
-              <img src="/images/buy_section_icon_3.svg" alt="" />
+              <Image width={100} height={100} className='w-5 h-auto' src="/images/buy_section_icon_3.svg" alt="buy_section_micBtn" />
             </div>
             <div className='flex justify-center items-center w-12 h-12 rounded-full bg-bgRed bg-opacity-20'>
-              <img src="/images/buy_section_icon_4.svg" alt="" />
+              <Image width={100} height={100} className='w-5 h-auto' src="/images/buy_section_icon_4.svg" alt="buy_section_img_4_targetBtn" />
             </div>
             <button type='submit' className='bg-bgRed px-4 py-1 text-white rounded-lg'>Search</button>
           </div>

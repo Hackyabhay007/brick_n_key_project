@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLuxuryListingItem } from "../../redux/slices/luxuryListingSlice";
 import { AppDispatch, RootState } from "../../redux/store";
+import { giveCorrectImage } from '../data';
 
 const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) => void }) => {
   const data = useSelector((state: RootState) => state.luxuryListingItems?.data);
@@ -21,7 +22,7 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
     dispatch(fetchLuxuryListingItem());
   }, [dispatch]);
 
-  const slides = data?.data?.map((currElem:{property_Location: String, property_Description: String, property_Images: [{url: String}], brand: {brand_name: string}}) => ({
+  const slides = data?.data?.map((currElem: { property_Location: String, property_Description: String, property_Images: [{ url: String }], brand: { brand_name: string } }) => ({
     title: currElem?.brand?.brand_name || "",
     location: currElem?.property_Location || "",
     description: currElem?.property_Description || "",
@@ -64,7 +65,7 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
 
   const getAnimationClasses = (position: 'prev' | 'current' | 'next') => {
     const baseClasses = 'transition-all duration-700 ease-out';
-    
+
     if (!slideDirection) {
       return `${baseClasses} opacity-100 transform translate-y-0`;
     }
@@ -124,10 +125,10 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
           <div className={`relative w-[45%] max-lg:w-[20%] -translate-x-4 max-sm:-translate-x-4 md:-translate-x-10 h-full ${getAnimationClasses('prev')}`}>
             <div className="w-full rounded-lg duration-300">
               <div className="relative w-full flex flex-col items-center justify-center min-h-[100px] bg-center group">
-                <img
+                <Image
                   width={100}
                   height={100}
-                   src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(1).url}`}
+                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(1).url}`}
                   alt={getSlide(-1).title}
                   className="w-full h-[150px] md:h-[200px] object-cover rounded-tr-[20px] rounded-br-[20px]"
                 />
@@ -149,10 +150,10 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
           <div className={`relative w-[50%] max-lg:w-[70%] ${getAnimationClasses('current')}`}>
             <div className="rounded-lg transition-shadow duration-300">
               <div className="relative flex flex-col items-center justify-center min-h-[200px] group">
-                <img
+                <Image
                   width={100}
                   height={100}
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(1).url}`}
+                  src={giveCorrectImage(getSlide(1).url)}
                   alt={getSlide(0).title}
                   className="w-full h-[200px] md:h-[296px] object-cover rounded-[20px]"
                 />
@@ -177,7 +178,7 @@ const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) =>
           <div className={`relative w-[45%] max-lg:w-[20%] translate-x-4 max-sm:translate-x-4 md:translate-x-10 ${getAnimationClasses('next')}`}>
             <div className="rounded-lg transition-shadow duration-300">
               <div className="relative flex flex-col items-center justify-center min-h-[100px] group">
-                <img
+                <Image
                   width={100}
                   height={100}
                   src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(1).url}`}

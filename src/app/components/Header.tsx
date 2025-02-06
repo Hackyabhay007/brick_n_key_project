@@ -116,13 +116,13 @@ export default function Header() {
                         variants={logoVariants}
                         initial="hidden"
                         animate={isInView ? "visible" : "hidden"}
-                        className="nav_logo max-md:h-[200px] max-sm:w-[200px] flex justify-start items-center bg-center"
+                        className="nav_logo flex justify-start items-center bg-center"
                         onClick={()=>{setSelectedNavLink("Home")}}
                     >
                         <Link href="/">
                             <Image
-                                width={276}
-                                height={56}
+                                width={100}
+                                height={100}
                                 src={giveCorrectImage(data?.data?.header_container?.LogoLink?.image?.url)}
                                 onClick={()=>{setSelectedNavLink("HOME")} }
                                 className="w-auto h-[56px] max-sm:w-auto max-sm:h-auto object-cover"

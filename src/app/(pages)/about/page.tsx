@@ -69,8 +69,10 @@ export default function page() {
                         </div>
                         <div className="w-full h-full flex items-center justify-center lg:items-end">
                             <div className="w-full h-auto max-lg:h-[150px] max-2xl:h-[430px] 2xl:h-[450px] aspect-[4/3] relative rounded-2xl overflow-hidden">
-                                <img 
-                                    src="/images/about_us_img_2.png" 
+                                <Image
+                                    width={100} 
+                                    height={100}
+                                    src={"/images/about_us_img_2.png"} 
                                     alt="About Us" 
                                     className="w-full h-full object-cover"
                                     style={{

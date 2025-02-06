@@ -11,11 +11,17 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        bgColor : "#f1efe7",
-        bgBlue : "#142738",
-        bgRed : "#ED371C"
+        bgColor: "#f1efe7",
+        bgBlue: "#142738",
+        bgRed: "#ED371C",
+        textGray: "#8F90A6",
+        textDark: "#110229",
+        overlayBlack: "rgba(0, 0, 0, 0.5)",
+        overlayWhite: "rgba(255, 255, 255, 0.85)",
+        whiteAlpha10: "rgba(255, 255, 255, 0.1)",
+        whiteAlpha20: "rgba(255, 255, 255, 0.2)",
       },
     },
   },
   plugins: [],
-} satisfies Config; 
+} satisfies Config;

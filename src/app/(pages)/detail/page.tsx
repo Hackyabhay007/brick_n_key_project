@@ -12,6 +12,8 @@ import Overview from "./Overview";
 import Places_Nearby from "./Places_Nearby";
 import Popular_Listing from "./Popular_Listing";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Image from "next/image";
+import { giveCorrectImage } from "@/app/data";
 
 export default function page() {
     const searchParams = useSearchParams();
@@ -100,8 +102,10 @@ export default function page() {
             <div className="detail_container w-full bg-bgColor">
                 <div className="detail_inner_container relative w-[90%] max-sm:w-[95%] 2xl:w-[80%] z-10 mx-auto">
                     <div className="carousel_container relative w-[80%] max-lg:w-[90%] mx-auto h-[450px] max-lg:h-[450px] rounded-[20px]">
-                        <img
-                            src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${images[currentImageIndex]}`}
+                        <Image
+                            width={100}
+                            height={100}
+                            src={giveCorrectImage(images[currentImageIndex])}
                             alt={`Carousel image ${currentImageIndex + 1}`}
                             className={`w-full h-full object-cover transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'
                                 }`}

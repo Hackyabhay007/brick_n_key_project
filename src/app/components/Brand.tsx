@@ -441,7 +441,7 @@ const Brand = () => {
                                 className="flex-shrink-0 w-full px-4"
                             >
                                 <div className='flex flex-col justify-start items-start gap-1'>
-                                    <img 
+                                    <Image 
                                         width={100}
                                         height={100}
                                         src={giveCorrectImage(currElem.property_Images[0].url)} 

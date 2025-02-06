@@ -35,6 +35,7 @@ export const navbarData = [
 
 export const giveCorrectImage = (image) => {
     const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+    // console.log("This is the iamge value", image)
     const imagePath = image;
 
     // console.log("This is the Image Path", imagePath)

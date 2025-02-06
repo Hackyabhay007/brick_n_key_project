@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plane } from 'lucide-react';
+import Image from 'next/image';
 
 const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, nearBy_Array: [{id :number, item: string}]}) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -56,7 +57,7 @@ const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, 
     <div className="w-[90%] mx-auto p-4 overflow-hidden">
       <div className="relative pb-8 flex flex-col gap-8 items-start border border-black rounded-[15px] p-2">
         <div className="place_nearby_icon">
-          <img src="/images/place_nearby_img.png" className='h-[50px] w-auto' alt="" />
+          <Image width={100} height={100} src="/images/place_nearby_img.png" className='h-[50px] w-auto' alt="" />
         </div>
 
         <div
