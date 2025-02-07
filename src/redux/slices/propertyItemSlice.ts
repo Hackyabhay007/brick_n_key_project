@@ -55,58 +55,83 @@ const buildApiUrl = (filters: PropertyFilters): string => {
   const baseUrl = "http://localhost:1337/api/detail-pages";
   const page = filters.page || 1;
   const pageSize = filters.pageSize || 5; // Default to 5 items per page
-  const start = (page - 1) * pageSize;
   
   // Updated pagination parameters
   let url = `${baseUrl}?populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
   
   const filterParams = [];
   
+  // Handle multiple values for property_Construction_status
   if (filters.property_Construction_status) {
-    filterParams.push(`filters[property_Construction_status][$eq]=${encodeURIComponent(filters.property_Construction_status)}`);
+    const statuses = filters.property_Construction_status.split(',');
+    if (statuses.length > 0) {
+      const statusFilters = statuses.map(status => 
+        `filters[property_Construction_status][$eq]=${encodeURIComponent(status)}`
+      ).join('&');
+      filterParams.push(statusFilters);
+    }
   }
   
+  // Handle multiple values for property_Bedroom
   if (filters.property_Bedroom) {
-    filterParams.push(`filters[property_Bedroom][$eq]=${encodeURIComponent(filters.property_Bedroom)}`);
+    const bedrooms = filters.property_Bedroom.split(',');
+    if (bedrooms.length > 0) {
+      const bedroomFilters = bedrooms.map(bedroom => 
+        `filters[property_Bedroom][$eq]=${encodeURIComponent(bedroom)}`
+      ).join('&');
+      filterParams.push(bedroomFilters);
+    }
   }
   
-  // Updated price filtering logic
+  // Handle multiple values for property_Type
+  if (filters.property_Type) {
+    const types = filters.property_Type.split(',');
+    if (types.length > 0) {
+      const typeFilters = types.map(type => 
+        `filters[property_Type][$eq]=${encodeURIComponent(type)}`
+      ).join('&');
+      filterParams.push(typeFilters);
+    }
+  }
+
+  // Handle multiple values for brand_name
+  if (filters.brand_name) {
+    const brands = filters.brand_name.split(',');
+    if (brands.length > 0) {
+      const brandFilters = brands.map(brand => 
+        `filters[brand][brand_type][$eq]=${encodeURIComponent(brand)}`
+      ).join('&');
+      filterParams.push(brandFilters);
+    }
+  }
+
+  // Handle price range
   if (filters.minPrice !== undefined && filters.maxPrice !== undefined) {
     filterParams.push(
       `filters[property_price][$gte]=${filters.minPrice}`,
       `filters[property_price][$lte]=${filters.maxPrice}`
     );
-  } else if (filters.property_price) {
-    filterParams.push(`filters[property_price][$gte]=${filters.property_price}`);
   }
 
+  // Handle luxury filter
   if (filters.isLuxury) {
     filterParams.push(`filters[isLuxury][$eq]=${filters.isLuxury}`);
   }
-  
-  if (filters.property_Type) {
-    filterParams.push(`filters[property_Type][$eq]=${encodeURIComponent(filters.property_Type)}`);
-  }
 
+  // Handle location search with multiple words
   if (filters.property_Location) {
     const locationWords = filters.property_Location.trim().split(/\s+/);
-    
     const locationFilters = locationWords.map(word => 
       `filters[property_Location][$containsi]=${encodeURIComponent(word)}`
     );
-    
     filterParams.push(...locationFilters);
-  }
-
-  if (filters.brand_type) {
-    filterParams.push(`filters[brand][brand_type][$eq]=${encodeURIComponent(filters.brand_type)}`);
   }
 
   if (filterParams.length > 0) {
     url += `&${filterParams.join('&')}`;
   }
 
-  console.log('Generated URL:', url);
+  // console.log('Generated URL:', url);
   return url;
 };
 
@@ -150,11 +175,11 @@ export const fetchNewPropertyItems = createAsyncThunk<
       const url = `http://localhost:1337/api/detail-pages?populate=*&pagination[start]=0&pagination[limit]=5&sort[0]=createdAt:desc`;
       
       const response = await axios.get(url);
-      console.log('New Items API Response:', response.data);
+      // console.log('New Items API Response:', response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('New Items API Error:', error.response?.data);
+        // console.error('New Items API Error:', error.response?.data);
         return rejectWithValue(error.response?.data?.message || "Failed to fetch new items");
       }
       console.error('Unknown Error:', error);
@@ -172,10 +197,10 @@ export const fetchPropertyItems = createAsyncThunk<
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState();
-      console.log('Current filters:', state.propertyItems.activeFilters);
+      // console.log('Current filters:', state.propertyItems.activeFilters);
       const url = buildApiUrl(state?.propertyItems?.activeFilters);
       const response = await axios.get(url);
-      console.log('API Response:', response.data);
+      // console.log('API Response:', response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -197,6 +222,8 @@ const propertyItemsSlice = createSlice({
       value: string | boolean | number | undefined 
     }>) => {
       const { key, value } = action.payload;
+
+      // console.log("This is the Key and value from the property Item Slice", key, value);
       if (value === undefined || value === '') {
         const { [key]: _, ...rest } = state.activeFilters;
         state.activeFilters = rest;
@@ -206,6 +233,8 @@ const propertyItemsSlice = createSlice({
           [key]: value
         };
       }
+
+      console.log("Updated filters:", state.activeFilters);
     },
     // New action for setting price range
     setPriceRange: (state, action: PayloadAction<{ minPrice: number; maxPrice: number }>) => {
@@ -217,7 +246,7 @@ const propertyItemsSlice = createSlice({
       };
     },
     clearFilters: (state) => {
-      console.log('Clearing all filters');
+      // console.log('Clearing all filters');
       state.activeFilters = {};
     }
   },

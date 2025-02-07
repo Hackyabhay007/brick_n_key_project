@@ -1,17 +1,43 @@
 "use client"
+
 import React, { useState, useRef, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 import Slider from './Slider';
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 
+interface LocationData {
+    id: number;
+    location: string;
+    images: string[];
+}
+
+const locationData: LocationData[] = [
+    {
+        id: 1,
+        location: "White Field, Bangalore",
+        images: ["/images/slider1.jpg", "/images/slider2.jpg", "/images/slider3.jpg"]
+    },
+    {
+        id: 2,
+        location: "Electronic City, Bangalore",
+        images: ["/images/slider4.jpg", "/images/slider5.jpg", "/images/slider6.jpg"]
+    },
+    {
+        id: 3,
+        location: "Indira Nagar, Bangalore",
+        images: ["/images/slider7.jpg", "/images/slider8.jpg", "/images/slider9.jpg"]
+    }
+];
+
 const Explore = () => {
-    const ref = useRef(null);
+    const ref = useRef<HTMLDivElement>(null);
     const isInView = useInView(ref, { once: true });
-    const [currentLocation, setCurrentLocation] = useState("White Field, Bangalore");
+    const [currentLocation, setCurrentLocation] = useState(locationData[0].location);
     const [activeIndex, setActiveIndex] = useState(0);
     const sliderRef = useRef<HTMLDivElement>(null);
     const [isScrolling, setIsScrolling] = useState(false);
+    const [currentImageSet, setCurrentImageSet] = useState(locationData[0].images);
 
     const handleScroll = (direction: 'left' | 'right') => {
         if (isScrolling || !sliderRef.current) return;
@@ -29,25 +55,27 @@ const Explore = () => {
             behavior: 'smooth'
         });
 
-        // Update active index
+        // Update active index and current image set
         const newIndex = direction === 'left'
-            ? (activeIndex - 1 + 3) % 3
-            : (activeIndex + 1) % 3;
+            ? (activeIndex - 1 + locationData.length) % locationData.length
+            : (activeIndex + 1) % locationData.length;
+        
         setActiveIndex(newIndex);
+        setCurrentImageSet(locationData[newIndex].images);
+        setCurrentLocation(locationData[newIndex].location);
 
         // Reset scrolling state after animation
         setTimeout(() => setIsScrolling(false), 500);
     };
 
+    // Update current image set when active index changes
+    useEffect(() => {
+        setCurrentImageSet(locationData[activeIndex].images);
+        setCurrentLocation(locationData[activeIndex].location);
+    }, [activeIndex]);
+
     const handleNext = () => handleScroll('right');
     const handlePrev = () => handleScroll('left');
-
-    useEffect(() => {
-        if (sliderRef.current) {
-            const container = sliderRef.current;
-            container.scrollLeft = container.clientWidth * activeIndex;
-        }
-    }, []);
 
     const containerVariants = {
         hidden: { opacity: 0, y: 50 },
@@ -102,7 +130,7 @@ const Explore = () => {
                 viewport={{ once: true, amount: 0.3 }}
                 className="w-[90%] 2xl:w-[80%] max-sm:w-[95%] mx-auto py-12 border-2 border-black rounded-[20px]"
             >
-                {/* Header */}
+                {/* Header section */}
                 <div className="text-center mb-12 max-lg:mb-0 flex flex-col items-center gap-3">
                     <motion.h2
                         variants={headerVariants}
@@ -126,18 +154,14 @@ const Explore = () => {
                     </motion.div>
                 </div>
 
-                {/* Slider */}
+                {/* Slider section */}
                 <motion.div
                     variants={{
                         hidden: { opacity: 0, y: 30 },
                         visible: {
                             opacity: 1,
                             y: 0,
-                            transition: { 
-                                duration: 0.8,
-                                delay: 0.6,
-                                ease: "easeOut"
-                            }
+                            transition: { duration: 0.8, delay: 0.6, ease: "easeOut" }
                         }
                     }}
                     className="relative overflow-hidden"
@@ -152,6 +176,7 @@ const Explore = () => {
                         }}
                     >
                         <Slider 
+                            images={currentImageSet}
                             onLocationChange={setCurrentLocation}
                             activeIndex={activeIndex}
                             onNext={handleNext}

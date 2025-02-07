@@ -10,6 +10,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Property_Card from './Property_Card';
 import { giveCorrectImage } from '../data';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 
 interface BrandData {
   id: number;
@@ -39,6 +41,9 @@ const Brand = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [isImageTransitioning, setIsImageTransitioning] = useState<{ [key: string]: boolean }>({});
+
+
+  const router = useRouter();
 
   const data = useSelector((state: RootState) => state.brandSection?.data);
   const dispatch = useDispatch<AppDispatch>();
@@ -368,6 +373,7 @@ const Brand = () => {
                                             setImageIndices(prev => ({ ...prev, [currElem.id]: 0 }));
                                             setIsImageTransitioning(prev => ({ ...prev, [currElem.id]: false }));
                                         }}
+                                        onClick={() => router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`)}
                                     />
                                 ))}
                             </motion.div>

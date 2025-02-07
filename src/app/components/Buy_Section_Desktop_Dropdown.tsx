@@ -3,18 +3,19 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  clearFilters, 
-  fetchPropertyItems, 
-  setFilter, 
+import {
+  clearFilters,
+  fetchPropertyItems,
+  setFilter,
   setPriceRange,
-  RootState 
+  RootState
 } from '@/redux/slices/propertyItemSlice';
 import { AppDispatch } from "../../redux/store";
 import { IoClose } from "react-icons/io5";
 import { FaChevronUp } from "react-icons/fa6";
 import Link from 'next/link';
 import Image from 'next/image';
+import { bedrooms, brandData, constructionStatus, propertyType } from '../data';
 
 // Define proper types for filters
 interface PropertyFilters {
@@ -33,144 +34,170 @@ interface Buy_Section_Desktop_DropdownProps {
   isLuxury: boolean;
 }
 
-const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> = ({ 
-  isOpen, 
-  onClose, 
-  isLuxury 
+interface MultiSelectState {
+  property_Type: string[];
+  property_Bedroom: string[];
+  property_Construction_status: string[];
+  brand_type: string[];
+}
+
+const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> = ({
+  isOpen,
+  onClose,
+  isLuxury
 }) => {
   const [openSection, setOpenSection] = useState<string>("");
   const activeFilters = useSelector((state: RootState) => state.propertyItems.activeFilters);
   const dispatch = useDispatch<AppDispatch>();
 
   // Update state initialization with proper types
-  const [property_Type, setProperty_Type] = useState<string>("");
-  const [property_Bedroom, setProperty_Bedroom] = useState<string>("");
-  const [property_Construction_status, setProperty_Construction_status] = useState<string>("");
-  const [budgetRange, setBudgetRange] = useState<{minPrice: number; maxPrice: number}>({ 
-    minPrice: 1, 
-    maxPrice: 100 
+  const [property_Type, setProperty_Type] = useState<string[]>([]);
+  const [property_Bedroom, setProperty_Bedroom] = useState<string[]>([]);
+  const [property_Construction_status, setProperty_Construction_status] = useState<string[]>([]);
+  const [budgetRange, setBudgetRange] = useState<{ minPrice: number; maxPrice: number }>({
+    minPrice: 1,
+    maxPrice: 100
   });
   const [isLuxuryVal, setIsLuxuryVal] = useState<boolean>(false);
-  const [brand_type, setBrand_Type] = useState<string>("");
+  const [brand_type, setBrand_Type] = useState<string[]>([]);
 
   // Update useEffect to properly handle filter updates
   useEffect(() => {
     if (activeFilters) {
-        console.log("This is the Active filter data ",activeFilters.property_Type?.toString());
-      setProperty_Type(activeFilters.property_Type?.toString() || "");
-      setProperty_Bedroom(activeFilters.property_Bedroom?.toString() || "");
-      setProperty_Construction_status(activeFilters.property_Construction_status?.toString() || "");
-      setBudgetRange({ 
-        minPrice: activeFilters.minPrice || 1, 
-        maxPrice: activeFilters.maxPrice || 100 
+      const typeValue = activeFilters.property_Type?.toString() || "";
+      const bedroomValue = activeFilters.property_Bedroom?.toString() || "";
+      const constructionValue = activeFilters.property_Construction_status?.toString() || "";
+      const brandValue = activeFilters.brand_name?.toString() || "";
+
+      // Split using double comma to handle values that might contain single commas
+      setProperty_Type(typeValue ? typeValue.split(',,').filter(Boolean) : []);
+      setProperty_Bedroom(bedroomValue ? bedroomValue.split(',,').filter(Boolean) : []);
+      setProperty_Construction_status(constructionValue ? constructionValue.split(',,').filter(Boolean) : []);
+      setBrand_Type(brandValue ? brandValue.split(',,').filter(Boolean) : []);
+      setBudgetRange({
+        minPrice: activeFilters.minPrice || 1,
+        maxPrice: activeFilters.maxPrice || 100
       });
       setIsLuxuryVal(!!activeFilters.isLuxury);
-      setBrand_Type(activeFilters.brand_name?.toString() || "");
     }
   }, [activeFilters]);
 
+  // Update handleApplyFilter to use all current filter values
+  const handleApplyFilter = () => {
+    if (property_Type.length > 0) {
+      dispatch(setFilter({ 
+        key: 'property_Type', 
+        value: property_Type.join(',,')  // Use double comma as separator
+      }));
+    }
+    
+    if (property_Bedroom.length > 0) {
+      dispatch(setFilter({ 
+        key: 'property_Bedroom', 
+        value: property_Bedroom.join(',,') 
+      }));
+    }
+    
+    if (property_Construction_status.length > 0) {
+      dispatch(setFilter({ 
+        key: 'property_Construction_status', 
+        value: property_Construction_status.join(',,') 
+      }));
+    }
+    
+    if (brand_type.length > 0) {
+      dispatch(setFilter({ 
+        key: 'brand_name', 
+        value: brand_type.join(',,') 
+      }));
+    }
+
+    if (budgetRange.minPrice !== 1 || budgetRange.maxPrice !== 100) {
+      dispatch(setPriceRange(budgetRange));
+    }
+
+    dispatch(setFilter({ key: 'isLuxury', value: isLuxuryVal }));
+
+    dispatch(fetchPropertyItems());
+    onClose();
+  }
+
+  // handleOnClose to reset all the existing filter 
+  const handleOnClose = () => {
+    dispatch(clearFilters());
+    onClose();
+  }
+
   const handleLuxuryFilterChange = () => {
-    console.log(isLuxuryVal);
     setIsLuxuryVal(!isLuxuryVal)
   }
 
   // Updated handler with proper typing
   const handleCheckBoxChange = (
-    e: React.ChangeEvent<HTMLInputElement>, 
-    key: keyof PropertyFilters, 
+    e: React.ChangeEvent<HTMLInputElement>,
+    key: keyof PropertyFilters,
     value: string
   ) => {
     if (key === 'property_Type') {
-      setProperty_Type(property_Type === value ? "" : value);
+      setProperty_Type(prev => 
+        prev.includes(value) 
+          ? prev.filter(item => item !== value)
+          : [...prev, value]
+      );
     }
-  };
+  }
 
   // Updated handler with proper typing
   const handleFilterChange = (
-    key: keyof PropertyFilters, 
-    value: string | undefined, 
+    key: keyof PropertyFilters,
+    value: string | undefined,
     section: string
   ) => {
     if (!value) return;
 
     switch (section) {
       case "bedroom":
-        setProperty_Bedroom(property_Bedroom === value ? "" : value);
+        setProperty_Bedroom(prev => 
+          prev.includes(value) 
+            ? prev.filter(item => item !== value)
+            : [...prev, value]
+        );
         break;
       case "construction_status":
-        setProperty_Construction_status(property_Construction_status === value ? "" : value);
+        setProperty_Construction_status(prev => 
+          prev.includes(value) 
+            ? prev.filter(item => item !== value)
+            : [...prev, value]
+        );
         break;
     }
-  };
-
-  // Update handleApplyFilter to use all current filter values
-  const handleApplyFilter = () => {
-    if (property_Type) {
-      dispatch(setFilter({ key: 'property_Type', value: property_Type }));
-    }
-    
-    if (property_Bedroom) {
-      dispatch(setFilter({ key: 'property_Bedroom', value: property_Bedroom }));
-    }
-    
-    if (property_Construction_status) {
-      dispatch(setFilter({ key: 'property_Construction_status', value: property_Construction_status }));
-    }
-    
-    dispatch(setFilter({ key: 'isLuxury', value: isLuxuryVal }));
-    
-    if (brand_type) {
-      dispatch(setFilter({ key: 'brand_name', value: brand_type }));
-    }
-    
-    if (budgetRange.minPrice !== 1 || budgetRange.maxPrice !== 100) {
-      dispatch(setPriceRange(budgetRange));
-    }
-
-    dispatch(fetchPropertyItems());
-    onClose();
   }
 
-  const handleOnClose = () => {
-    // console.log('Clear filters triggered');
-    dispatch(clearFilters());
-    onClose();
-  }
-
+  // For the handling the Budget Range 
   const handleBudgetMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.min(Number(e.target.value), budgetRange.maxPrice);
     setBudgetRange({ ...budgetRange, minPrice: value });
-    // console.log(`Selected budget range: ${value} Cr - ${budgetRange.maxPrice} Cr`);
-  };
+  }
 
   const handleBudgetMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.max(Number(e.target.value), budgetRange.minPrice);
     setBudgetRange({ ...budgetRange, maxPrice: value });
-    // console.log(`Selected budget range: ${budgetRange.minPrice} Cr - ${value} Cr`);
-  };
+  }
 
+  // For the handline the Brand Type
   const handleBrandTypeChange = (value: string) => {
-    if (brand_type == value) {
-      setBrand_Type("");
-    }
-    else {
-      setBrand_Type(value);
-    }
+    setBrand_Type(prev => 
+      prev.includes(value)
+        ? prev.filter(item => item !== value)
+        : [...prev, value]
+    );
   }
 
   useEffect(() => {
-    if(isLuxury){
-        setIsLuxuryVal(isLuxury);
+    if (isLuxury) {
+      setIsLuxuryVal(isLuxury);
     }
   }, [isLuxury])
-
-  const properties = [{ text: "Flat/Appartment", value: 'FlatApartment' }, { text: "Independent/Builder Floor", value: 'IndependentBuilderFloor' }, { text: "Independent House/Villa", value: 'IndependentHouseVilla' }, { text: "Residential Land", value: 'ResidentialLand' }, { text: "1 RK/ Studio Apartment", value: 'OneRKStudioApartment' }, { text: "Farm House", value: 'FarmHouse' }, { text: "Serviced Apartment", value: 'ServicedApartment' }, { text: "Other", value: 'Other' }];
-
-  const bedrooms = [{ text: "1 RK/1 BHK", value: 'OneRK_OneBHK' }, { text: "2 BHK", value: 'TwoBHK' }, { text: "3 BHK", value: 'ThreeBHK' }, { text: "4 BHK", value: 'FourBHK' }, { text: "4+ BHK", value: 'FourPlusBHK' }];
-
-  const constructionStatus = ['New Launch', 'Ready to move', 'Under Construction'];
-
-  const brandData = ["Sobha", "Prestige", "Godrej", "Brigade", "Total Environmental"];
 
   const dropdownVariants = {
     hidden: {
@@ -207,7 +234,7 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
         height: { duration: 0.2 }
       }
     }
-  };
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -251,14 +278,14 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
             </div>
             <div className="grid grid-cols-3 gap-3 text-sm text-[#8F90A6]">
               {
-                (properties)?.map((currElem: { text: string, value: string }, index) => {
+                (propertyType)?.map((currElem: { text: string, value: string }, index) => {
                   return (
                     <label key={index} htmlFor={`checkbox-${index}`} className="flex items-center space-x-2">
                       <input
                         name={currElem?.text}
                         value={currElem?.value}
                         onChange={(e) => handleCheckBoxChange(e, 'property_Type', currElem?.value || "")}
-                        checked={(property_Type == currElem?.value) ? true : false}
+                        checked={property_Type.includes(currElem?.value)}
                         type="checkbox"
                         className="input_CheckBox"
                         id={`checkbox-${index}`} />
@@ -282,21 +309,21 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
 
             </button>
 
-            <button onClick={() => { if (openSection == "bedroom") { setOpenSection("") } else { setOpenSection("bedroom") } }} className={`flex justifycenter items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(property_Bedroom == "") ? "" : "bg-bgRed text-black bg-opacity-10 border border-bgRed"} ${(openSection == "bedroom" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
+            <button onClick={() => { if (openSection == "bedroom") { setOpenSection("") } else { setOpenSection("bedroom") } }} className={`flex justifycenter items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(property_Bedroom.length === 0) ? "" : "bg-bgRed text-black bg-opacity-10 border border-bgRed"} ${(openSection == "bedroom" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
               Bedroom
               {
                 openSection == "bedroom" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon_1" />
               }
             </button>
 
-            <button onClick={() => { if (openSection == "construction_status") { setOpenSection("") } else { setOpenSection("construction_status") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(property_Construction_status == "") ? "" : "bg-bgRed  text-black bg-opacity-10 text-blackborder border-bgRed"} ${(openSection == "construction_status" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
+            <button onClick={() => { if (openSection == "construction_status") { setOpenSection("") } else { setOpenSection("construction_status") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(property_Construction_status.length === 0) ? "" : "bg-bgRed  text-black bg-opacity-10 text-blackborder border-bgRed"} ${(openSection == "construction_status" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
               Construction Status
               {
                 openSection == "construction_status" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
               }
             </button>
 
-            <button onClick={() => { if (openSection == "brand_type") { setOpenSection("") } else { setOpenSection("brand_type") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(brand_type == "") ? "" : "bg-bgRed bg-opacity-10 text-black border border-bgRed"}  ${(openSection == "brand_type" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
+            <button onClick={() => { if (openSection == "brand_type") { setOpenSection("") } else { setOpenSection("brand_type") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(brand_type.length === 0) ? "" : "bg-bgRed bg-opacity-10 text-black border border-bgRed"}  ${(openSection == "brand_type" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
               Brands
               {
                 openSection == "brand_type" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
@@ -377,15 +404,19 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
                   <button
                     key={index}
                     onClick={() => handleFilterChange('property_Bedroom', currElem?.value, "bedroom")}
-                    className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${property_Bedroom === currElem?.value ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
+                    className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${
+                      property_Bedroom.includes(currElem?.value) 
+                        ? "bg-bgRed bg-opacity-20 text-black border-bgRed" 
+                        : ""
+                    }`}
                   >
-                    {property_Bedroom === currElem?.value ? (
-                      <IoClose 
+                    {property_Bedroom.includes(currElem?.value) ? (
+                      <IoClose
                         onClick={(e) => {
                           e.stopPropagation();
-                          setProperty_Bedroom("");
-                        }} 
-                        className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" 
+                          handleFilterChange('property_Bedroom', currElem?.value, "bedroom");
+                        }}
+                        className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600"
                       />
                     ) : (
                       <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_5.svg" alt="buy_section_img" />
@@ -407,10 +438,10 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
                     <button
                       key={status}
                       onClick={(e) => handleFilterChange('property_Construction_status', status || undefined, "construction_status")}
-                      className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(property_Construction_status == status) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
+                      className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(property_Construction_status.includes(status)) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                     >
                       {
-                        (property_Construction_status == status) ? <IoClose onClick={() => { setProperty_Construction_status("") }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_5.svg" alt="buy_section_icon_5" />
+                        (property_Construction_status.includes(status)) ? <IoClose onClick={() => { setProperty_Construction_status(prev => prev.filter(item => item !== status)) }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_5.svg" alt="buy_section_icon_5" />
 
                       }
                       {status}
@@ -432,10 +463,10 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
                       key={status}
                       value={brand_type}
                       onClick={() => { handleBrandTypeChange(status) }}
-                      className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(brand_type == status) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
+                      className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(brand_type.includes(status)) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                     >
                       {
-                        (brand_type == status) ? <IoClose onClick={() => { setBrand_Type("") }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_5.svg" alt="buy_section_icon_5" />
+                        (brand_type.includes(status)) ? <IoClose onClick={() => { setBrand_Type(prev => prev.filter(item => item !== status)) }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_5.svg" alt="buy_section_icon_5" />
 
                       }
                       {status}

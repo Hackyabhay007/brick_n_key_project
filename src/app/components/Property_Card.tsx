@@ -52,7 +52,7 @@ const Property_Card = ({
 }: PropertyCardProps) => {
     const containerClassName = component === 'brand' 
         ? 'product_card_item flex flex-col justify-start items-start gap-3 w-full'
-        : 'property_data_item flex flex-col justify-start items-start w-full bg-bgBlue/50 cursor-pointer hover:shadow-2xl rounded-[20px] transition-all duration-300 group overflow-hidden';
+        : 'property_data_item flex flex-col justify-start items-start w-full bg-bgBlue/50 cursor-pointer hover:shadow-2xl rounded-[20px] transition-all duration-300 group overflow-hidden cursor-pointer';
 
     const imageClassName = component === 'brand'
         ? "relative w-full h-[240px] overflow-hidden rounded-[20px] flex flex-col items-center justify-center"
@@ -72,13 +72,19 @@ const Property_Card = ({
             onHoverStart={onHoverStart}
             onHoverEnd={onHoverEnd}
         >
-            <motion.div className={imageClassName}>
+            <motion.div className={`${imageClassName} cursor-pointer`}>
                 <motion.img
                     src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images[imageIndex]?.url}`}
-                    className={`w-full h-full object-cover transition-all duration-500 ${
+                    className={`w-full h-full object-cover object-center transition-all duration-500 ${
                         isImageTransitioning ? 'opacity-0' : 'opacity-100'
                     } ${component === 'listing' ? 'group-hover:scale-110' : ''}`}
                     alt={currElem?.property_Name || "Property Image"}
+                    loading="lazy"
+                    style={{
+                        imageRendering: 'crisp-edges',
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden'
+                    }}
                     initial={{ scale: 1.2, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5, delay: index * 0.2 }}

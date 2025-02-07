@@ -8,7 +8,15 @@ import { fetchLuxuryListingItem } from "../../redux/slices/luxuryListingSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import { giveCorrectImage } from '../data';
 
-const Slider = ({ onLocationChange }: { onLocationChange?: (location: string) => void }) => {
+interface SliderProps {
+    images: string[];
+    onLocationChange: (location: string) => void;
+    activeIndex: number;
+    onNext: () => void;
+    onPrev: () => void;
+}
+
+const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, onNext, onPrev }) => {
   const data = useSelector((state: RootState) => state.luxuryListingItems?.data);
   console.log("This is the SLider data", data);
   const dispatch = useDispatch<AppDispatch>();

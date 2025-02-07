@@ -27,7 +27,7 @@ const Overview = ({overViewArray}:{overViewArray: [{id: number, Overview_item_he
         {
           overViewArray?.map((currElem, index) => ( 
             <div key={currElem.id} className="flex items-center gap-3">
-            <Image width={100} height={100} src='/images/detail_overview_img_1.png' alt='detail_overview_img_1' />
+            <Image width={100} height={100} className='w-8 h-auto' src='/images/detail_overview_img_1.png' alt='detail_overview_img_1' />
             <div>
               <p className="text-white text-opacity-50 font-[400] text-[24px] leading-[29.26px]">{currElem?.Overview_item_heading}</p>
               <div className="flex items-center gap-2 font-[500] text-sm leading-[29.26px] text-[#F1EFE7]">

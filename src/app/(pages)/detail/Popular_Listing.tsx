@@ -7,6 +7,7 @@ import { fetchPopular_Listing } from '../../../redux/slices/popularListingSlice'
 import { AppDispatch, RootState } from "../../../redux/store";
 import Property_Card from '@/app/components/Property_Card';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 interface SlideItem {
   id: number;
@@ -20,6 +21,8 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
   const [isImageTransitioning, setIsImageTransitioning] = useState<{ [key: string]: boolean }>({});
+
+  const router = useRouter();
 
   const fetchListings = (propertyType: string) => {
     dispatch(fetchPopular_Listing({ propertyType: propertyType }));
@@ -198,6 +201,7 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
                     setImageIndices(prev => ({ ...prev, [currElem.id]: 0 }));
                     setIsImageTransitioning(prev => ({ ...prev, [currElem.id]: false }));
                   }}
+                  onClick={() => router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`)}
                 />
               </motion.div>
             ))}
