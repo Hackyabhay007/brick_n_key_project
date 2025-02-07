@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react'; 
 
 interface PropertyCardProps {
     currElem: any;
@@ -52,11 +52,11 @@ const Property_Card = ({
 }: PropertyCardProps) => {
     const containerClassName = component === 'brand' 
         ? 'product_card_item flex flex-col justify-start items-start gap-3 w-full'
-        : 'property_data_item flex flex-col justify-start items-start gap-1 cursor-pointer hover:shadow-xl rounded-[20px] transition-all duration-300 group';
+        : 'property_data_item flex flex-col justify-start items-start w-full bg-bgBlue/50 cursor-pointer hover:shadow-2xl rounded-[20px] transition-all duration-300 group overflow-hidden';
 
     const imageClassName = component === 'brand'
         ? "relative w-full h-[240px] overflow-hidden rounded-[20px] flex flex-col items-center justify-center"
-        : "rounded-[20px] max-lg:rounded-[5px] w-full object-cover";
+        : "w-full h-[300px] overflow-hidden"; // Fixed height for listing page
 
     return (
         <motion.div
@@ -75,9 +75,9 @@ const Property_Card = ({
             <motion.div className={imageClassName}>
                 <motion.img
                     src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images[imageIndex]?.url}`}
-                    className={`w-full h-full object-cover transition-opacity duration-500 ${
+                    className={`w-full h-full object-cover transition-all duration-500 ${
                         isImageTransitioning ? 'opacity-0' : 'opacity-100'
-                    }`}
+                    } ${component === 'listing' ? 'group-hover:scale-110' : ''}`}
                     alt={currElem?.property_Name || "Property Image"}
                     initial={{ scale: 1.2, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -85,16 +85,20 @@ const Property_Card = ({
                 />
             </motion.div>
             
-            <div className={`w-full ${component === 'brand' ? 'flex flex-col gap-3 px-1' : 'h-full flex justify-between p-4'}`}>
-                <div className='text-white space-y-2'>
+            <div className={`w-full ${
+                component === 'brand' 
+                    ? 'flex flex-col gap-3 px-1' 
+                    : 'flex flex-col justify-between p-6 space-y-4'
+            }`}>
+                <div className='text-white space-y-3'>
                     <motion.h1
-                        className='font-[700] text-base'
+                        className='font-[700] text-lg tracking-wide'
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 + index * 0.1 }}
                     >
-                        {(currElem?.property_Name?.length > 20) ? 
-                            (currElem?.property_Name.slice(0, 19) + "...") : 
+                        {(currElem?.property_Name?.length > 25) ? 
+                            (currElem?.property_Name.slice(0, 24) + "...") : 
                             currElem?.property_Name}
                     </motion.h1>
                     <motion.p
@@ -108,7 +112,11 @@ const Property_Card = ({
                 </div>
 
                 <motion.div 
-                    className='text-[#8F90A6] space-y-1'
+                    className={`${
+                        component === 'listing' 
+                            ? 'text-gray-300 space-y-2 border-t border-gray-700/50 pt-4' 
+                            : 'text-[#8F90A6] space-y-1'
+                    }`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 + index * 0.1 }}
@@ -116,7 +124,7 @@ const Property_Card = ({
                     {(currElem?.propertyFeature || [])
                         .slice(0, 3)
                         .map((feature: any) => (
-                            <p key={feature.id} className='text-xs flex items-center gap-2'>
+                            <p key={feature.id} className='text-sm flex items-center gap-2'>
                                 • {feature.item}
                             </p>
                     ))}

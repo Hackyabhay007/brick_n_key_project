@@ -56,6 +56,7 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
   // Update useEffect to properly handle filter updates
   useEffect(() => {
     if (activeFilters) {
+        console.log("This is the Active filter data ",activeFilters.property_Type?.toString());
       setProperty_Type(activeFilters.property_Type?.toString() || "");
       setProperty_Bedroom(activeFilters.property_Bedroom?.toString() || "");
       setProperty_Construction_status(activeFilters.property_Construction_status?.toString() || "");
@@ -158,8 +159,9 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
   }
 
   useEffect(() => {
-    console.log("hello from the Buy_Section_Desktop_Dropdown component");
-    setIsLuxuryVal(isLuxury);
+    if(isLuxury){
+        setIsLuxuryVal(isLuxury);
+    }
   }, [isLuxury])
 
   const properties = [{ text: "Flat/Appartment", value: 'FlatApartment' }, { text: "Independent/Builder Floor", value: 'IndependentBuilderFloor' }, { text: "Independent House/Villa", value: 'IndependentHouseVilla' }, { text: "Residential Land", value: 'ResidentialLand' }, { text: "1 RK/ Studio Apartment", value: 'OneRKStudioApartment' }, { text: "Farm House", value: 'FarmHouse' }, { text: "Serviced Apartment", value: 'ServicedApartment' }, { text: "Other", value: 'Other' }];
@@ -226,7 +228,7 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
               {/* Add Luxury Chip */}
               <button
                 onClick={() => { handleLuxuryFilterChange() }}
-                className={`px-4 py-1 rounded-full transition-all duration-300 flex justify-center items-center gap-2 ${(isLuxuryVal) == true
+                className={`px-4 py-1 rounded-full transition-all duration-300 flex justify-center items-center gap-2 ${(isLuxuryVal == true)
                   ? "bg-bgRed bg-opacity-20 border border-bgRed"
                   : "bg-white text-black border border-gray-300"
                   }`}
@@ -255,7 +257,7 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
                       <input
                         name={currElem?.text}
                         value={currElem?.value}
-                        onChange={(e) => handleCheckBoxChange(e, 'property_Type', currElem?.value || undefined)}
+                        onChange={(e) => handleCheckBoxChange(e, 'property_Type', currElem?.value || "")}
                         checked={(property_Type == currElem?.value) ? true : false}
                         type="checkbox"
                         className="input_CheckBox"

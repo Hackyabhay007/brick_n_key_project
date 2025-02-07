@@ -146,37 +146,72 @@ const Page = () => {
                     animate="animate"
                     exit="exit"
                 >
-                    <div className="filter_data_container grid grid-cols-2 max-lg:grid-cols-1 justify-items-center gap-12">
-                        {data?.data?.map((currElem: any, index: number) => (
-                            <Property_Card
-                                key={currElem.id}
-                                currElem={currElem}
-                                index={index}
-                                imageIndex={imageIndices[currElem.id] || 0}
-                                isImageTransitioning={isImageTransitioning[currElem.id]}
-                                component="listing"
-                                onClick={() => router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`)}
-                                onHoverStart={() => {
-                                    if (currElem?.property_Images.length > 1) {
-                                        const interval = setInterval(() => {
-                                            cycleImage(currElem.id, currElem.property_Images.length);
-                                        }, 1000);
-                                        (window as any)[`interval_${currElem.id}`] = interval;
-                                    }
-                                }}
-                                onHoverEnd={() => {
-                                    clearInterval((window as any)[`interval_${currElem.id}`]);
-                                    setImageIndices(prev => ({ ...prev, [currElem.id]: 0 }));
-                                }}
+                    {data && data.data && data.data.length > 0 ? (
+                        <>
+                            <div className="filter_data_container grid grid-cols-2 max-lg:grid-cols-1 justify-items-center gap-12">
+                                {data?.data?.map((currElem: any, index: number) => (
+                                    <Property_Card
+                                        key={currElem.id}
+                                        currElem={currElem}
+                                        index={index}
+                                        imageIndex={imageIndices[currElem.id] || 0}
+                                        isImageTransitioning={isImageTransitioning[currElem.id]}
+                                        component="listing"
+                                        onClick={() => router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`)}
+                                        onHoverStart={() => {
+                                            if (currElem?.property_Images.length > 1) {
+                                                const interval = setInterval(() => {
+                                                    cycleImage(currElem.id, currElem.property_Images.length);
+                                                }, 1000);
+                                                (window as any)[`interval_${currElem.id}`] = interval;
+                                            }
+                                        }}
+                                        onHoverEnd={() => {
+                                            clearInterval((window as any)[`interval_${currElem.id}`]);
+                                            setImageIndices(prev => ({ ...prev, [currElem.id]: 0 }));
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                            <Pagination
+                                currentPage={currentPage}
+                                totalItems={data?.meta?.pagination?.total || 0}
+                                itemsPerPage={itemsPerPage}
+                                onPageChange={handlePageChange}
                             />
-                        ))}
-                    </div>
-                    <Pagination
-                        currentPage={currentPage}
-                        totalItems={data?.meta?.pagination?.total || 0}
-                        itemsPerPage={itemsPerPage}
-                        onPageChange={handlePageChange}
-                    />
+                        </>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <motion.h2 
+                                className="text-2xl font-semibold text-white mb-4"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                            >
+                                No properties found for your search criteria
+                            </motion.h2>
+                            <motion.p 
+                                className="text-gray-400 mb-8 max-w-md"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                            >
+                                Try adjusting your filters or exploring our other available properties
+                            </motion.p>
+                            <motion.button
+                                className="bg-bgRed text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors"
+                                onClick={() => {
+                                    dispatch(clearFilters());
+                                    dispatch(fetchPropertyItems());
+                                }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                            >
+                                View All Properties
+                            </motion.button>
+                        </div>
+                    )}
                 </motion.div>
             </div>
         </motion.div>

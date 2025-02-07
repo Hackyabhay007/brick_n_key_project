@@ -26,6 +26,7 @@ export interface PropertyFilters {
   minPrice?: number;
   maxPrice?: number;
   brand_name?: string;
+  brand_type?: string;  // Add this line
 }
 
 export interface PopularSectionSlice {
@@ -53,10 +54,11 @@ const initialState: PopularSectionSlice = {
 const buildApiUrl = (filters: PropertyFilters): string => {
   const baseUrl = "http://localhost:1337/api/detail-pages";
   const page = filters.page || 1;
-  const pageSize = filters.pageSize || 5;
+  const pageSize = filters.pageSize || 5; // Default to 5 items per page
   const start = (page - 1) * pageSize;
   
-  let url = `${baseUrl}?populate=*&pagination[start]=${start}&pagination[limit]==${pageSize}`;
+  // Updated pagination parameters
+  let url = `${baseUrl}?populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
   
   const filterParams = [];
   
@@ -94,6 +96,10 @@ const buildApiUrl = (filters: PropertyFilters): string => {
     );
     
     filterParams.push(...locationFilters);
+  }
+
+  if (filters.brand_type) {
+    filterParams.push(`filters[brand][brand_type][$eq]=${encodeURIComponent(filters.brand_type)}`);
   }
 
   if (filterParams.length > 0) {

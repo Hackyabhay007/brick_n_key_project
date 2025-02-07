@@ -359,7 +359,7 @@ const Brand = () => {
                                             if (currElem?.property_Images.length > 1) {
                                                 const interval = setInterval(() => {
                                                     cycleImage(currElem.id, currElem.property_Images.length);
-                                                }, 300);
+                                                }, 800);
                                                 (window as any)[`interval_${currElem.id}`] = interval;
                                             }
                                         }}
