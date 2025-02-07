@@ -1,26 +1,44 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
-interface PropertyFilters {
-  property_Construction_status?: string | undefined;
-  property_Bedroom?: string | undefined;
-  property_price?: number | undefined;
-  property_Type?: string | undefined;
-  isLuxury?: boolean | undefined;
-  property_Location?: string | undefined;
-  page?: number | undefined;
-  pageSize?: number | undefined;
-  minPrice?: number | undefined;
-  maxPrice?: number | undefined;
+// Define API response type
+export interface ApiResponse {
+  data: Array<any>;
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
 }
 
-interface PopularSectionSlice {
-  data: any;
-  newItems: any;
+export interface PropertyFilters {
+  property_Construction_status?: string;
+  property_Bedroom?: string;
+  property_price?: number;
+  property_Type?: string;
+  isLuxury?: boolean;
+  property_Location?: string;
+  page?: number;
+  pageSize?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  brand_name?: string;
+}
+
+export interface PopularSectionSlice {
+  data: ApiResponse | null;
+  newItems: ApiResponse | null;
   loading: boolean;
   newItemsLoading: boolean;
   error: string | null;
-  activeFilters: { [key in keyof PropertyFilters]: string | number | undefined };
+  activeFilters: Partial<PropertyFilters>;
+}
+
+export interface RootState {
+  propertyItems: PopularSectionSlice;
 }
 
 const initialState: PopularSectionSlice = {
@@ -38,7 +56,7 @@ const buildApiUrl = (filters: PropertyFilters): string => {
   const pageSize = filters.pageSize || 5;
   const start = (page - 1) * pageSize;
   
-  let url = `${baseUrl}?populate=*&pagination[start]=${start}&pagination[limit]=${pageSize}`;
+  let url = `${baseUrl}?populate=*&pagination[start]=${start}&pagination[limit]==${pageSize}`;
   
   const filterParams = [];
   
@@ -88,9 +106,9 @@ const buildApiUrl = (filters: PropertyFilters): string => {
 
 // New thunk for fetching properties by price range
 export const fetchPropertiesByPriceRange = createAsyncThunk<
-  any,
+  ApiResponse,
   { minPrice: number; maxPrice: number },
-  { state: { propertyItems: PopularSectionSlice }, rejectValue: string }
+  { state: RootState, rejectValue: string }
 >(
   "propertyItems/fetchPropertiesByPriceRange",
   async ({ minPrice, maxPrice }, { dispatch, rejectWithValue }) => {
@@ -115,9 +133,9 @@ export const fetchPropertiesByPriceRange = createAsyncThunk<
 
 // New function to fetch newly added items
 export const fetchNewPropertyItems = createAsyncThunk<
-  any,
+  ApiResponse,
   void,
-  { state: { propertyItems: PopularSectionSlice }, rejectValue: string }
+  { state: RootState, rejectValue: string }
 >(
   "propertyItems/fetchNewPropertyItems",
   async (_, { rejectWithValue }) => {
@@ -140,9 +158,9 @@ export const fetchNewPropertyItems = createAsyncThunk<
 );
 
 export const fetchPropertyItems = createAsyncThunk<
-  any,
+  ApiResponse,
   void,
-  { state: { propertyItems: PopularSectionSlice }, rejectValue: string }
+  { state: RootState, rejectValue: string }
 >(
   "propertyItems/fetchPropertyItems",
   async (_, { getState, rejectWithValue }) => {
@@ -168,21 +186,20 @@ const propertyItemsSlice = createSlice({
   name: "propertyItems",
   initialState,
   reducers: {
-    setFilter: (state, action: PayloadAction<{ key: keyof PropertyFilters; value: string | boolean | number | undefined }>) => {
+    setFilter: (state, action: PayloadAction<{ 
+      key: keyof PropertyFilters; 
+      value: string | boolean | number | undefined 
+    }>) => {
       const { key, value } = action.payload;
-      console.log('Setting filter:', key, value);
-      
-      const newFilters = { ...state.activeFilters };
-      
       if (value === undefined || value === '') {
-        delete newFilters[key];
+        const { [key]: _, ...rest } = state.activeFilters;
+        state.activeFilters = rest;
       } else {
-        newFilters[key] = value;
+        state.activeFilters = {
+          ...state.activeFilters,
+          [key]: value
+        };
       }
-      
-      state.activeFilters = newFilters;
-      
-      console.log('Updated filters:', state.activeFilters);
     },
     // New action for setting price range
     setPriceRange: (state, action: PayloadAction<{ minPrice: number; maxPrice: number }>) => {
@@ -240,7 +257,7 @@ const propertyItemsSlice = createSlice({
   },
 });
 
-export const selectActiveFilters = (state: { propertyItems: PopularSectionSlice }) => 
+export const selectActiveFilters = (state: RootState) => 
   state.propertyItems.activeFilters;
 
 export const { setFilter, clearFilters, setPriceRange } = propertyItemsSlice.actions;
