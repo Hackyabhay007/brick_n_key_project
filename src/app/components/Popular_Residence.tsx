@@ -193,7 +193,7 @@ const Popular_Residence = () => {
                                             className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full object-cover rounded-[10px]"
                                         />
                                         <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-[10px]">
-                                            <span className="py-1.5 px-2 text-sm border-2 border-white text-white rounded-full">View Detail</span>
+                                            <span className="py-1.5 px-2 text-sm border-2 border-white text-white rounded-full">View more</span>
                                         </div>
                                     </div>
                                     <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-xs">{item.property_Type}</h3>

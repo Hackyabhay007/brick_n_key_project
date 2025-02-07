@@ -25,9 +25,18 @@ html {
   scroll-behavior: smooth;
 }
 
-
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.input_CheckBox {
+    @apply h-4 w-4 rounded border-gray-300 text-bgRed focus:ring-bgRed bg-opacity-20;
+    accent-color: #EF233C;
+}
+
+.input_CheckBox:checked {
+    background-color: #ed371c; /* This is the bgRed color with 20% opacity */
+    border-color: #EF233C;
 }

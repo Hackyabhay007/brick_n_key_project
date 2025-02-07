@@ -8,6 +8,8 @@ interface PropertyCardProps {
     isImageTransitioning: boolean;
     onHoverStart: () => void;
     onHoverEnd: () => void;
+    component?: 'brand' | 'listing';
+    onClick?: () => void;
 }
 
 const cardVariants = {
@@ -38,18 +40,27 @@ const cardVariants = {
     }
 };
 
-export default function Property_Card({
+const Property_Card = ({
     currElem,
     index,
     imageIndex,
     isImageTransitioning,
     onHoverStart,
-    onHoverEnd
-}: PropertyCardProps) {
+    onHoverEnd,
+    component = 'brand',
+    onClick
+}: PropertyCardProps) => {
+    const containerClassName = component === 'brand' 
+        ? 'product_card_item flex flex-col justify-start items-start gap-3 w-full'
+        : 'property_data_item flex flex-col justify-start items-start gap-1 cursor-pointer hover:shadow-xl rounded-[20px] transition-all duration-300 group';
+
+    const imageClassName = component === 'brand'
+        ? "relative w-full h-[240px] overflow-hidden rounded-[20px] flex flex-col items-center justify-center"
+        : "rounded-[20px] max-lg:rounded-[5px] w-full object-cover";
+
     return (
         <motion.div
-            key={currElem?.id}
-            className='product_card_item flex flex-col justify-start items-start gap-1'
+            className={containerClassName}
             variants={cardVariants}
             initial="hidden"
             animate="visible"
@@ -57,29 +68,27 @@ export default function Property_Card({
             transition={{
                 delay: index * 0.15,
             }}
+            onClick={onClick}
             onHoverStart={onHoverStart}
             onHoverEnd={onHoverEnd}
         >
-            <motion.div
-                className="relative w-full overflow-hidden rounded-[20px] flex flex-col items-center justify-center"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-            >
+            <motion.div className={imageClassName}>
                 <motion.img
                     src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem.property_Images[imageIndex]?.url}`}
-                    className={`w-full h-full object-cover bg-center transition-opacity duration-500 ${
+                    className={`w-full h-full object-cover transition-opacity duration-500 ${
                         isImageTransitioning ? 'opacity-0' : 'opacity-100'
                     }`}
-                    alt=""
+                    alt={currElem?.property_Name || "Property Image"}
                     initial={{ scale: 1.2, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5, delay: index * 0.2 }}
                 />
             </motion.div>
-            <div className='w-full flex justify-between'>
-                <div className='text-white'>
+            
+            <div className={`w-full ${component === 'brand' ? 'flex flex-col gap-3 px-1' : 'h-full flex justify-between p-4'}`}>
+                <div className='text-white space-y-2'>
                     <motion.h1
-                        className='font-[700] text-sm'
+                        className='font-[700] text-base'
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 + index * 0.1 }}
@@ -89,20 +98,32 @@ export default function Property_Card({
                             currElem?.property_Name}
                     </motion.h1>
                     <motion.p
-                        className='flex justify-start items-center gap-2 text-sm'
+                        className='flex justify-start items-center gap-2 text-sm text-gray-300'
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 + index * 0.1 }}
                     >
-                        <MapPin />{currElem.property_Location}
+                        <MapPin className="w-4 h-4" />{currElem.property_Location}
                     </motion.p>
                 </div>
-                <div className='text-[#8F90A6] text-[16px]'>
-                    {(currElem?.propertyFeature)?.map((feature: any) => (
-                        <p key={feature.id} className='text-xs'>{feature.item}</p>
+
+                <motion.div 
+                    className='text-[#8F90A6] space-y-1'
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                >
+                    {(currElem?.propertyFeature || [])
+                        .slice(0, 3)
+                        .map((feature: any) => (
+                            <p key={feature.id} className='text-xs flex items-center gap-2'>
+                                • {feature.item}
+                            </p>
                     ))}
-                </div>
+                </motion.div>
             </div>
         </motion.div>
     );
-}
+};
+
+export default Property_Card;

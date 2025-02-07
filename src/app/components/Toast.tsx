@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
+import { CheckCircle, XCircle, X } from 'lucide-react';
 
 interface ToastProps {
     message: string;
@@ -9,11 +10,28 @@ interface ToastProps {
 }
 
 const Toast = ({ message, type, isVisible, onClose }: ToastProps) => {
-    const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-    
+    const toastConfig = {
+        success: {
+            icon: <CheckCircle className="w-5 h-5" />,
+            bgColor: 'bg-emerald-50',
+            borderColor: 'border-emerald-500',
+            textColor: 'text-emerald-800',
+            iconColor: 'text-emerald-500'
+        },
+        error: {
+            icon: <XCircle className="w-5 h-5" />,
+            bgColor: 'bg-red-50',
+            borderColor: 'border-red-500',
+            textColor: 'text-red-800',
+            iconColor: 'text-red-500'
+        }
+    };
+
+    const config = toastConfig[type];
+
     useEffect(() => {
         if (isVisible) {
-            const timer = setTimeout(onClose, 5000);
+            const timer = setTimeout(onClose, 3000);
             return () => clearTimeout(timer);
         }
     }, [isVisible, onClose]);
@@ -22,16 +40,29 @@ const Toast = ({ message, type, isVisible, onClose }: ToastProps) => {
         <AnimatePresence>
             {isVisible && (
                 <motion.div
-                    initial={{ opacity: 0, y: -50, x: '-50%' }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -50 }}
-                    className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 
-                        ${bgColor} text-white px-6 py-3 w-fit rounded-md shadow-lg 
-                        flex items-center text-xs`}
+                    initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className={`fixed top-4 left-[50%] z-50
+                        ${config.bgColor} ${config.textColor} 
+                        px-4 py-3 rounded-lg shadow-lg border
+                        ${config.borderColor}
+                        flex items-center justify-between gap-3 
+                        w-auto min-w-[320px] max-w-[90vw]
+                        mx-auto`}
                 >
-                    <div className="flex items-center gap-2">
-                        <p className="text-sm">{message}</p>
-                    </div>
+                    <p className="flex-1 text-sm font-medium text-center">
+                        {message}
+                    </p>
+
+                    <button
+                        onClick={onClose}
+                        className={`${config.textColor} opacity-70 hover:opacity-100 
+                            transition-opacity duration-200 ml-2`}
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
                 </motion.div>
             )}
         </AnimatePresence>

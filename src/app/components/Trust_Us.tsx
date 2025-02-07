@@ -240,34 +240,61 @@ export default function Trust_Us() {
                                         key={currElem?.id}
                                         className={`
                                             transition-all duration-500 
-                                            lg:min-w-[31.333%] 
+                                            // lg:min-w-[31.333%] 
                                             ${isVisible ? 'opacity-100' : 'opacity-0'}
                                             ${isCenterSlide ? 
-                                                'max-lg:min-w-[60%] max-lg:z-20' : 
+                                                'max-lg:min-w-[60%] max-lg:z-20 max-lg:scale-110' : 
                                                 'max-lg:min-w-[27.5%] max-lg:opacity-75'
                                             }
                                         `}
                                     >
                                         <div className={`
                                             mx-2 rounded-lg overflow-hidden
+                                            ${isCenterSlide ? 'max-lg:aspect-[3/4]' : ''}
                                         `}>
-                                            <div className="relative w-full">
+                                            <div className="relative w-full h-full flex justify-center items-center bg-center">
                                                 <video
-                                                    className="w-full h-[240px] sm:h-[350px] lg:h-[400px] 2xl:h-[500px] object-cover"
+                                                    className={`
+                                                        w-full object-cover
+                                                        ${isCenterSlide ? 
+                                                            'max-lg:h-full  lg:h-[400px] 2xl:h-[500px]' : 
+                                                            'h-[240px] sm:h-[350px] lg:h-[400px] 2xl:h-[500px]'
+                                                        }
+                                                    `}
                                                     src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.video}`}
                                                     ref={el => { videoRefs.current[currElem?.id] = el; }}
                                                 ></video>
-                                                <div className="video_info absolute bottom-2 md:bottom-5 w-full flex justify-between items-center text-white px-2 md:px-3">
+                                                <div className={`
+                                                    video_info absolute bottom-2 md:bottom-5 w-full 
+                                                    flex justify-between items-center text-white px-2 md:px-3
+                                                    ${isCenterSlide ? 'max-lg:bottom-8' : ''}
+                                                `}>
                                                     <div className='h-full flex flex-col justify-center items-start'>
-                                                        <h3 className="text-sm md:text-base">{currElem?.title}</h3>
-                                                        <p className='text-xs'>{currElem?.designation}</p>
+                                                        <h3 className={`
+                                                            text-sm md:text-base
+                                                            ${isCenterSlide ? 'max-lg:text-lg' : ''}
+                                                        `}>
+                                                            {currElem?.title}
+                                                        </h3>
+                                                        <p className={`
+                                                            text-xs
+                                                            ${isCenterSlide ? 'max-lg:text-sm' : ''}
+                                                        `}>
+                                                            {currElem?.designation}
+                                                        </p>
                                                     </div>
                                                     <Image
                                                         width={46}
                                                         height={46}
                                                         src={playingVideo === currElem?.id ?  '/images/pause_btn.png' : '/images/play_btn.png'}
                                                         alt="testimonial img"
-                                                        className={`cursor-pointer w-8 h-8 md:w-12 md:h-12 ${isCenterSlide ? "max-lg:absolute left-1/2 bottom-0":""}`}
+                                                        className={`
+                                                            cursor-pointer w-8 h-8 md:w-12 md:h-12
+                                                            ${isCenterSlide ? 
+                                                                'max-lg:w-14 max-lg:h-14 max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2 max-lg:bottom-16' : 
+                                                                ''
+                                                            }
+                                                        `}
                                                         onClick={() => handleVideoClick(currElem?.id)}
                                                     />
                                                 </div>

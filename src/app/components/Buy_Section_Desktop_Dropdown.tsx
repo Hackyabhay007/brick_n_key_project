@@ -49,7 +49,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
     }
 
     const handleFilterChange = (key: keyof Buy_Section_Desktop_Dropdown, value: string | number | undefined, section: string) => {
-        console.log(key, value);
+        // console.log(key, value);
         if (section == "bedroom") {
             if (property_Bedroom == value) setProperty_Bedroom("");
             else setProperty_Bedroom(value as string);
@@ -64,8 +64,8 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
     };
 
     const handleApplyFilter = () => {
-        console.log('Apply filters triggered');
-        console.log(property_Type, property_Bedroom, property_Construction_status, isLuxury);
+        // console.log('Apply filters triggered');
+        // console.log(property_Type, property_Bedroom, property_Construction_status, isLuxury);
         dispatch(setFilter({ key: 'property_Type', value: property_Type }));
         dispatch(setFilter({ key: 'property_Bedroom', value: property_Bedroom }));
         dispatch(setFilter({ key: 'property_Construction_status', value: property_Construction_status }));
@@ -76,7 +76,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
     }
 
     const handleOnClose = () => {
-        console.log('Clear filters triggered');
+        // console.log('Clear filters triggered');
         dispatch(clearFilters());
         onClose();
     }
@@ -94,16 +94,17 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
     const handleBudgetMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Math.min(Number(e.target.value), budgetRange.maxPrice);
         setBudgetRange({ ...budgetRange, minPrice: value });
-        console.log(`Selected budget range: ${value} Cr - ${budgetRange.maxPrice} Cr`);
+        // console.log(`Selected budget range: ${value} Cr - ${budgetRange.maxPrice} Cr`);
     };
 
     const handleBudgetMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Math.max(Number(e.target.value), budgetRange.minPrice);
         setBudgetRange({ ...budgetRange, maxPrice: value });
-        console.log(`Selected budget range: ${budgetRange.minPrice} Cr - ${value} Cr`);
+        // console.log(`Selected budget range: ${budgetRange.minPrice} Cr - ${value} Cr`);
     };
 
     useEffect(() => {
+        console.log("hello from the Buy_Section_Desktop_Dropdown component");
         setIsLuxuryVal(isLuxury);
     }, [isLuxury])
 
@@ -212,7 +213,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
                                                 onChange={(e) => handleCheckBoxChange(e, 'property_Type', currElem?.value || undefined)}
                                                 checked={(property_Type == currElem?.value) ? true : false}
                                                 type="checkbox"
-                                                className="form-checkbox checked:bg-red-600 text-red-600 checked:bg-opacity-20 border-gray-300 rounded"
+                                                className="input_CheckBox"
                                                 id={`checkbox-${index}`} />
                                             <span>{currElem?.text}</span>
                                         </label>
@@ -229,7 +230,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
                         <button onClick={() => { if (openSection == "budget") { setOpenSection("") } else { setOpenSection("budget") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(openSection == "budget" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
                             Budget
                             {
-                                openSection == "budget" ? <FaChevronUp className='text-lg' /> : <Image width={100} height={100} src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
+                                openSection == "budget" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100}className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
                             }
 
                         </button>
@@ -237,21 +238,21 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
                         <button onClick={() => { if (openSection == "bedroom") { setOpenSection("") } else { setOpenSection("bedroom") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(openSection == "bedroom" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
                             Bedroom
                             {
-                                openSection == "bedroom" ? <FaChevronUp className='text-lg' /> : <Image width={100} height={100} src="/images/buy_section_icon_1.svg" alt="buy_section_icon_1" />
+                                openSection == "bedroom" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100}className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon_1" />
                             }
                         </button>
 
                         <button onClick={() => { if (openSection == "construction_status") { setOpenSection("") } else { setOpenSection("construction_status") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(openSection == "construction_status" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
                             Construction Status
                             {
-                                openSection == "construction_status" ? <FaChevronUp className='text-lg' /> : <Image width={100} height={100} src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
+                                openSection == "construction_status" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100}className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
                             }
                         </button>
 
                         <button onClick={() => { if (openSection == "brand_type") { setOpenSection("") } else { setOpenSection("brand_type") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(openSection == "brand_type" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
                             Brands
                             {
-                                openSection == "brand_type" ? <FaChevronUp className='text-lg' /> : <Image width={100} height={100} src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
+                                openSection == "brand_type" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
                             }
                         </button>
                     </div>
@@ -336,7 +337,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
                                             className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(property_Bedroom == currElem?.value) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                                         >
                                             {
-                                                (property_Bedroom == currElem?.value) ? <IoClose onClick={() => { setProperty_Bedroom("") }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} src="/images/buy_section_icon_5.svg" alt="buy_section_img" />
+                                                (property_Bedroom == currElem?.value) ? <IoClose onClick={() => { setProperty_Bedroom("") }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_5.svg" alt="buy_section_img" />
                                             }
                                             {currElem?.text}
                                         </button>
@@ -360,7 +361,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
                                             className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(property_Construction_status == status) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                                         >
                                             {
-                                                (property_Construction_status == status) ? <IoClose onClick={() => { setProperty_Construction_status("") }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} src="/images/buy_section_icon_5.svg" alt="buy_section_icon_5" />
+                                                (property_Construction_status == status) ? <IoClose onClick={() => { setProperty_Construction_status("") }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_5.svg" alt="buy_section_icon_5" />
 
                                             }
                                             {status}
@@ -385,7 +386,7 @@ const Buy_Section_Desktop_Dropdown = ({ isOpen, onClose, isLuxury }: { isOpen: b
                                             className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(property_Construction_status == status) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                                         >
                                             {
-                                                (property_Construction_status == status) ? <IoClose onClick={() => { setProperty_Construction_status("") }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} src="/images/buy_section_icon_5.svg" alt="buy_section_icon_5" />
+                                                (property_Construction_status == status) ? <IoClose onClick={() => { setProperty_Construction_status("") }} className="text-[#8F90A6] text-xl cursor-pointer hover:text-red-600" /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_5.svg" alt="buy_section_icon_5" />
 
                                             }
                                             {status}

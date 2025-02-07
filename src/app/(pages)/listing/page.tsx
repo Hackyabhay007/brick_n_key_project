@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import Loader from '../../components/Loader';
 import PropertySkeleton from '../../components/PropertySkeleton';
+import Property_Card from '@/app/components/Property_Card';
 
 const Page = () => {
     const searchParams = useSearchParams();
@@ -25,6 +26,7 @@ const Page = () => {
     const [luxury, setLuxury] = useState(false);
     const itemsPerPage = 5;
     const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
+    const [isImageTransitioning, setIsImageTransitioning] = useState<{ [key: string]: boolean }>({});
 
     const data = useSelector((state: RootState) => state.propertyItems?.data);
     const activeFilters = useSelector((state: RootState) => state.propertyItems?.activeFilters);
@@ -146,14 +148,13 @@ const Page = () => {
                 >
                     <div className="filter_data_container grid grid-cols-2 max-lg:grid-cols-1 justify-items-center gap-12">
                         {data?.data?.map((currElem: any, index: number) => (
-                            <motion.div
-                                key={index}
-                                variants={fadeInUp}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                whileHover={{ scale: 1.02 }}
-                                transition={{ duration: 0.2 }}
+                            <Property_Card
+                                key={currElem.id}
+                                currElem={currElem}
+                                index={index}
+                                imageIndex={imageIndices[currElem.id] || 0}
+                                isImageTransitioning={isImageTransitioning[currElem.id]}
+                                component="listing"
                                 onClick={() => router.push(`/detail?id=${encodeURIComponent(currElem?.id)}`)}
                                 onHoverStart={() => {
                                     if (currElem?.property_Images.length > 1) {
@@ -167,53 +168,7 @@ const Page = () => {
                                     clearInterval((window as any)[`interval_${currElem.id}`]);
                                     setImageIndices(prev => ({ ...prev, [currElem.id]: 0 }));
                                 }}
-                                className='flex flex-col justify-start items-start gap-1 cursor-pointer hover:shadow-xl rounded-[20px] transition-all duration-300 group'
-                            >
-                                <motion.img
-                                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.property_Images[imageIndices[currElem.id] || 0]?.url}`}
-                                    className='rounded-[20px] max-lg:rounded-[5px] w-full object-cover'
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.5 }}
-                                    alt=""
-                                />
-                                <div className='w-full h-full flex justify-between p-4'>
-                                    <div className='text-white'>
-                                        <motion.h1
-                                            className='font-[700] text-[28px]'
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.2 }}
-                                        >
-                                            {
-                                                (currElem?.property_Name.length > 21) ?
-                                                    currElem?.property_Name.slice(0, 20) + '...'
-                                                    : currElem?.property_Name[0].toUpperCase() + currElem?.property_Name.slice(1)
-                                            }
-                                        </motion.h1>
-                                        <motion.p
-                                            className='flex justify-start items-center gap-3 text-[14px]'
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: 0.3 }}
-                                        >
-                                            <MapPin />{currElem?.property_Location}
-                                        </motion.p>
-                                    </div>
-                                    <div className='text-[#8F90A6] text-[16px]'>
-                                        {currElem?.propertyFeature.map((feature: any, idx: number) => (
-                                            <motion.p
-                                                key={`propertyFeature${idx}`}
-                                                initial={{ opacity: 0, y: 5 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: 0.4 + (idx * 0.1) }}
-                                            >
-                                                {feature?.item}
-                                            </motion.p>
-                                        ))}
-                                    </div>
-                                </div>
-                            </motion.div>
+                            />
                         ))}
                     </div>
                     <Pagination

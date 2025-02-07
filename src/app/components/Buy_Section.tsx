@@ -21,7 +21,7 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
   const dispatch = useDispatch();
   const router = useRouter();
 
-  console.log(component)
+  // console.log(component)
 
   const handleInputSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +35,8 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
   };
 
   const handleAllResidentialClick = () => {
-    console.log("All Residential Click");
-    console.log("Component: ", component);
+    // console.log("All Residential Click");
+    // console.log("Component: ", component);
     if(component === "herosection") {
       router.push('/listing');
     }
