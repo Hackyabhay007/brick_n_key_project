@@ -30,7 +30,10 @@ export const subscribeToNewsletter = createAsyncThunk(
       });
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Subscription failed');
+      // return rejectWithValue(error?.response?.data || 'Subscription failed');
+      return rejectWithValue(
+        error.response?.data?.error?.details?.errors[0].message || "Subscription failed"
+      );
     }
   }
 );

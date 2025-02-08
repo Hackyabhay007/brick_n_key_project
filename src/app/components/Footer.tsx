@@ -35,6 +35,8 @@ export default function Footer() {
     const { loading, success, error } = useSelector((state: RootState) => state?.subscribeSection);
 
 
+    console.log("This is the error of the Footer section", error);
+
     const [toastConfig, setToastConfig] = useState({
         isVisible: false,
         message: '',
@@ -52,10 +54,10 @@ export default function Footer() {
             setTimeout(() => dispatch(resetSubscribeState()), 3000);
         }
         if (error) {
-            console.log(error)
+            console.log("This is the error from the Footer component", error)
             setToastConfig({
                 isVisible: true,
-                message: error?.error?.message || 'An error occurred. Please try again later.',
+                message: error || 'An error occurred. Please try again later.',
                 type: 'error'
             });
             setTimeout(() => dispatch(resetSubscribeState()), 3000);
@@ -64,8 +66,6 @@ export default function Footer() {
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(email);
-        console.log(error)
         if (!email) {
             setToastConfig({
                 isVisible: true,
