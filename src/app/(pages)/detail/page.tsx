@@ -16,7 +16,7 @@ import Image from "next/image";
 import { giveCorrectImage } from "@/app/data";
 import { ImSpinner9 } from "react-icons/im";
 
-export default function page() {
+const DetailPage = () => {
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(true);
     const [images, setImages] = useState([]);
@@ -52,11 +52,13 @@ export default function page() {
 
         const image_Data = data?.property_Images.map((currElem: { url: string, id: number }) => currElem?.url);
         setImages(image_Data);
+        // Reset currentImageIndex when images change
+        setCurrentImageIndex(0);
     }, [data]);
 
-    // Add auto-sliding effect
+    // Modify auto-sliding effect to only work when there are multiple images
     useEffect(() => {
-        if (images?.length > 0) {
+        if (images?.length > 1) {
             const timer = setInterval(() => {
                 setIsTransitioning(true);
                 setTimeout(() => {
@@ -114,7 +116,7 @@ export default function page() {
                                 <div className="simple-loader"></div>
                             </div>
                         )}
-                        
+
                         {/* Modern Loader */}
                         {imageLoading && (
                             <div className="absolute inset-0 flex items-center justify-center bg-gray-100/50 backdrop-blur-sm rounded-xl">
@@ -123,55 +125,56 @@ export default function page() {
                         )}
 
                         <Image
-                            width={100}
-                            height={100}
+                            width={600}
+                            height={400}
                             src={giveCorrectImage(images[currentImageIndex])}
                             alt={`Carousel image ${currentImageIndex + 1}`}
-                            onLoad={handleImageLoad}
-                            className={`w-full h-full object-container transition-opacity duration-500 rounded-xl ${isTransitioning ? 'opacity-0' : 'opacity-100'
-                                } ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+                            onLoad={() => handleImageLoad()} // Ensuring proper function execution
+                            className={`w-full h-full object-cover transition-opacity duration-500 rounded-xl 
+    ${isTransitioning || imageLoading ? 'opacity-0' : 'opacity-100'}`}
                         />
 
                         <div className="feature_container absolute top-2 left-0 w-[150px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
                             Featured
                         </div>
 
-
-                        {/* Add Navigation Buttons */}
-                        <button
-                            onClick={handlePrevClick}
-                            className="absolute -left-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
-                            aria-label="Previous image"
-                        >
-                            <IoIosArrowBack size={24} />
-                        </button>
-                        <button
-                            onClick={handleNextClick}
-                            className="absolute -right-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
-                            aria-label="Next image"
-                        >
-                            <IoIosArrowForward size={24} />
-                        </button>
-
+                        {/* Show navigation buttons only when there are multiple images */}
+                        {images?.length > 1 && (
+                            <>
+                                <button
+                                    onClick={handlePrevClick}
+                                    className="absolute -left-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
+                                    aria-label="Previous image"
+                                >
+                                    <IoIosArrowBack size={24} />
+                                </button>
+                                <button
+                                    onClick={handleNextClick}
+                                    className="absolute -right-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
+                                    aria-label="Next image"
+                                >
+                                    <IoIosArrowForward size={24} />
+                                </button>
+                            </>
+                        )}
                     </div>
 
-
-
-
-                    {/* Dot Navigation */}
-                    <div className="dot_navigation absolute lg:bottom-1/3 max-lg:bottom-1/3 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                        {(images).map((_, index: number) => (
-                            <button
-                                key={index}
-                                onClick={() => handleDotClick(index)}
-                                className={`w-3 h-3 rounded-full ${currentImageIndex === index
-                                    ? 'bg-[#ED371C]'
-                                    : 'bg-gray-300'
+                    {/* Show dot navigation only when there are multiple images */}
+                    {images?.length > 1 && (
+                        <div className="dot_navigation absolute lg:bottom-1/3 max-lg:bottom-1/3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                            {images.map((_, index: number) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleDotClick(index)}
+                                    className={`w-3 h-3 rounded-full ${
+                                        currentImageIndex === index
+                                            ? 'bg-[#ED371C]'
+                                            : 'bg-gray-300'
                                     }`}
-                            />
-                        ))}
-                    </div>
-
+                                />
+                            ))}
+                        </div>
+                    )}
 
                     <div className="estimated_EMI_bar transition-all duration-500 ease-in-out relative w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue -mt-32 group-hover:-mt-20 max-lg:-mt-24 max-lg:group-hover:-mt-16 z-20 py-6 text-white flex justify-center max-lg:justify-between items-center px-8 rounded-t-[40px] rounded-b-[10px] gap-6 max-md:gap-4">
                         <div className="flex flex-col items-start justify-center gap-2">
@@ -224,3 +227,5 @@ export default function page() {
         </>
     )
 }
+
+export default DetailPage;

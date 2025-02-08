@@ -1,61 +1,109 @@
 "use client"
 
-
 import ContactForm from '@/app/components/ContactForm';
 import React from 'react';
+import { Mail, Phone, Headphones, MessageSquare, Newspaper } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { contactPageData } from '@/app/data';
 
-
-const Contact = () => {
+export default function Contact(){
     let listing_Id = undefined;
+
+    // Map icon names to actual components
+    const iconComponents: { [key: string]: React.ComponentType } = {
+        Mail,
+        Phone,
+        HeadphonesIcon: Headphones, // Fixed incorrect icon name
+        MessageSquare,
+        Newspaper
+    };
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: { 
+            opacity: 1,
+            transition: { staggerChildren: 0.1 }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { 
+            opacity: 1, 
+            y: 0,
+            transition: { duration: 0.5 }
+        }
+    };
+
     return (
-        <div className="w-full bg-bgColor py-16 max-md:pt-2">
-            <div className="w-[90%] 2xl:w-[80%] max-sm:w-[95%] mx-auto grid grid-cols-[3fr_5fr] gap-20 max-md:gap-12 max-lg:grid-cols-1 items-center">
+        <div className="min-h-screen bg-bgColor/70 py-16 max-md:py-8">
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="w-[90%] 2xl:w-[80%] max-sm:w-[95%] mx-auto grid grid-cols-[4fr_5fr] gap-8 max-md:gap-12 max-lg:grid-cols-1 items-start"
+            >
                 {/* Left Section */}
-                <div className="flex-1 mt-4">
-                    <h1 className="text-[4rem] max-md:text-4xl font-[700] leading-[78.02px] max-sm:leading-[29.26px] text-bgRed">Contact Us</h1>
-
-                    <p className="text-[#8F90A6] max-sm:w-full text-xl max-md:text-base max-md:font-[600] font-[400] leading-[24.38px] mt-4"> Email, call, or complete the form to learn how Snappy can solve your messaging problem.</p>
-
-                    <div className="my-4 space-y-3 text-bgRed text-xl font-[400] leading-[24.38px]">
-                        <p className="">Info@Snappy.io</p>
-                        <p className="">321-221-231</p>
-                    </div>
-
-                    <div className="mt-3 max-md:mt-6 space-y-1 max-md:space-y-2">
-                        <h2 className="text-2xl font-[500] leading-[29.26px]">Customer Support</h2>
-                        <p className="text-[#8F90A6] text-[1.25rem] max-md:text-base max-md:font-[600] font-[400] leading-[24.38px]">
-                            Our Support Team Is Available
-                            Around The Clock To Address Any
-                            Concerns Or Queries You May Have.
+                <motion.div 
+                    variants={itemVariants}
+                    className="flex-1 sticky top-8 space-y-8 bg-bgColor p-8 rounded-3xl shadow-lg"
+                >
+                    <div className="space-y-4">
+                        <h1 className="text-6xl max-md:text-4xl font-bold bg-gradient-to-r from-bgRed to-bgBlue bg-clip-text text-transparent">
+                            {contactPageData.hero.title}
+                        </h1>
+                        <p className="text-[#8F90A6] text-xl max-md:text-base font-medium leading-relaxed">
+                            {contactPageData.hero.description}
                         </p>
                     </div>
 
-                    <div className="mt-3 space-y-1">
-                        <h2 className="text-2xl font-[500] leading-[29.26px]">Feedback And Suggestions</h2>
-                        <p className="text-[#8F90A6] text-[1.25rem] max-md:text-base max-md:font-[600] font-[400] leading-[24.38px]">
-                            We Value Your Feedback And Are
-                            Continuously Working To Improve
-                            Snappy. Your Input Is Crucial In
-                            Shaping The Future Of Snappy.
-                        </p>
+                    <div className="flex flex-col gap-4">
+                        {contactPageData.contactInfo.map((info, index) => {
+                            const Icon = iconComponents[info.icon];
+                            return Icon ? (
+                                <motion.a 
+                                    key={index}
+                                    variants={itemVariants}
+                                    href={info.href}
+                                    className="flex items-center gap-3 text-xl text-bgRed hover:translate-x-2 transition-all duration-300"
+                                >
+                                    <span className="w-6 h-6"><Icon /></span>
+                                    <span>{info.value}</span>
+                                </motion.a>
+                            ) : null;
+                        })}
                     </div>
 
-                    <div className="mt-3 space-y-1">
-                        <h2 className="text-2xl font-[500] leading-[29.26px]">Media Inquiries</h2>
-                        <p className="text-[#8F90A6] text-[1.25rem] max-md:text-base max-md:font-[600] font-[400] leading-[24.38px]">
-                            For Media-Related Questions Or
-                            Press Inquiries, Please Contact Us At
-                            Media@Snappyapp.Com.
-                        </p>
+                    <div className="grid gap-6 mt-8">
+                        {contactPageData.infoCards.map((card, index) => {
+                            const Icon = iconComponents[card.icon];
+                            return Icon ? (
+                                <motion.div 
+                                    key={index}
+                                    variants={itemVariants}
+                                    className="p-6 bg-gradient-to-br from-white to-gray-50 rounded-xl hover:shadow-md transition-all duration-300"
+                                >
+                                    <div className="flex items-center gap-3 mb-2">
+                                    <span className="w-6 h-6 text-bgRed"><Icon /></span>
+                                        <h2 className="text-2xl font-medium">{card.title}</h2>
+                                    </div>
+                                    <p className="text-[#8F90A6] text-lg">
+                                        {card.description}
+                                    </p>
+                                </motion.div>
+                            ) : null;
+                        })}
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Right Section - Form */}
-                <ContactForm component="contact" listingId={listing_Id} />
-
-            </div>
+                <motion.div 
+                    variants={itemVariants}
+                    className="z-10"
+                >
+                    <ContactForm component="contact" listingId={listing_Id} />
+                </motion.div>
+            </motion.div>
         </div>
     );
 };
-
-export default Contact;

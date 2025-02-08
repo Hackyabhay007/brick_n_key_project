@@ -53,39 +53,6 @@ const Brand = () => {
     dispatch(fetchBrandSectionSlice());
   }, [dispatch]);
 
-  const brandLogos: BrandData[] = [
-    { id: 1, icon: "/apple-logo.png", alt: "Apple", url: "/images/brand_img_1.png" },
-    { id: 2, icon: "/facebook-logo.png", alt: "Facebook", url: "/images/brand_img_2.png" },
-    { id: 3, icon: "/google-logo.png", alt: "Google", url: "/images/brand_img_3.png" },
-    { id: 4, icon: "/youtube-logo.png", alt: "YouTube", url: "/images/brand_img_4.png" },
-    { id: 5, icon: "/twitter-logo.png", alt: "Twitter", url: "/images/brand_img_5.png" },
-    { id: 6, icon: "/microsoft-logo.png", alt: "Microsoft", url: "/images/brand_img_3.png" },
-  ];
-
-  const properties: PropertyData[] = [
-    {
-      id: 1,
-      image: "/property1.jpg",
-      title: "AJK Complex",
-      location: "Whitefield, Bangalore",
-      details: "10 Bedroom 2 Garage 150 M²"
-    },
-    {
-      id: 2,
-      image: "/property2.jpg",
-      title: "AJK Complex",
-      location: "Whitefield, Bangalore",
-      details: "10 Bedroom 2 Garage 150 M²"
-    },
-    {
-      id: 3,
-      image: "/property3.jpg",
-      title: "AJK Complex",
-      location: "Whitefield, Bangalore",
-      details: "10 Bedroom 2 Garage 150 M²"
-    },
-  ];
-
   const containerVariants = {
     hidden: {
       opacity: 0,
@@ -185,7 +152,7 @@ const Brand = () => {
       resetBrandTimeout();
       brandTimeoutRef.current = setTimeout(() => {
         setCurrentIndex((prevIndex) =>
-          prevIndex === brandLogos.length - 5 ? 0 : prevIndex + 1
+          prevIndex === data?.data?.length - 5 ? 0 : prevIndex + 1
         );
       }, 10000);
     }
@@ -193,14 +160,14 @@ const Brand = () => {
     return () => {
       resetBrandTimeout();
     };
-  }, [currentIndex, brandLogos.length, data]);
+  }, [currentIndex, data?.data?.length, data]);
 
   useEffect(() => {
     if ((data?.data[cardIndex]?.brand_relations || []).length > 1) {
       resetPropertyTimeout();
       propertyTimeoutRef.current = setTimeout(() => {
         setPropertyIndex((prevIndex) =>
-          prevIndex === properties.length - 1 ? 0 : prevIndex + 1
+          prevIndex === data?.data[cardIndex]?.brand_relations.length - 1 ? 0 : prevIndex + 1
         );
       }, 10000);
     }
@@ -213,29 +180,29 @@ const Brand = () => {
     return () => {
       resetPropertyTimeout();
     };
-  }, [propertyIndex, properties.length, data, cardIndex]);
+  }, [propertyIndex, data?.data[cardIndex]?.brand_relations.length, data, cardIndex]);
 
   const nextBrandSlide = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === brandLogos.length - 5 ? 0 : prevIndex + 1
+      prevIndex === data?.data?.length - 5 ? 0 : prevIndex + 1
     );
   };
 
   const prevBrandSlide = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? brandLogos.length - 5 : prevIndex - 1
+      prevIndex === 0 ? data?.data?.length - 5 : prevIndex - 1
     );
   };
 
   const nextPropertySlide = () => {
     setPropertyIndex((prevIndex) =>
-      prevIndex === properties.length - 1 ? 0 : prevIndex + 1
+      prevIndex === data?.data[cardIndex]?.brand_relations.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const prevPropertySlide = () => {
     setPropertyIndex((prevIndex) =>
-      prevIndex === 0 ? properties.length - 1 : prevIndex - 1
+      prevIndex === 0 ? data?.data[cardIndex]?.brand_relations.length - 1 : prevIndex - 1
     );
   };
 
@@ -264,14 +231,23 @@ const Brand = () => {
     }, 200);
 };
 
+  // Add this function to check if next slide is available
+  const hasNextSlide = () => {
+    return currentIndex < (data?.data?.length || 0) - 5;
+  };
+
+  // Add this function to check if previous slide is available
+  const hasPrevSlide = () => {
+    return currentIndex > 0;
+  };
 
   return (
     <div className="brand_container w-full bg-bgColor pt-16">
       <div className="brand_inner_container relative w-[90%] flex flex-col justify-center max-lg:justify-between items-center gap-6 max-sm:w-[95%] 2xl:w-[80%] mx-auto pb-8 bg-bgBlue rounded-[20px] px-16 max-lg:px-4">
         <div className='w-[80%] mx-auto max-lg:mt-10'>
           <Image
-            width={100}
-            height={100}
+            width={600}
+            height={400}
             src="/images/brand_main_img.svg"
             className='text-center w-full h-full bg-cover' 
             alt="Brand_img" />
@@ -279,24 +255,27 @@ const Brand = () => {
 
         {/* Brands Slider */}
         <div className="relative mx-auto mb-12 px-4 w-full mt-20 max-xl:mt-10 max-lg:mt-0">
-          <button
-            onClick={prevBrandSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-          >
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {/* Only show prev button if there are previous slides */}
+          {hasPrevSlide() && (
+            <button
+              onClick={prevBrandSlide}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+          )}
 
           {/* Brand Logos */}
           <div className="overflow-hidden w-full">
@@ -319,7 +298,7 @@ const Brand = () => {
                       height={100}
                       src={giveCorrectImage(currElem.brand_logo.url)}
                       alt={currElem.brand_name}
-                      className="h-14 max-lg:h-10 max-md:h-8 w-auto object-contain"
+                      className="h-20 w-20 max-lg:h-16 max-lg:w-16 max-md:h-10 max-md:w-10 max-sm:w-32 max-sm:h-32 object-contain"
                     />
                   </div>
                 </div>
@@ -327,24 +306,27 @@ const Brand = () => {
             </div>
           </div>
 
-          <button
-            onClick={nextBrandSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-          >
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {/* Only show next button if there are more slides */}
+          {hasNextSlide() && (
+            <button
+              onClick={nextBrandSlide}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          )}
         </div>
 
         <h3 className={`brand_Heading text-white font-semibold text-4xl max-lg:text-2xl max-md:text-xl ${brand_name ? "" : "hidden"}`}>
@@ -386,16 +368,6 @@ const Brand = () => {
                             </motion.div>
                         )}
                     </AnimatePresence>
-        {/* <Property_Card 
-          showPropertyCard={showPropertyCard}
-          cardIndex={cardIndex}
-          data={data}
-          brand_name={brand_name}
-          propertyIndex={propertyIndex}
-          nextPropertySlide={nextPropertySlide}
-          prevPropertySlide={prevPropertySlide}
-          component="brand"
-        /> */}
 
                     {/* Mobile View */}
                     <div className="relative lg:hidden w-full">

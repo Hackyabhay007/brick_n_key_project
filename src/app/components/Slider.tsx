@@ -23,11 +23,11 @@ export const metadata: Metadata = {
 }
 
 interface SliderProps {
-    images: string[];
-    onLocationChange: (location: string) => void;
-    activeIndex: number;
-    onNext: () => void;
-    onPrev: () => void;
+  images: string[];
+  onLocationChange: (location: string) => void;
+  activeIndex: number;
+  onNext: () => void;
+  onPrev: () => void;
 }
 
 const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, onNext, onPrev }) => {
@@ -150,84 +150,87 @@ const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, 
           {/* Previous Slide */}
           <div className={`relative w-[45%] cursor-pointer max-lg:w-[20%] -translate-x-4 max-sm:-translate-x-4 md:-translate-x-10 h-full ${getAnimationClasses('prev')}`}>
             <Link href={`/detail?id=${encodeURIComponent(getSlide(-1)?.id)}`}>
-            <div className="w-full rounded-lg duration-300">
-              <div className="relative w-full flex flex-col items-center justify-center min-h-[100px] bg-center group">
-                <Image
-                  width={100}
-                  height={100}
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(-1).url}`}
-                  alt={getSlide(-1).title}
-                  className="w-full h-[150px] md:h-[200px] object-cover rounded-tr-[20px] rounded-br-[20px]"
-                />
-                <div className="detail_icon opacity-0 group-hover:opacity-100 absolute w-12 h-12 md:w-20 md:h-20 rounded-full bg-bgRed text-white flex justify-center items-center transition-opacity duration-300 text-xs md:text-base">
-                  Detail
-                </div>
-                <div className='w-full flex flex-col md:flex-row justify-between items-start md:items-center mt-2'>
-                  <p className='text-sm md:text-lg font-semibold'>{getSlide(-1).title}</p>
-                  <p className='text-xs flex justify-start items-center'>
-                    <span><MapPin className="w-4 h-4 md:w-6 md:h-6" /></span>
-                    {getSlide(-1).location}
-                  </p>
+              <div className="w-full rounded-lg duration-300">
+                <div className="relative w-full flex flex-col items-center justify-center min-h-[100px] bg-center group">
+                  <Image
+                    width={300} // Increase resolution
+                    height={200}
+                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(-1).url}`}
+                    alt={getSlide(-1).title}
+                    className="w-full h-[150px] md:h-[200px] object-cover rounded-tr-[20px] rounded-br-[20px]"
+                    quality={100} // Improve rendering quality
+                  />
+                  <div className="detail_icon opacity-0 group-hover:opacity-100 absolute w-12 h-12 md:w-20 md:h-20 rounded-full bg-bgRed text-white flex justify-center items-center transition-opacity duration-300 text-xs md:text-base">
+                    Detail
+                  </div>
+                  <div className='w-full flex flex-col md:flex-row justify-between items-start md:items-center mt-2'>
+                    <p className='text-sm md:text-lg font-semibold'>{getSlide(-1).title}</p>
+                    <p className='text-xs flex justify-start items-center'>
+                      <span><MapPin className="w-4 h-4 md:w-6 md:h-6" /></span>
+                      {getSlide(-1).location}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
             </Link>
           </div>
 
           {/* Current Slide */}
           <div className={`relative w-[50%] max-lg:w-[70%] ${getAnimationClasses('current')}`}>
             <Link href={`/detail?id=${encodeURIComponent(getSlide(0)?.id)}`}>
-            <div className="rounded-lg transition-shadow duration-300">
-              <div className="relative flex flex-col items-center justify-center min-h-[200px] group">
-                <Image
-                  width={100}
-                  height={100}
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(0).url}`}
-                  alt={getSlide(0).title}
-                  className="w-full h-[200px] md:h-[296px] object-cover rounded-[20px]"
-                />
-                <div className="detail_icon opacity-0 group-hover:opacity-100 absolute w-12 h-12 md:w-20 md:h-20 rounded-full bg-bgRed text-white flex justify-center items-center transition-opacity duration-300 text-xs md:text-base">
-                  Detail
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 px-2 md:px-0">
-                  <div>
-                    <h3 className="text-base md:text-lg font-semibold">{getSlide(0)?.title}</h3>
-                    <p className='text-xs flex justify-start items-center'>
-                      <span><MapPin className="w-4 h-4 md:w-6 md:h-6" /></span>
-                      {getSlide(0)?.location}
-                    </p>
+              <div className="rounded-lg transition-shadow duration-300">
+                <div className="relative flex flex-col items-center justify-center min-h-[200px] group">
+                  <Image
+                    width={600}
+                    height={400}
+                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(0).url}`}
+                    alt={getSlide(0).title}
+                    className="w-full h-[200px] md:h-[296px] object-cover rounded-[20px]"
+                    quality={100} // Improve rendering quality
+                  />
+                  <div className="detail_icon opacity-0 group-hover:opacity-100 absolute w-12 h-12 md:w-20 md:h-20 rounded-full bg-bgRed text-white flex justify-center items-center transition-opacity duration-300 text-xs md:text-base">
+                    Detail
                   </div>
-                  <p className="text-xs">{getSlide(0)?.description?.slice(0, 100)}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 px-2 md:px-0">
+                    <div>
+                      <h3 className="text-base md:text-lg font-semibold">{getSlide(0)?.title}</h3>
+                      <p className='text-xs flex justify-start items-center'>
+                        <span><MapPin className="w-4 h-4 md:w-6 md:h-6" /></span>
+                        {getSlide(0)?.location}
+                      </p>
+                    </div>
+                    <p className="text-xs">{getSlide(0)?.description?.slice(0, 100)}</p>
+                  </div>
                 </div>
               </div>
-            </div>
             </Link>
           </div>
 
           {/* Next Slide */}
           <div className={`relative w-[45%] max-lg:w-[20%] translate-x-4 max-sm:translate-x-4 md:translate-x-10 ${getAnimationClasses('next')}`}>
             <Link href={`/detail?id=${encodeURIComponent(getSlide(1)?.id)}`}>
-            <div className="rounded-lg transition-shadow duration-300">
-              <div className="relative flex flex-col items-center justify-center min-h-[100px] group">
-                <Image
-                  width={100}
-                  height={100}
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(1).url}`}
-                  alt={getSlide(1).title}
-                  className="w-full h-[150px] md:h-[200px] object-cover rounded-tl-[20px] rounded-bl-[20px]"
-                />
-                <div className="detail_icon opacity-0 z-20 group-hover:opacity-100 absolute w-12 h-12 md:w-20 md:h-20 rounded-full bg-bgRed text-white flex justify-center items-center transition-opacity duration-300 text-xs md:text-base">
-                  Detail
-                </div>
-                <div className='w-full flex flex-col md:flex-row justify-between items-start md:items-center mt-2'>
-                  <p className='text-sm md:text-lg font-semibold'>{getSlide(1).title}</p>
-                  <p className='text-xs flex justify-between items-center mr-10'>
-                    <span className='flex items-center'><MapPin className="w-4 h-4 md:w-6 md:h-6" /></span>
-                    {getSlide(1).location}
-                  </p>
+              <div className="rounded-lg transition-shadow duration-300">
+                <div className="relative flex flex-col items-center justify-center min-h-[100px] group">
+                  <Image
+                    width={300}
+                    height={200}
+                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(1).url}`}
+                    alt={getSlide(1).title}
+                    className="w-full h-[150px] md:h-[200px] object-cover rounded-tl-[20px] rounded-bl-[20px]"
+                    quality={100} // Improve rendering quality
+                  />
+                  <div className="detail_icon opacity-0 z-20 group-hover:opacity-100 absolute w-12 h-12 md:w-20 md:h-20 rounded-full bg-bgRed text-white flex justify-center items-center transition-opacity duration-300 text-xs md:text-base">
+                    Detail
+                  </div>
+                  <div className='w-full flex flex-col md:flex-row justify-between items-start md:items-center mt-2'>
+                    <p className='text-sm md:text-lg font-semibold'>{getSlide(1).title}</p>
+                    <p className='text-xs flex justify-between items-center mr-10'>
+                      <span className='flex items-center'><MapPin className="w-4 h-4 md:w-6 md:h-6" /></span>
+                      {getSlide(1).location}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
             </Link>
           </div>
         </div>

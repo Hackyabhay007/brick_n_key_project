@@ -7,6 +7,8 @@ import { AppDispatch, RootState } from "../../redux/store";
 import Toast from "./Toast";
 import { Metadata } from 'next'
 import Head from 'next/head'
+import { FaPhone, FaUserAlt } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
 
 export const metadata: Metadata = {
   title: 'Contact Us | Brick N Key',
@@ -93,8 +95,12 @@ export default function ContactForm({ component, listingId }: { component: strin
     await dispatch(submitContactForm(formData));
   };
 
+  const handlePhoneClick = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_PHONE_NUMBER}`;
+  };
+
   return (
-    <div className={`bg-bgBlue w-full h-full flex flex-col justify-center items-center max-2xl:gap-12 max-lg:gap-4 text-white py-16 px-8 ${(component === "contact") ? "rounded-3xl" : ""}`}>
+    <div className={`bg-bgBlue w-full h-full flex flex-col justify-center items-center max-2xl:gap-12 max-lg:gap-4 text-white py-16 px-8 max-md:px-4 max-sm:px-4 ${(component === "contact") ? "rounded-3xl shadow-2xl" : ""}`}>
       <Toast 
         message={toastConfig.message}
         type={toastConfig.type}
@@ -102,68 +108,103 @@ export default function ContactForm({ component, listingId }: { component: strin
         onClose={() => setToastConfig(prev => ({ ...prev, isVisible: false }))}
       />
       
-      <h2 className="text-3xl font-[400] text-center">Still haven't found what you're looking for?</h2>
+      <div className="text-center space-y-4 mb-8">
+        <h2 className="text-4xl font-[500] text-center bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+          Get in Touch With Us
+        </h2>
+        <p className="text-gray-300 max-w-2xl">
+          Have questions about buying or selling property? Our experts are here to help you every step of the way.
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="pt-10">
-        <div className="grid grid-cols-2 gap-4 max-2xl:mt-3 max-lg:mt-0">
-          <div>
-            <label className="font-[400] text-[20px]">First Name</label>
-            <input
-              type="text"
-              placeholder="First Name"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
-              value={formData.first_name}
-              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-            />
+      {/* Quick Contact Options */}
+      <div className="flex gap-6 mb-8">
+        <button
+          onClick={() => handlePhoneClick()}
+          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-all duration-300 px-6 py-3 rounded-full"
+        >
+          <FaPhone className="text-red-500" />
+          <span >Call Now</span>
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="w-full max-w-3xl space-y-6">
+        <div className="grid grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="font-[400] text-[16px] text-gray-300">First Name *</label>
+            <div className="relative">
+              <FaUserAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="First Name"
+                className="w-full bg-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 outline-none border border-transparent focus:border-red-500 transition-all duration-300"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+              />
+            </div>
           </div>
-          <div>
-            <label className="font-[400] text-[20px]">Last Name</label>
-            <input
-              type="text"
-              placeholder="Last Name"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
-              value={formData.last_name}
-              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-            />
+          
+          <div className="space-y-2">
+            <label className="font-[400] text-[16px] text-gray-300">Last Name *</label>
+            <div className="relative">
+              <FaUserAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Last Name"
+                className="w-full bg-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 outline-none border border-transparent focus:border-red-500 transition-all duration-300"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 max-2xl:mt-3 max-lg:mt-0">
-          <div className="my-3">
-            <label className="font-[400] text-[20px]">Phone Number</label>
-            <input
-              type="number"
-              placeholder="Phone Number"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: Number(e.target.value) })}
-            />
+        <div className="grid grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="font-[400] text-[16px] text-gray-300">Phone Number *</label>
+            <div className="relative">
+              <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                className="w-full bg-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 outline-none border border-transparent focus:border-red-500 transition-all duration-300"
+                value={formData.phone || ''}
+                onChange={(e) => setFormData({ ...formData, phone: Number(e.target.value) })}
+              />
+            </div>
           </div>
-          <div className="my-3">
-            <label className="font-[400] text-[20px]">I want to</label>
-            <input
-              type="text"
-              placeholder="Buy Property"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
+          
+          <div className="space-y-2">
+            <label className="font-[400] text-[16px] text-gray-300">I want to</label>
+            <select
+              className="w-full bg-white/10 rounded-lg px-4 py-3 text-white outline-none border border-transparent focus:border-red-500 transition-all duration-300"
               value={formData.I_want_to}
               onChange={(e) => setFormData({ ...formData, I_want_to: e.target.value })}
-            />
-          </div> 
+            >
+              <option value="" className="bg-bgBlue">Select an option</option>
+              <option value="Buy Property" className="bg-bgBlue">Buy Property</option>
+              <option value="Sell Property" className="bg-bgBlue">Sell Property</option>
+              <option value="Rent Property" className="bg-bgBlue">Rent Property</option>
+            </select>
+          </div>
         </div>
 
-        <div className="max-2xl:mt-4 max-lg:mt-0">
-          <label className="font-[400] text-[20px]">Notes</label>
+        <div className="space-y-2">
+          <label className="font-[400] text-[16px] text-gray-300">Notes</label>
           <textarea
-            placeholder="Notes"
-            rows={6}
-            className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
+            placeholder="Tell us more about what you're looking for..."
+            rows={4}
+            className="w-full bg-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-400 outline-none border border-transparent focus:border-red-500 transition-all duration-300"
             value={formData.Notes}
             onChange={(e) => setFormData({ ...formData, Notes: e.target.value })}
           />
         </div>
 
-        <button type="submit" className="bg-red-500 text-white px-6 py-2 rounded max-2xl:mt-4 max-lg:mt-0 hover:bg-red-600 transition-colors">
-          Submit
+        <button 
+          type="submit" 
+          className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+        >
+          Submit Inquiry
         </button>
       </form>
     </div>
