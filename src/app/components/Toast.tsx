@@ -1,3 +1,19 @@
+"use client"
+
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Notifications | Brick N Key',
+  description: 'Stay updated with real-time notifications about your property searches and interactions.',
+  keywords: 'notifications, alerts, updates, property alerts',
+  openGraph: {
+    title: 'Notifications | Brick N Key',
+    description: 'Stay updated with real-time notifications',
+    type: 'website',
+  }
+}
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import { CheckCircle, XCircle, X } from 'lucide-react';

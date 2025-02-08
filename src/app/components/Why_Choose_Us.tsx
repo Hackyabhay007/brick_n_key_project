@@ -1,5 +1,19 @@
 "use client"
 
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Why Choose Brick N Key | Leading Real Estate Platform',
+  description: 'Discover why Brick N Key is your best choice for real estate. Learn about our unique advantages and commitment to excellence.',
+  keywords: 'why choose us, real estate benefits, property expertise, customer service',
+  openGraph: {
+    title: 'Why Choose Brick N Key | Leading Real Estate Platform',
+    description: 'Your trusted partner in real estate',
+    images: ['/images/why_choose_us_img_2.png'],
+  }
+}
+
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "framer-motion";

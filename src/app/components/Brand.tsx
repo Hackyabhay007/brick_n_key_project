@@ -41,6 +41,7 @@ const Brand = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [isImageTransitioning, setIsImageTransitioning] = useState<{ [key: string]: boolean }>({});
+  const [selectedBrandIndex, setSelectedBrandIndex] = useState<number | null>(null);
 
 
   const router = useRouter();
@@ -240,7 +241,10 @@ const Brand = () => {
 
   const handleBrandClick = (index: number) => {
     setCardIndex(index);
+    setSelectedBrandIndex(index);
     setIsItemsVisible(true);
+    setShowPropertyCard(true); 
+    setBrand_name(data?.data[index]?.brand_name);
     setTimeout(() => setIsItemsVisible(false), 5000);
   };
 
@@ -268,7 +272,7 @@ const Brand = () => {
           <Image
             width={100}
             height={100}
-            src="/images/brand_main_img.png"
+            src="/images/brand_main_img.svg"
             className='text-center w-full h-full bg-cover' 
             alt="Brand_img" />
         </div>
@@ -306,9 +310,10 @@ const Brand = () => {
                 <div
                   key={"brand" + currElem.id}
                   className="flex-shrink-0 w-1/5 px-4 cursor-pointer"
-                  onClick={() => { handleBrandClick(index); setShowPropertyCard(true); setBrand_name(currElem?.brand_name); }}
+                  onClick={() => handleBrandClick(index)}
                 >
-                  <div className="flex flex-col items-center justify-center h-20">
+                  <div className={`flex flex-col items-center justify-center h-20 transition-all duration-300 rounded-full
+                  ${selectedBrandIndex === index ? 'bg-bgColor bg-opacity-20 rounded-full' : ''}`}>
                     <Image
                       width={100}
                       height={100}
@@ -342,7 +347,9 @@ const Brand = () => {
           </button>
         </div>
 
-        <h3 className={`max-lg:text-xs max-md:text-[10px] text-white font-semibold text-4xl ${(brand_name)?"":"hidden"} `}>{brand_name}</h3>
+        <h3 className={`brand_Heading text-white font-semibold text-4xl max-lg:text-2xl max-md:text-xl ${brand_name ? "" : "hidden"}`}>
+          {brand_name}
+        </h3>
         {/* Replace Property Cards Section with new component */}
                     <AnimatePresence mode="wait">
                         {showPropertyCard && (

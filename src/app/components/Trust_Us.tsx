@@ -9,6 +9,19 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPeopleTrustUs_Slice } from "../../redux/slices/peopleTrust_usSlice";
 import { AppDispatch, RootState } from "../../redux/store";
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Customer Trust | Brick N Key',
+  description: 'See why over 1000+ customers trust Brick N Key. Read testimonials and success stories from our satisfied clients.',
+  keywords: 'customer testimonials, trust, reviews, client feedback, real estate success stories',
+  openGraph: {
+    title: 'Customer Trust | Brick N Key',
+    description: 'Over 1000+ satisfied customers trust Brick N Key',
+    images: ['/images/Trusted_by_img.png'],
+  }
+}
 
 interface Testimonial {
     id: number;
@@ -226,7 +239,7 @@ export default function Trust_Us() {
                         className="overflow-hidden"
                     >
                         <div
-                            className="w-full flex gap-8 max-xl:gap-4 max-sm:gap-0 transition-all duration-500 ease-in-out"
+                            className="w-full flex gap-8 max-xl:gap-4 max-sm:gap-2 transition-all duration-500 ease-in-out"
                             style={{
                                 transform: `translateX(-${currentIndex * 33.333}%)`,
                             }}
@@ -240,26 +253,23 @@ export default function Trust_Us() {
                                         key={currElem?.id}
                                         className={`
                                             transition-all duration-500 
-                                            // lg:min-w-[31.333%] 
+                                            lg:min-w-[31.333%]
                                             ${isVisible ? 'opacity-100' : 'opacity-0'}
                                             ${isCenterSlide ? 
-                                                'max-lg:min-w-[60%] max-lg:z-20 max-lg:scale-110' : 
-                                                'max-lg:min-w-[27.5%] max-lg:opacity-75'
+                                                'max-lg:min-w-[54%] max-sm:min-w-[60%] max-lg:z-20 max-[470px]:min-w-[50%]' : 
+                                                'max-lg:min-w-[27.5%] max-sm:min-w-[27.5%] max-lg:opacity-75 max-[470px]:w-[7.5%]'
                                             }
                                         `}
                                     >
-                                        <div className={`
-                                            mx-2 rounded-lg overflow-hidden
-                                            ${isCenterSlide ? 'max-lg:aspect-[3/4]' : ''}
-                                        `}>
-                                            <div className="relative w-full h-full flex justify-center items-center bg-center">
+                                        <div className="mx-2 rounded-lg overflow-hidden">
+                                            <div className="relative w-full h-full flex justify-center items-center bg-center max-lg:gap-12 max-sm:gap-6">
                                                 <video
                                                     className={`
                                                         w-full object-cover
-                                                        ${isCenterSlide ? 
-                                                            'max-lg:h-full  lg:h-[400px] 2xl:h-[500px]' : 
-                                                            'h-[240px] sm:h-[350px] lg:h-[400px] 2xl:h-[500px]'
-                                                        }
+                                                        max-sm:h-[300px]
+                                                        sm:h-[350px]
+                                                        lg:h-[400px] 
+                                                        2xl:h-[450px]
                                                     `}
                                                     src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.video}`}
                                                     ref={el => { videoRefs.current[currElem?.id] = el; }}

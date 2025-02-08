@@ -7,6 +7,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchLuxuryListingItem } from "../../redux/slices/luxuryListingSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import { giveCorrectImage } from '../data';
+import Link from 'next/link';
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Featured Properties | Brick N Key',
+  description: 'Browse through our featured properties with our interactive slider. View luxurious homes and prime locations.',
+  keywords: 'property slider, featured properties, luxury homes, property showcase',
+  openGraph: {
+    title: 'Featured Properties | Brick N Key',
+    description: 'Browse through our featured properties',
+    type: 'website',
+  }
+}
 
 interface SliderProps {
     images: string[];
@@ -25,12 +39,15 @@ const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, 
   const [slideDirection, setSlideDirection] = useState<'left' | 'right' | ''>('');
   const [property_Location, setPropertyLocation] = useState('');
 
+  // const router = useRouter();
+
   useEffect(() => {
     setIsClient(true);
     dispatch(fetchLuxuryListingItem());
   }, [dispatch]);
 
-  const slides = data?.data?.map((currElem: { property_Location: String, property_Description: String, property_Images: [{ url: String }], brand: { brand_name: string } }) => ({
+  const slides = data?.data?.map((currElem: { id: number, property_Location: String, property_Description: String, property_Images: [{ url: String }], brand: { brand_name: string } }) => ({
+    id: currElem?.id,
     title: currElem?.brand?.brand_name || "",
     location: currElem?.property_Location || "",
     description: currElem?.property_Description || "",
@@ -64,6 +81,7 @@ const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, 
   const getSlide = (offset: number) => {
     const index = getSlideIndex(offset);
     return slides[index] || {
+      id: 0,
       title: "",
       location: "",
       description: "",
@@ -130,13 +148,14 @@ const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, 
       <div className="relative w-full overflow-hidden">
         <div className="w-full flex items-start justify-start gap-4 max-sm:gap-0">
           {/* Previous Slide */}
-          <div className={`relative w-[45%] max-lg:w-[20%] -translate-x-4 max-sm:-translate-x-4 md:-translate-x-10 h-full ${getAnimationClasses('prev')}`}>
+          <div className={`relative w-[45%] cursor-pointer max-lg:w-[20%] -translate-x-4 max-sm:-translate-x-4 md:-translate-x-10 h-full ${getAnimationClasses('prev')}`}>
+            <Link href={`/detail?id=${encodeURIComponent(getSlide(-1)?.id)}`}>
             <div className="w-full rounded-lg duration-300">
               <div className="relative w-full flex flex-col items-center justify-center min-h-[100px] bg-center group">
                 <Image
                   width={100}
                   height={100}
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(1).url}`}
+                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(-1).url}`}
                   alt={getSlide(-1).title}
                   className="w-full h-[150px] md:h-[200px] object-cover rounded-tr-[20px] rounded-br-[20px]"
                 />
@@ -152,16 +171,18 @@ const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, 
                 </div>
               </div>
             </div>
+            </Link>
           </div>
 
           {/* Current Slide */}
           <div className={`relative w-[50%] max-lg:w-[70%] ${getAnimationClasses('current')}`}>
+            <Link href={`/detail?id=${encodeURIComponent(getSlide(0)?.id)}`}>
             <div className="rounded-lg transition-shadow duration-300">
               <div className="relative flex flex-col items-center justify-center min-h-[200px] group">
                 <Image
                   width={100}
                   height={100}
-                  src={giveCorrectImage(getSlide(1).url)}
+                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${getSlide(0).url}`}
                   alt={getSlide(0).title}
                   className="w-full h-[200px] md:h-[296px] object-cover rounded-[20px]"
                 />
@@ -180,10 +201,12 @@ const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, 
                 </div>
               </div>
             </div>
+            </Link>
           </div>
 
           {/* Next Slide */}
           <div className={`relative w-[45%] max-lg:w-[20%] translate-x-4 max-sm:translate-x-4 md:translate-x-10 ${getAnimationClasses('next')}`}>
+            <Link href={`/detail?id=${encodeURIComponent(getSlide(1)?.id)}`}>
             <div className="rounded-lg transition-shadow duration-300">
               <div className="relative flex flex-col items-center justify-center min-h-[100px] group">
                 <Image
@@ -205,6 +228,7 @@ const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, 
                 </div>
               </div>
             </div>
+            </Link>
           </div>
         </div>
       </div>

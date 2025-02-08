@@ -5,6 +5,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { submitContactForm, resetFormState } from "../../redux/slices/Contact_Section_Slice";
 import { AppDispatch, RootState } from "../../redux/store";
 import Toast from "./Toast";
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Contact Us | Brick N Key',
+  description: 'Get in touch with our real estate experts. We\'re here to help you find your perfect property.',
+  keywords: 'contact form, real estate inquiry, property consultation, customer support',
+  openGraph: {
+    title: 'Contact Us | Brick N Key',
+    description: 'Get in touch with our real estate experts',
+    type: 'website',
+  }
+}
 
 interface ContactFormData {
   first_name: string;

@@ -1,4 +1,19 @@
 "use client"
+
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Brick N Key | Stay Connected',
+  description: 'Stay updated with the latest property news and listings. Subscribe to our newsletter for exclusive updates.',
+  keywords: 'real estate updates, property newsletter, contact information, social media',
+  openGraph: {
+    title: 'Brick N Key | Stay Connected',
+    description: 'Stay updated with the latest property news and listings',
+    type: 'website',
+  }
+}
+
 import Toast from './Toast';
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -9,6 +24,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { subscribeToNewsletter, resetSubscribeState } from '@/redux/slices/subscribeSlice';
 import { RootState, AppDispatch } from '@/redux/store';
 import Link from 'next/link';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { footerInfoArray } from '../data';
 
 export default function Footer() {
     const ref = useRef(null);
@@ -109,9 +126,27 @@ export default function Footer() {
         }
     };
 
+    const getSocialIcon = (iconName: string) => {
+        switch (iconName) {
+            case 'FaFacebook':
+                return <FaFacebook size={22} />;
+            case 'FaTwitter':
+                return <FaTwitter size={22} />;
+            case 'FaInstagram':
+                return <FaInstagram size={22} />;
+            case 'FaLinkedin':
+                return <FaLinkedin size={22} />;
+            default:
+                return null;
+        }
+    };
+
+    // Update the copyright year dynamically
+    const currentYear = new Date().getFullYear();
+
     return (
         <>
-            <Toast 
+            <Toast
                 message={toastConfig.message}
                 type={toastConfig.type}
                 isVisible={toastConfig.isVisible}
@@ -119,27 +154,27 @@ export default function Footer() {
             />
             <div className="footer_container rel w-full bg-bgColor relative -mt-4 z-10">
                 <div ref={ref} className="footer_inner_container w-[90%] max-sm:w-[95%] 2xl:w-[80%] mx-auto py-12 max-lg:py-10 px-4 md:px-8  bg-bgBlue rounded-b-[20px] max-lg:flex max-lg:flex-col max-lg:gap-12">
-                <motion.div
-                            variants={subscribeVariants}
-                            initial="hidden"
-                            animate={isInView ? "visible" : "hidden"}
-                            className="footer_panel_4 leading-[52px] lg:hidden text-center max-md:leading-[30px] flex flex-col items-start text-white"
-                        >
-                            <h3 className=" w-full font-[600] text-[20px] max-lg:text-lg">Subscribe</h3>
-                            <p className=" w-full text-center text-[14px] max-md:text-sm max-md:font-[400] leading-[23px] text-[#8F90A6]">Subscribe to get latest property, blog news from us</p>
-                            <form onSubmit={handleFormSubmit} className="panel_4_search_bar w-full mt-4 flex justify-between items-center gap-2">
-                                <input
-                                    type="text"
-                                    placeholder="Email Address"
-                                    value={email}
-                                    onChange={(e)=>{setEmail(e.target.value)}}
-                                    className="w-full h-full bg-white p-4 max-md:py-0 max-md:h-[38.93px] rounded-[15px] outline-none text-black text-xs"
-                                /> 
-                                 <button type="submit" className="bg-[#ED371C] px-6 max-sm:px-2 max-sm:py-2 max-sm:text-xs rounded-full mr-3 flex justify-center items-center whitespace-nowrap">
-                                    Subscribe
-                                </button>
-                            </form>
-                        </motion.div>
+                    <motion.div
+                        variants={subscribeVariants}
+                        initial="hidden"
+                        animate={isInView ? "visible" : "hidden"}
+                        className="footer_panel_4 leading-[52px] lg:hidden text-center max-md:leading-[30px] flex flex-col items-start text-white"
+                    >
+                        <h3 className=" w-full font-[600] text-[20px] max-lg:text-lg">Subscribe</h3>
+                        <p className=" w-full text-center text-[14px] max-md:text-sm max-md:font-[400] leading-[23px] text-[#8F90A6]">Subscribe to get latest property, blog news from us</p>
+                        <form onSubmit={handleFormSubmit} className="panel_4_search_bar w-full mt-4 flex justify-between items-center gap-2">
+                            <input
+                                type="text"
+                                placeholder="Email Address"
+                                value={email}
+                                onChange={(e) => { setEmail(e.target.value) }}
+                                className="w-full h-full bg-white p-4 max-md:py-0 max-md:h-[38.93px] rounded-[15px] outline-none text-black text-xs"
+                            />
+                            <button type="submit" className="bg-[#ED371C] px-6 max-sm:px-2 max-sm:py-2 max-sm:text-xs rounded-full mr-3 flex justify-center items-center whitespace-nowrap">
+                                Subscribe
+                            </button>
+                        </form>
+                    </motion.div>
                     <div className="grid grid-cols-[4fr_2fr_2fr] max-lg:grid-cols-[3fr_2fr] place-items-end items-start gap-2 lg:gap-6 max-lg:gap-8 md:gap-2">
                         <motion.div
                             variants={panelVariants}
@@ -157,88 +192,69 @@ export default function Footer() {
                                     alt=""
                                 />
                                 <div className="panel1_info_and_logo leading-[31px]">
-                                    <p className="font-[400] text-[14px] max-md:text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                    <p className="font-[400] text-[14px] max-md:text-sm">
+                                        {footerInfoArray.description}
+                                    </p>
                                     <div className="footer_panel_1_logo flex gap-6 my-4">
-                                        {[
-                                            "facebook_logo.png",
-                                            "twitter_logo.png",
-                                            "instagram_logo.png",
-                                            "linkedIn_logo.png"
-                                        ].map((icon, index) => (
+                                        {footerInfoArray.socialLinks.map((social, index) => (
                                             <motion.div
-                                                key={icon}
+                                                key={social.id}
                                                 variants={socialIconVariants}
                                                 custom={index}
                                                 initial="hidden"
                                                 animate={isInView ? "visible" : "hidden"}
+                                                className="text-white hover:text-bgRed transition-colors cursor-pointer"
                                             >
-                                                <Image width={22} height={22} src={`/images/${icon}`} alt="" className="w-[22px] h-[22px]" />
+                                                <Link href={social.link} target="_blank" rel="noopener noreferrer">
+                                                    {getSocialIcon(social.icon)}
+                                                </Link>
                                             </motion.div>
                                         ))}
                                     </div>
                                 </div>
-                                <p className="font-[400] text-[13px]">© 2021 . All rights reserved.</p>
+                                <p className="font-[400] text-[13px]">© {currentYear} . All rights reserved.</p>
                             </div>
                         </motion.div>
 
                         <motion.div
-                        variants={panelVariants}
-                        custom={0}
-                        initial="hidden"
-                        animate={isInView ? "visible" : "hidden"}
-                        className="footer_panel_1 text-[#8F90A6] lg:hidden"
-                    >
-                        <div className="flex flex-col justify-between items-start gap-6">
-                            <Image
-                                width={182}
-                                height={63}
-                                src="/images/footer_icon.png"
-                                className="h-[30px] w-auto rounded-full bg-white"
-                                alt=""
-                            />
-                            <div className="panel1_info_and_logo leading-[31px] max-sm:leading-[20px]">
-                                <p className="font-[400] text-[14px] max-md:text-[10px]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                            </div>
-                            <div className="flex flex-col gap-2 mt-3">
-                                <div className="footer_panel_1_logo flex gap-2.5">
-                                    {[
-                                        "facebook_logo.png",
-                                        "twitter_logo.png",
-                                        "instagram_logo.png",
-                                        "linkedIn_logo.png"
-                                    ].map((icon, index) => (
-                                        <motion.div
-                                            key={icon}
-                                            variants={socialIconVariants}
-                                            custom={index}
-                                            initial="hidden"
-                                            animate={isInView ? "visible" : "hidden"}
-                                        >
-                                            <Image width={22} height={22} src={`/images/${icon}`} alt="" className="w-[22px] h-[22px] max-md:w-[10px] max-md:h-[10px]" />
-                                        </motion.div>
-                                    ))}
-                                </div>
-                                <p className="font-[400] text-[13px] max-md:text-[10px]">© 2021 . All rights reserved.</p>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                        {/* <motion.div
                             variants={panelVariants}
-                            custom={1}
+                            custom={0}
                             initial="hidden"
                             animate={isInView ? "visible" : "hidden"}
-                            className="footer_panel_2 max-[450px]:w-full"
+                            className="footer_panel_1 text-[#8F90A6] lg:hidden"
                         >
-                            <ul className="flex flex-col justify-between items-start max-sm:leading-[45px] sm:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white">
-                                <li className="font-[600] max-md:font-semibold text-[20px] max-md:text-base mb-2 text-start">Take a tour</li>
-                                <li>Features</li>
-                                <li>Partners</li>
-                                <li>Pricing</li>
-                                <li>Product</li>
-                                <li>Support</li>
-                            </ul>
-                        </motion.div> */}
+                            <div className="flex flex-col justify-between items-start gap-6">
+                                <Image
+                                    width={182}
+                                    height={63}
+                                    src="/images/footer_icon.png"
+                                    className="h-[30px] w-auto rounded-full bg-white"
+                                    alt=""
+                                />
+                                <div className="panel1_info_and_logo leading-[31px] max-sm:leading-[20px]">
+                                    <p className="font-[400] text-[14px] max-md:text-[10px]"> {footerInfoArray.description}</p>
+                                </div>
+                                <div className="flex flex-col gap-2 mt-3">
+                                    <div className="footer_panel_1_logo flex gap-2.5">
+                                        {footerInfoArray.socialLinks.map((social, index) => (
+                                            <motion.div
+                                                key={social.id}
+                                                variants={socialIconVariants}
+                                                custom={index}
+                                                initial="hidden"
+                                                animate={isInView ? "visible" : "hidden"}
+                                                className="text-white hover:text-bgRed transition-colors cursor-pointer"
+                                            >
+                                                <Link href={social.link} target="_blank" rel="noopener noreferrer">
+                                                    {getSocialIcon(social.icon)}
+                                                </Link>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                    <p className="font-[400] text-[13px] max-md:text-[10px]">© 2021 . All rights reserved.</p>
+                                </div>
+                            </div>
+                        </motion.div>
 
                         <motion.div
                             variants={panelVariants}
@@ -249,11 +265,11 @@ export default function Footer() {
                         >
                             <ul className="flex flex-col justify-between items-start max-sm:leading-[45px] sm:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white pl-8 max-lg:pl-16 max-md:pl-12 max-sm:pl-0">
                                 <li className="font-[600] max-md:font-semibold text-[20px] max-md:text-base mb-2 text-start">Our Company</li>
-                                <li className='cursor-pointer'><Link href="/about">About Us</Link></li>
-                                <li className='cursor-pointer'><Link href="/listing?new=true">All Listing</Link></li>
-                                <li className='cursor-pointer'><Link href="/map">Master Map</Link></li>
-                                {/* <li className='cursor-pointer'>Media</li> */}
-                                <li className='cursor-pointer'><Link href="/contact">Contact Us</Link></li>
+                                {footerInfoArray.companyLinks.map((link) => (
+                                    <li key={link.id} className='cursor-pointer'>
+                                        <Link href={link.path}>{link.title}</Link>
+                                    </li>
+                                ))}
                             </ul>
                         </motion.div>
 
@@ -270,16 +286,16 @@ export default function Footer() {
                                     type="text"
                                     placeholder="Email Address"
                                     value={email}
-                                    onChange={(e)=>{setEmail(e.target.value)}}
+                                    onChange={(e) => { setEmail(e.target.value) }}
                                     className="w-full h-full p-4 max-md:py-0 max-md:h-[38.93px] rounded-tl-[15px] outline-none text-black rounded-bl-[15px] text-xs"
-                                /> 
-                                 <button type='submit' className="bg-[#ED371C] p-2 max-sm:px-1 max-sm:py-0 rounded-full mr-3 flex justify-center items-center text-xs whitespace-nowrap">
+                                />
+                                <button type='submit' className="bg-[#ED371C] p-2 max-sm:px-1 max-sm:py-0 rounded-full mr-3 flex justify-center items-center text-xs whitespace-nowrap">
                                     Subscribe
                                 </button>
                             </form>
                         </motion.div>
                     </div>
-             
+
                 </div>
 
             </div>

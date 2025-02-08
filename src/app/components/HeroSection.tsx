@@ -9,6 +9,20 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHeroSection } from "../../redux/slices/heroSectionSlice";
 import { AppDispatch, RootState } from "../../redux/store";
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+// Add metadata export
+export const metadata: Metadata = {
+  title: 'Find Your Dream Property | Brick N Key',
+  description: 'Discover your perfect home with Brick N Key. Browse through our curated selection of premium properties and luxury homes.',
+  keywords: 'real estate, property search, luxury homes, apartments, property listings',
+  openGraph: {
+    title: 'Find Your Dream Property | Brick N Key',
+    description: 'Discover your perfect home with Brick N Key',
+    images: ['/images/Hero_Section.png'],
+  }
+}
 
 export default function HeroSection() {
     const data = useSelector((state: RootState)=>state.heroSection);
@@ -120,7 +134,7 @@ export default function HeroSection() {
                         animate={isInView ? "visible" : "hidden"}
                         className="absolute z-30 flex justify-center items-center w-[80%] max-sm:w-[90%] -mt-4 sm:-mt-6 md:-mt-8 lg:-mt-10"
                     >
-                        <Buy_Section component="herosection"/>
+                        <Buy_Section component="herosection" isLuxury={false} />
                     </motion.div>
                 </div>
             </div>

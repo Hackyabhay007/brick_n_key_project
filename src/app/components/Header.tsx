@@ -11,6 +11,19 @@ import { fetchHeaderSection } from "../../redux/slices/headerSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import { usePathname, useSearchParams } from "next/navigation";
 import path from "path";
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Brick N Key | Premium Real Estate Platform',
+  description: 'Navigate through our comprehensive real estate platform. Find your dream property with ease.',
+  keywords: 'real estate navigation, property search, home finder, property listings',
+  openGraph: {
+    title: 'Brick N Key | Premium Real Estate Platform',
+    description: 'Navigate through our comprehensive real estate platform',
+    type: 'website',
+  }
+}
 
 interface NavLink {
     id: number;
@@ -25,33 +38,25 @@ export default function Header() {
     const isInView = useInView(ref, { once: true });
     const searchParams = useSearchParams();
 
+
     const pathname = usePathname();
     const newData = searchParams.get('new');
-    console.log("This is the new Data of the Header", newData);
+    const isLuxury = searchParams.get('isLuxury');
+    console.log("This is the isLuxury value from the Header", isLuxury)
+
 
     const data = useSelector((state: RootState) => state.headerSection?.data);
     const dispatch = useDispatch<AppDispatch>();
-
-    // const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"; // Fallback for local dev
-    // const imagePath = data?.data?.header_container?.LogoLink?.image?.url; 
-
-    // if (!imagePath) {
-    //     console.error(" Image path is missing:", imagePath);
-    // }
-    
-    // // Ensure `imagePath` is a valid string before concatenating
-    // const imageUrl = imagePath ? `${baseUrl}${imagePath}` : ""; 
-    
     
 
     useEffect(() => {
         dispatch(fetchHeaderSection());
     }, [dispatch, selectedNavLink]);
 
+
     useEffect(()=>{
         console.log("This is the pathname", pathname)
         if(pathname === "/"){
-
             setSelectedNavLink("Home")
         }
         else if(pathname === "/map"){
@@ -60,10 +65,13 @@ export default function Header() {
         else if(newData){
             setSelectedNavLink("All Listing")
         }
+        else if(isLuxury === 'true'){
+            setSelectedNavLink("Luxury")
+        }
         else{
             setSelectedNavLink("")
         }
-    }, [pathname])
+    }, [pathname, isLuxury])
 
 
     const logoVariants = {
@@ -78,6 +86,7 @@ export default function Header() {
         },
     };
 
+
     const navItemVariants = {
         hidden: { opacity: 0, y: -20 },
         visible: (i = 1) => ({
@@ -91,6 +100,7 @@ export default function Header() {
         }),
     };
 
+
     const dropdownVariants = {
         hidden: { opacity: 0, y: -10 },
         visible: {
@@ -103,6 +113,8 @@ export default function Header() {
             },
         },
     };
+
+
 
     return (
         <>
@@ -125,7 +137,7 @@ export default function Header() {
                                 height={100}
                                 src={giveCorrectImage(data?.data?.header_container?.LogoLink?.image?.url)}
                                 onClick={()=>{setSelectedNavLink("HOME")} }
-                                className="w-auto h-[56px] max-sm:w-auto max-sm:h-auto object-cover"
+                                className="w-auto h-[56px] max-sm:w-auto max-sm:h-auto object-cover hover:scale-110 transition-transform duration-200"
                                 alt="Nav_logo"
                             />
                         </Link>
@@ -181,10 +193,10 @@ export default function Header() {
                                                 custom={index}
                                                 initial="hidden"
                                                 animate="visible"
-                                                className={`px-4 py-1.5  ${(selectedNavLink == item?.label) ? "text-bgRed" : ""}`}
+                                                className={`px-4 py-1.5`}
                                             >
                                                 <div onClick={()=>{setIsMenuOpen(false)}} className="bg-gray-800 rounded-full py-2 px-6 w-fit text-center text-white font-medium tracking-wide hover:bg-gray-700 transition-colors whitespace-nowrap">
-                                                    <Link href={item?.link}>
+                                                    <Link className={`${(selectedNavLink == item?.label) ? "text-bgRed" : ""}`} href={item?.link}>
                                                         {item.label}
                                                     </Link>
                                                 </div>

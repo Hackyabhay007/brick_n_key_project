@@ -10,8 +10,19 @@ import { setFilter } from '@/redux/slices/propertyItemSlice';
 import { useRouter } from 'next/navigation';
 import { FaChevronUp } from "react-icons/fa6";
 import Image from 'next/image';
+import { Metadata } from 'next'
+import Head from 'next/head'
 
-
+export const metadata: Metadata = {
+  title: 'Buy Properties | Brick N Key',
+  description: 'Search and filter through available properties. Find the perfect home that matches your criteria.',
+  keywords: 'buy property, real estate search, property filters, home buying',
+  openGraph: {
+    title: 'Buy Properties | Brick N Key',
+    description: 'Search and filter through available properties',
+    type: 'website',
+  }
+}
 
 const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boolean }) => {
   const [showFilter, setShowFilter] = useState(false);

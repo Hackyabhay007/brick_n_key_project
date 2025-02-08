@@ -1,3 +1,19 @@
+"use client"
+
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Property Details | Brick N Key',
+  description: 'Detailed view of our premium properties. View high-quality images, locations, and property features.',
+  keywords: 'property details, real estate listings, property features, home details',
+  openGraph: {
+    title: 'Property Details | Brick N Key',
+    description: 'Detailed view of our premium properties',
+    type: 'website',
+  }
+}
+
 import { motion } from 'framer-motion';
 import { MapPin } from 'lucide-react'; 
 
@@ -93,7 +109,7 @@ const Property_Card = ({
             
             <div className={`w-full ${
                 component === 'brand' 
-                    ? 'flex flex-col gap-3 px-1' 
+                    ? 'flex flex-col max-md:flex-col gap-3 px-1' 
                     : 'flex flex-col justify-between p-6 space-y-4'
             }`}>
                 <div className='text-white space-y-3'>

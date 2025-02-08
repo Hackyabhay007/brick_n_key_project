@@ -21,12 +21,13 @@ export interface PropertyFilters {
   property_Type?: string;
   isLuxury?: boolean;
   property_Location?: string;
-  page?: number;
-  pageSize?: number;
+  page: number;
+  pageSize: number;
   minPrice?: number;
   maxPrice?: number;
   brand_name?: string;
   brand_type?: string;  // Add this line
+  brandFilter?: string[];
 }
 
 export interface PopularSectionSlice {
@@ -55,6 +56,10 @@ const buildApiUrl = (filters: PropertyFilters): string => {
   const baseUrl = "http://localhost:1337/api/detail-pages";
   const page = filters.page || 1;
   const pageSize = filters.pageSize || 5; // Default to 5 items per page
+  
+  // Ensure we don't fetch empty pages
+  let totalCount = 0;
+  let maxPages = 1;
   
   // Updated pagination parameters
   let url = `${baseUrl}?populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
@@ -103,6 +108,25 @@ const buildApiUrl = (filters: PropertyFilters): string => {
       ).join('&');
       filterParams.push(brandFilters);
     }
+  }
+
+  // Handle brand_type filter
+  if (filters.brand_type) {
+    const brandTypes = filters.brand_type.split(',');
+    if (brandTypes.length > 0) {
+      const brandTypeFilters = brandTypes.map(type => 
+        `filters[brand][brand_type][$eq]=${encodeURIComponent(type)}`
+      ).join('&');
+      filterParams.push(brandTypeFilters);
+    }
+  }
+
+  // Updated brand filter handling
+  if (filters.brandFilter && filters.brandFilter.length > 0) {
+    const brandFilters = filters.brandFilter.map(brand => 
+      `filters[brand][brand_name][$eq]=${encodeURIComponent(brand)}`
+    ).join('&');
+    filterParams.push(brandFilters);
   }
 
   // Handle price range
@@ -198,7 +222,11 @@ export const fetchPropertyItems = createAsyncThunk<
     try {
       const state = getState();
       // console.log('Current filters:', state.propertyItems.activeFilters);
-      const url = buildApiUrl(state?.propertyItems?.activeFilters);
+      const url = buildApiUrl({
+        page: 1,
+        pageSize: 5,
+        ...state?.propertyItems?.activeFilters
+      });
       const response = await axios.get(url);
       // console.log('API Response:', response.data);
       return response.data;
@@ -219,19 +247,38 @@ const propertyItemsSlice = createSlice({
   reducers: {
     setFilter: (state, action: PayloadAction<{ 
       key: keyof PropertyFilters; 
-      value: string | boolean | number | undefined 
+      value: PropertyFilters[keyof PropertyFilters] | undefined 
     }>) => {
       const { key, value } = action.payload;
 
       // console.log("This is the Key and value from the property Item Slice", key, value);
-      if (value === undefined || value === '') {
-        const { [key]: _, ...rest } = state.activeFilters;
-        state.activeFilters = rest;
+      if (key === 'brand_name' || key === 'brandFilter') {
+        // Handle brand filter separately
+        if (value === undefined || value === '') {
+          const { brandFilter, ...rest } = state.activeFilters;
+          state.activeFilters = rest;
+        } else if (Array.isArray(value)) {
+          state.activeFilters = {
+            ...state.activeFilters,
+            brandFilter: value
+          };
+        } else {
+          state.activeFilters = {
+            ...state.activeFilters,
+            brandFilter: value.toString().split(',,').filter(Boolean)
+          };
+        }
       } else {
-        state.activeFilters = {
-          ...state.activeFilters,
-          [key]: value
-        };
+        // Handle other filters as before
+        if (value === undefined || value === '') {
+          const { [key]: _, ...rest } = state.activeFilters;
+          state.activeFilters = rest;
+        } else {
+          state.activeFilters = {
+            ...state.activeFilters,
+            [key]: value
+          };
+        }
       }
 
       console.log("Updated filters:", state.activeFilters);
@@ -248,7 +295,18 @@ const propertyItemsSlice = createSlice({
     clearFilters: (state) => {
       // console.log('Clearing all filters');
       state.activeFilters = {};
-    }
+    },
+    setBrandFilter: (state, action: PayloadAction<string>) => {
+      const brands = action.payload
+        ? action.payload.split(',,').map(brand => brand.trim()).filter(Boolean)
+        : [];
+      
+      state.activeFilters = {
+        ...state.activeFilters,
+        brandFilter: brands,
+        page: 1 // Reset to first page when filter changes
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -295,5 +353,5 @@ const propertyItemsSlice = createSlice({
 export const selectActiveFilters = (state: RootState) => 
   state.propertyItems.activeFilters;
 
-export const { setFilter, clearFilters, setPriceRange } = propertyItemsSlice.actions;
+export const { setFilter, clearFilters, setPriceRange, setBrandFilter } = propertyItemsSlice.actions;
 export default propertyItemsSlice.reducer;

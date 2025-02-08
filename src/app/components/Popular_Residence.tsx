@@ -11,6 +11,19 @@ import { setFilter } from '@/redux/slices/propertyItemSlice';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { giveCorrectImage } from '../data';
+import { Metadata } from 'next'
+import Head from 'next/head'
+
+export const metadata: Metadata = {
+  title: 'Popular Residences | Brick N Key',
+  description: 'Discover our most sought-after residential properties. From luxury apartments to premium villas in prime locations.',
+  keywords: 'popular residences, luxury homes, premium properties, residential areas, real estate',
+  openGraph: {
+    title: 'Popular Residences | Brick N Key',
+    description: 'Discover our most sought-after residential properties',
+    images: ['/images/popular_residence_img_1.png'],
+  }
+}
 
 interface ResidenceItem {
     id: number;

@@ -8,6 +8,7 @@ import {
   fetchPropertyItems,
   setFilter,
   setPriceRange,
+  setBrandFilter,
   RootState
 } from '@/redux/slices/propertyItemSlice';
 import { AppDispatch } from "../../redux/store";
@@ -64,16 +65,19 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
   // Update useEffect to properly handle filter updates
   useEffect(() => {
     if (activeFilters) {
+      console.log("THE ACTIVE FILTERS ARE: ", activeFilters);
       const typeValue = activeFilters.property_Type?.toString() || "";
       const bedroomValue = activeFilters.property_Bedroom?.toString() || "";
       const constructionValue = activeFilters.property_Construction_status?.toString() || "";
-      const brandValue = activeFilters.brand_name?.toString() || "";
+      const brandValue = activeFilters.brandFilter?.map((currElem)=>{
+        return currElem
+      }) || [];
 
       // Split using double comma to handle values that might contain single commas
       setProperty_Type(typeValue ? typeValue.split(',,').filter(Boolean) : []);
       setProperty_Bedroom(bedroomValue ? bedroomValue.split(',,').filter(Boolean) : []);
       setProperty_Construction_status(constructionValue ? constructionValue.split(',,').filter(Boolean) : []);
-      setBrand_Type(brandValue ? brandValue.split(',,').filter(Boolean) : []);
+      setBrand_Type(brandValue);
       setBudgetRange({
         minPrice: activeFilters.minPrice || 1,
         maxPrice: activeFilters.maxPrice || 100
@@ -106,10 +110,8 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
     }
     
     if (brand_type.length > 0) {
-      dispatch(setFilter({ 
-        key: 'brand_name', 
-        value: brand_type.join(',,') 
-      }));
+      // Use the new setBrandFilter action instead
+      dispatch(setBrandFilter(brand_type.join(',,'))); 
     }
 
     if (budgetRange.minPrice !== 1 || budgetRange.maxPrice !== 100) {
@@ -299,34 +301,66 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
 
           <p className='border-b-2 border-[#DCDCEB] pb-4 mb-3'>For any Special Requirement? <span className='text-bgRed'><Link href="/contact">Contact Us</Link></span></p>
 
+          {/* Fix: Correct the button container structure */}
           <div className="budget_bedroom_construction_postedby_section text-[#8F90A6] flex justify-start items-center gap-2">
-
-            <button onClick={() => { if (openSection == "budget") { setOpenSection("") } else { setOpenSection("budget") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(budgetRange.minPrice == 1 && budgetRange.maxPrice == 100) ? "" : "bg-bgRed text-black bg-opacity-10 border border-bgRed"} ${(openSection == "budget" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
+            <button 
+              onClick={() => setOpenSection(openSection === "budget" ? "" : "budget")} 
+              className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${
+                (budgetRange.minPrice === 1 && budgetRange.maxPrice === 100) 
+                  ? "" 
+                  : "bg-bgRed text-black bg-opacity-10 border border-bgRed"
+              } ${openSection === "budget" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
+            >
               Budget
-              {
-                openSection == "budget" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
+              {openSection === "budget" 
+                ? <FaChevronUp className='text-sm' /> 
+                : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
               }
-
             </button>
 
-            <button onClick={() => { if (openSection == "bedroom") { setOpenSection("") } else { setOpenSection("bedroom") } }} className={`flex justifycenter items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(property_Bedroom.length === 0) ? "" : "bg-bgRed text-black bg-opacity-10 border border-bgRed"} ${(openSection == "bedroom" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
+            {/* Similar structure for other buttons */}
+            <button 
+              onClick={() => setOpenSection(openSection === "bedroom" ? "" : "bedroom")}
+              className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${
+                property_Bedroom.length === 0 
+                  ? "" 
+                  : "bg-bgRed text-black bg-opacity-10 border border-bgRed"
+              } ${openSection === "bedroom" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
+            >
               Bedroom
-              {
-                openSection == "bedroom" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon_1" />
+              {openSection === "bedroom" 
+                ? <FaChevronUp className='text-sm' /> 
+                : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon_1" />
               }
             </button>
 
-            <button onClick={() => { if (openSection == "construction_status") { setOpenSection("") } else { setOpenSection("construction_status") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${(property_Construction_status.length === 0) ? "" : "bg-bgRed  text-black bg-opacity-10 text-blackborder border-bgRed"} ${(openSection == "construction_status" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
+            <button 
+              onClick={() => setOpenSection(openSection === "construction_status" ? "" : "construction_status")}
+              className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${
+                property_Construction_status.length === 0 
+                  ? "" 
+                  : "bg-bgRed text-black bg-opacity-10 border border-bgRed"
+              } ${openSection === "construction_status" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
+            >
               Construction Status
-              {
-                openSection == "construction_status" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
+              {openSection === "construction_status" 
+                ? <FaChevronUp className='text-sm' /> 
+                : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
               }
             </button>
 
-            <button onClick={() => { if (openSection == "brand_type") { setOpenSection("") } else { setOpenSection("brand_type") } }} className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full  ${(brand_type.length === 0) ? "" : "bg-bgRed bg-opacity-10 text-black border border-bgRed"}  ${(openSection == "brand_type" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "")}`}>
+            <button 
+              onClick={() => setOpenSection(openSection === "brand_type" ? "" : "brand_type")}
+              className={`flex justify-center items-center gap-2 py-1 px-3 border border-[#8F90A6] rounded-full ${
+                brand_type.length === 0 
+                  ? "" 
+                  : "bg-bgRed bg-opacity-10 text-black border border-bgRed"
+              } ${openSection === "brand_type" ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
+            >
               Brands
-              {
-                openSection == "brand_type" ? <FaChevronUp className='text-sm' /> : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
+              {openSection === "brand_type" 
+                ? <FaChevronUp className='text-sm' /> 
+                : <Image width={100} height={100} className='w-3 h-auto' src="/images/buy_section_icon_1.svg" alt="buy_section_icon" />
               }
             </button>
           </div>
