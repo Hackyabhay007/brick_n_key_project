@@ -1,23 +1,9 @@
 "use client"
 
-import { Metadata } from 'next'
-import Head from 'next/head'
-
-export const metadata: Metadata = {
-  title: 'Why Choose Brick N Key | Leading Real Estate Platform',
-  description: 'Discover why Brick N Key is your best choice for real estate. Learn about our unique advantages and commitment to excellence.',
-  keywords: 'why choose us, real estate benefits, property expertise, customer service',
-  openGraph: {
-    title: 'Why Choose Brick N Key | Leading Real Estate Platform',
-    description: 'Your trusted partner in real estate',
-    images: ['/images/why_choose_us_img_2.png'],
-  }
-}
-
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetch_whyChooseUsSection } from "../../redux/slices/whyChooseUsSlice";
 import { AppDispatch, RootState } from "../../redux/store";
@@ -88,70 +74,6 @@ export default function Why_Choose_Us() {
             transition: { duration: 0.6 }
         }
     };
-
-    const buttonVariants = {
-        rotate: {
-            rotate: 360,
-            transition: {
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear"
-            }
-        }
-    };
-
-    const [currentPositions, setCurrentPositions] = useState([0, 1, 2, 3]);
-
-    const positions = {
-        desktop: [
-            { x: 0, y: -120 },    // top
-            { x: 120, y: 0 },     // right
-            { x: 0, y: 120 },     // bottom
-            { x: -120, y: 0 }     // left
-        ],
-        tablet: [
-            { x: 0, y: -80 },     // top
-            { x: 80, y: 0 },      // right
-            { x: 0, y: 80 },      // bottom
-            { x: -80, y: 0 }      // left
-        ],
-        mobile: [
-            { x: 0, y: -60 },     // top
-            { x: 60, y: 0 },      // right
-            { x: 0, y: 60 },      // bottom
-            { x: -60, y: 0 }      // left
-        ]
-    };
-
-    const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowWidth(window.innerWidth);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    const getCurrentPositions = () => {
-        if (windowWidth <= 640) return positions.mobile;
-        if (windowWidth <= 1024) return positions.tablet;
-        return positions.desktop;
-    };
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentPositions(prev => {
-                const newPositions = [...prev];
-                const last = newPositions.pop()!;
-                newPositions.unshift(last);
-                return newPositions;
-            });
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, []);
 
     const buttonTexts = [
         data?.data?.Right_sideBtn_1_text,

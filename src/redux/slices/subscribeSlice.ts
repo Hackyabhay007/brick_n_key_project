@@ -1,5 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { StrapiResponse, BaseAttributes } from '../../types/strapi';
 
 export interface SubscribeState {
   loading: boolean;
@@ -11,6 +12,10 @@ export interface SubscribePayload {
   email: string;
 }
 
+interface SubscribeAttributes extends BaseAttributes {
+  email: string;
+}
+
 const initialState: SubscribeState = {
   loading: false,
   success: false,
@@ -19,26 +24,22 @@ const initialState: SubscribeState = {
 
 const API_URL = 'http://localhost:1337/api/subscribe-models';
 
-export const subscribeToNewsletter = createAsyncThunk(
-  'subscribe/submitEmail',
-  async (payload: SubscribePayload, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(API_URL, {
-        data: {
-          email: payload.email
-        }
-      });
-      return response.data;
-    } catch (error: any) {
-      // return rejectWithValue(error?.response?.data || 'Subscription failed');
-      return rejectWithValue(
-        error.response?.data?.error?.details?.errors[0].message || "Subscription failed"
-      );
+export const subscribeToNewsletter = createAsyncThunk<
+  StrapiResponse<{ id: number; attributes: SubscribeAttributes }>,
+  SubscribePayload,
+  { rejectValue: string }
+>('subscribe/submitEmail', async (payload, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(API_URL, { data: { email: payload.email } });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.error?.details?.errors[0]?.message;
+      return rejectWithValue(errorMessage || "Subscription failed");
     }
+    return rejectWithValue("Subscription failed");
   }
-);
-
-
+});
 
 const subscribeSlice = createSlice({
   name: 'subscribe',

@@ -4,9 +4,7 @@ import React, { useState, useRef } from 'react';
 import { MapPin } from 'lucide-react';
 import Slider from './Slider';
 import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
 import { Metadata } from 'next'
-import Head from 'next/head'
 
 export const metadata: Metadata = {
   title: 'Explore Luxury Properties | Brick N Key',
@@ -45,7 +43,6 @@ const locationData: LocationData[] = [
 
 const Explore = () => {
     const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true });
     const [currentLocation, setCurrentLocation] = useState(locationData[0].location);
     const [activeIndex, setActiveIndex] = useState(0);
     const [currentImageSet, setCurrentImageSet] = useState(locationData[0].images);

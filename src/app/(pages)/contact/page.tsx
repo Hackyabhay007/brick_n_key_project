@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { contactPageData } from '@/app/data';
 
 export default function Contact(){
-    let listing_Id = undefined;
+    const listing_Id = undefined;
 
     // Map icon names to actual components
     const iconComponents: { [key: string]: React.ComponentType } = {

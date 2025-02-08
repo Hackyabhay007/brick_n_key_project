@@ -1,33 +1,63 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { StrapiResponse, StrapiImage } from "../../types/strapi";
 
-interface HeaderSectionSlice {
-  data: any;
+interface NavLink {
+  id: number;
+  title: string;
+  url: string;
+}
+
+interface HeaderContainer {
+  LogoLink: {
+    image: {
+      data: StrapiImage;
+    };
+  };
+  navLinks: {
+    data: NavLink[];
+  };
+}
+
+interface HeaderAttributes {
+  header_container: HeaderContainer;
+}
+
+type HeaderResponse = StrapiResponse<{
+  id: number;
+  attributes: HeaderAttributes;
+}>;
+
+interface HeaderState {
+  data: HeaderResponse | null;
   loading: boolean;
   error: string | null;
 }
 
-// Define initial state
-const initialState: HeaderSectionSlice = {
+const initialState: HeaderState = {
   data: null,
   loading: false,
   error: null,
 };
 
-// Async Thunk for fetching data from Strapi
-export const fetchHeaderSection = createAsyncThunk(
-  "headerSection/fetchHeaderSection",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get("http://localhost:1337/api/global?populate=header_container.LogoLink.image&populate[1]=header_container.navLinks");
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || "Failed to fetch data");
+export const fetchHeaderSection = createAsyncThunk<
+  HeaderResponse,
+  void,
+  { rejectValue: string }
+>("headerSection/fetchHeaderSection", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get<HeaderResponse>(
+      "http://localhost:1337/api/global?populate=header_container.LogoLink.image&populate[1]=header_container.navLinks"
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch data");
     }
+    return rejectWithValue("An unexpected error occurred");
   }
-);
+});
 
-// Create the slice
 const headerSectionSlice = createSlice({
   name: "headerSection",
   initialState,
@@ -38,13 +68,13 @@ const headerSectionSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchHeaderSection.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchHeaderSection.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
       })
-      .addCase(fetchHeaderSection.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(fetchHeaderSection.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? "An error occurred";
       });
   },
 });

@@ -1,34 +1,55 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { StrapiResponse, StrapiImage } from "../../types/strapi";
 
-interface LuxuryListingSlice {
-  data: any;
+interface LuxuryListingAttributes {
+  title: string;
+  description: string;
+  isLuxury: boolean;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  propertyDetails?: Record<string, unknown>;
+  images?: {
+    data: StrapiImage[];
+  };
+}
+
+type LuxuryListingResponse = StrapiResponse<Array<{
+  id: number;
+  attributes: LuxuryListingAttributes;
+}>>;
+
+interface LuxuryListingState {
+  data: LuxuryListingResponse | null;
   loading: boolean;
   error: string | null;
 }
 
-// Define initial state
-const initialState: LuxuryListingSlice = {
+const initialState: LuxuryListingState = {
   data: null,
   loading: false,
   error: null,
 };
 
-// Async Thunk for fetching data from Strapi
-export const fetchLuxuryListingItem = createAsyncThunk(
-  "luxuryListingItem/fetchLuxuryListingItem",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get("http://localhost:1337/api/detail-pages?filters[isLuxury][$eq]=true&populate=*");
-    //   console.log(response)
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || "Failed to fetch data");
+export const fetchLuxuryListingItem = createAsyncThunk<
+  LuxuryListingResponse,
+  void,
+  { rejectValue: string }
+>("luxuryListingItem/fetchLuxuryListingItem", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get<LuxuryListingResponse>(
+      "http://localhost:1337/api/detail-pages?filters[isLuxury][$eq]=true&populate=*"
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch data");
     }
+    return rejectWithValue("An unexpected error occurred");
   }
-);
+});
 
-// Create the slice
 const propertyItemsSlice = createSlice({
   name: "luxuryListingItem",
   initialState,
@@ -39,13 +60,13 @@ const propertyItemsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchLuxuryListingItem.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchLuxuryListingItem.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
       })
-      .addCase(fetchLuxuryListingItem.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(fetchLuxuryListingItem.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? "An error occurred";
       });
   },
 });

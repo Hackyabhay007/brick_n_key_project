@@ -9,65 +9,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPeopleTrustUs_Slice } from "../../redux/slices/peopleTrust_usSlice";
 import { AppDispatch, RootState } from "../../redux/store";
-import { Metadata } from 'next'
-import Head from 'next/head'
 
-export const metadata: Metadata = {
-  title: 'Customer Trust | Brick N Key',
-  description: 'See why over 1000+ customers trust Brick N Key. Read testimonials and success stories from our satisfied clients.',
-  keywords: 'customer testimonials, trust, reviews, client feedback, real estate success stories',
-  openGraph: {
-    title: 'Customer Trust | Brick N Key',
-    description: 'Over 1000+ satisfied customers trust Brick N Key',
-    images: ['/images/Trusted_by_img.png'],
-  }
-}
-
-interface Testimonial {
-    id: number;
-    name: string;
-    position: string;
-    company: string;
-    image: string;
-}
-
-const testimonials: Testimonial[] = [
-    {
-        id: 1,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    },
-    {
-        id: 2,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    },
-    {
-        id: 3,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    },
-    {
-        id: 4,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    },
-    {
-        id: 5,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    }
-];
 
 export default function Trust_Us() {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -79,13 +21,10 @@ export default function Trust_Us() {
 
     const data = useSelector((state: RootState) => state.peopleTrustUsSection?.data);
     const dispatch = useDispatch<AppDispatch>();
-    // const { data, loading, error } = useSelector(
-    //     (state: RootState) => state.heroSection
-    // );
 
     useEffect(() => {
         if(data){
-            const newArr = data?.data.map((currElem: {id: number, People_Trust_Us_video: {url: string}, People_Trust_Us_title: string, People_Trust_Us_designation: string}, index: number) => {
+            const newArr = data?.data.map((currElem: {id: number, People_Trust_Us_video: {url: string}, People_Trust_Us_title: string, People_Trust_Us_designation: string}) => {
                 return {
                     id : currElem.id,
                     title: currElem.People_Trust_Us_title,
@@ -106,8 +45,6 @@ export default function Trust_Us() {
         dispatch(fetchPeopleTrustUs_Slice());
     }, [dispatch]);
 
-    // if (data?.loading) return <p>Loading...</p>;
-    // if (data?.error) return <p>Error: {data?.error}</p>;
     if (data) console.log(data?.data);
 
     const nextSlide = () => {
@@ -132,7 +69,6 @@ export default function Trust_Us() {
             video.pause();
             setPlayingVideo(null);
         } else {
-            // Pause any currently playing video
             if (playingVideo !== null && videoRefs.current[playingVideo]) {
                 videoRefs.current[playingVideo]?.pause();
             }
@@ -194,7 +130,6 @@ export default function Trust_Us() {
                 ref={ref}
                 className='w-[95%] md:w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue rounded-[20px] max-lg:py-10 lg:p-14'
             >
-                {/* Header Section */}
                 <motion.div
                     variants={headerVariants}
                     initial="hidden"
@@ -209,9 +144,7 @@ export default function Trust_Us() {
                     </p>
                 </motion.div>
 
-                {/* Slider Section */}
                 <div className="relative w-full mx-auto mt-8 md:mt-12 lg:mt-20 mb-8">
-                    {/* Navigation Buttons */}
                     <motion.button
                         variants={buttonVariants}
                         initial="hidden"
@@ -231,7 +164,6 @@ export default function Trust_Us() {
                         <ChevronRight className="w-4 h-4 md:w-6 md:h-6 text-white" />
                     </motion.button>
 
-                    {/* Testimonials Container */}
                     <motion.div
                         variants={sliderVariants}
                         initial="hidden"

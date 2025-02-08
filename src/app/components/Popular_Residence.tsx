@@ -7,12 +7,9 @@ import { useEffect } from "react";
 import { fetchPopularSection } from "../../redux/slices/popularSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilter } from '@/redux/slices/propertyItemSlice';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { giveCorrectImage } from '../data';
 import { Metadata } from 'next'
-import Head from 'next/head'
 
 export const metadata: Metadata = {
   title: 'Popular Residences | Brick N Key',
@@ -88,39 +85,27 @@ const Popular_Residence = () => {
     const data = useSelector((state: RootState) => state.popularSection?.data);
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
-    // const { data, loading, error } = useSelector(
-    //     (state: RootState) => state.heroSection
-    // );
-
 
     useEffect(() => {
         dispatch(fetchPopularSection());
     }, [dispatch]);
 
-    // if (data?.loading) return <p>Loading...</p>;
-    // if (data?.error) return <p>Error: {data?.error}</p>;
-    // if (data) console.log(data.data);
-
-    // Responsive calculation for different screen sizes
     const getVisibleItems = () => {
         const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
 
         if (screenWidth >= 1024) {
-            // Desktop: 6 items
             return {
                 itemsToShow: 6,
                 canSlideNext: startIndex < residenceData.length - 6,
                 canSlidePrev: startIndex > 0
             };
         } else if (screenWidth >= 768) {
-            // Tablet: 5.5 items
             return {
                 itemsToShow: 5.5,
                 canSlideNext: startIndex < residenceData.length - 5.5,
                 canSlidePrev: startIndex > 0
             };
         } else {
-            // Mobile: 4.5 items
             return {
                 itemsToShow: 4.5,
                 canSlideNext: startIndex < residenceData.length - 4.5,
@@ -142,7 +127,6 @@ const Popular_Residence = () => {
             setStartIndex(prev => prev - 1);
         }
     };
-
 
     const handleFilterChange = (key: string, value: string | number | undefined) => {
         console.log(key, value);
@@ -187,14 +171,19 @@ const Popular_Residence = () => {
                             transform: `translateX(-${startIndex * (100 / itemsToShow)}%)`,
                         }}
                     >
-                        {(data?.data)?.map((item: { id: number, property_Images: { url: string }, property_Location: string, property_Type: String }, index: Number) => (
+                        {(data?.data)?.map((item: { 
+                            id: number, 
+                            property_Images: { url: string }, 
+                            property_Location: string, 
+                            property_Type: string
+                        }) => (
                             <div
                                 key={"string" + item.id}
                                 className="min-w-[calc((100%-5*1.5rem)/6)] flex-shrink-0 
                                     lg:min-w-[calc((100%-5*1.5rem)/6)]
                                     md:min-w-[calc((100%-4*1.5rem)/5.5)]
                                     max-md:min-w-[calc((100%-3*1.5rem)/4.5)] cursor-pointer"
-                                onClick={(e) => handleFilterChange('property_Location', item.property_Location || undefined)}
+                                onClick={() => handleFilterChange('property_Location', item.property_Location || undefined)}
                             >
                                 <div className="rounded-lg overflow-hidden flex flex-col justify-start items-start text-[16px] font-[500] leading-[19.5px]">
                                     <div className="relative group">

@@ -1,18 +1,13 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
+import { StrapiResponse, PropertyAttributes } from "../../types/strapi";
 
-// Define API response type
-export interface ApiResponse {
-  data: Array<any>;
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+type PropertyResponse = StrapiResponse<Array<{
+  id: number;
+  attributes: PropertyAttributes;
+}>>;
+
+export type ApiResponse = PropertyResponse;
 
 export interface PropertyFilters {
   property_Construction_status?: string;
@@ -30,9 +25,14 @@ export interface PropertyFilters {
   brandFilter?: string[];
 }
 
+interface FilterPayload {
+  key: keyof PropertyFilters;
+  value: PropertyFilters[keyof PropertyFilters];
+}
+
 export interface PopularSectionSlice {
-  data: ApiResponse | null;
-  newItems: ApiResponse | null;
+  data: PropertyResponse | null;
+  newItems: PropertyResponse | null;
   loading: boolean;
   newItemsLoading: boolean;
   error: string | null;
@@ -54,17 +54,9 @@ const initialState: PopularSectionSlice = {
 
 const buildApiUrl = (filters: PropertyFilters): string => {
   const baseUrl = "http://localhost:1337/api/detail-pages";
-  const page = filters.page || 1;
-  const pageSize = filters.pageSize || 5; // Default to 5 items per page
+  const url = `${baseUrl}?populate=*&pagination[page]=${filters.page || 1}&pagination[pageSize]=${filters.pageSize || 5}`;
   
-  // Ensure we don't fetch empty pages
-  let totalCount = 0;
-  let maxPages = 1;
-  
-  // Updated pagination parameters
-  let url = `${baseUrl}?populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
-  
-  const filterParams = [];
+  const filterParams: string[] = [];
   
   // Handle multiple values for property_Construction_status
   if (filters.property_Construction_status) {
@@ -151,12 +143,7 @@ const buildApiUrl = (filters: PropertyFilters): string => {
     filterParams.push(...locationFilters);
   }
 
-  if (filterParams.length > 0) {
-    url += `&${filterParams.join('&')}`;
-  }
-
-  // console.log('Generated URL:', url);
-  return url;
+  return filterParams.length > 0 ? `${url}&${filterParams.join('&')}` : url;
 };
 
 // New thunk for fetching properties by price range
@@ -245,43 +232,20 @@ const propertyItemsSlice = createSlice({
   name: "propertyItems",
   initialState,
   reducers: {
-    setFilter: (state, action: PayloadAction<{ 
-      key: keyof PropertyFilters; 
-      value: PropertyFilters[keyof PropertyFilters] | undefined 
-    }>) => {
+    setFilter: (state, action: PayloadAction<FilterPayload>) => {
       const { key, value } = action.payload;
-
-      // console.log("This is the Key and value from the property Item Slice", key, value);
-      if (key === 'brand_name' || key === 'brandFilter') {
-        // Handle brand filter separately
-        if (value === undefined || value === '') {
-          const { brandFilter, ...rest } = state.activeFilters;
-          state.activeFilters = rest;
-        } else if (Array.isArray(value)) {
-          state.activeFilters = {
-            ...state.activeFilters,
-            brandFilter: value
-          };
-        } else {
-          state.activeFilters = {
-            ...state.activeFilters,
-            brandFilter: value.toString().split(',,').filter(Boolean)
-          };
-        }
+      
+      if (value === undefined || value === '') {
+        // Instead of destructuring with an unused variable, use Object.fromEntries
+        state.activeFilters = Object.fromEntries(
+          Object.entries(state.activeFilters).filter(([k]) => k !== key)
+        );
       } else {
-        // Handle other filters as before
-        if (value === undefined || value === '') {
-          const { [key]: _, ...rest } = state.activeFilters;
-          state.activeFilters = rest;
-        } else {
-          state.activeFilters = {
-            ...state.activeFilters,
-            [key]: value
-          };
-        }
+        state.activeFilters = {
+          ...state.activeFilters,
+          [key]: value
+        };
       }
-
-      console.log("Updated filters:", state.activeFilters);
     },
     // New action for setting price range
     setPriceRange: (state, action: PayloadAction<{ minPrice: number; maxPrice: number }>) => {

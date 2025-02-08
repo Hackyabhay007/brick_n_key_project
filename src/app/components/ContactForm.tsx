@@ -6,9 +6,7 @@ import { submitContactForm, resetFormState } from "../../redux/slices/Contact_Se
 import { AppDispatch, RootState } from "../../redux/store";
 import Toast from "./Toast";
 import { Metadata } from 'next'
-import Head from 'next/head'
 import { FaPhone, FaUserAlt } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
 
 export const metadata: Metadata = {
   title: 'Contact Us | Brick N Key',
@@ -47,7 +45,7 @@ export default function ContactForm({ component, listingId }: { component: strin
   });
 
   const dispatch = useDispatch<AppDispatch>();
-  const { loading, error, successMessage } = useSelector((state: RootState) => state.contactSection);
+  const { error, successMessage } = useSelector((state: RootState) => state.contactSection);
 
   useEffect(() => {
     if (successMessage) {
@@ -56,7 +54,7 @@ export default function ContactForm({ component, listingId }: { component: strin
         type: "success",
         isVisible: true
       });
-      // Reset form after successful submission
+      // Reset form after successful submission, removed unused prevData parameter
       setFormData({
         first_name: "",
         last_name: "",
@@ -76,7 +74,7 @@ export default function ContactForm({ component, listingId }: { component: strin
     return () => {
       dispatch(resetFormState());
     };
-  }, [dispatch, successMessage, error]);
+  }, [dispatch, successMessage, error, listingId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

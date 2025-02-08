@@ -1,8 +1,47 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+
+interface StrapiImage {
+  data: {
+    id: number;
+    attributes: {
+      url: string;
+      alternativeText?: string;
+    };
+  };
+}
+
+interface StrapiData<T> {
+  id: number;
+  attributes: T;
+}
+
+interface BrandAttributes {
+  brand_logo: StrapiImage;
+  brand_relations: {
+    data: Array<StrapiData<{
+      property_Images: StrapiImage[];
+      propertyFeature: Array<StrapiData<{
+        name: string;
+        description?: string;
+      }>>;
+    }>>;
+  };
+}
+
+interface StrapiResponse {
+  data: Array<StrapiData<BrandAttributes>>;
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      total: number;
+    };
+  };
+}
 
 interface BrandSectionState {
-  data: any;
+  data: StrapiResponse | null;
   loading: boolean;
   error: string | null;
 }
@@ -19,10 +58,15 @@ export const fetchBrandSectionSlice = createAsyncThunk(
   "brandSection/fetchBrandSectionSlice",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://localhost:1337/api/brands?populate=brand_logo&populate[1]=brand_relations.property_Images&populate[2]=brand_relations.propertyFeature");
+      const response = await axios.get<StrapiResponse>(
+        "http://localhost:1337/api/brands?populate=brand_logo&populate[1]=brand_relations.property_Images&populate[2]=brand_relations.propertyFeature"
+      );
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || "Failed to fetch data");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data?.error?.message || "Failed to fetch data");
+      }
+      return rejectWithValue("An unexpected error occurred");
     }
   }
 );
@@ -38,13 +82,13 @@ const brandSectionSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchBrandSectionSlice.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchBrandSectionSlice.fulfilled, (state, action: PayloadAction<StrapiResponse>) => {
         state.loading = false;
         state.data = action.payload;
       })
-      .addCase(fetchBrandSectionSlice.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(fetchBrandSectionSlice.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload as string;
       });
   },
 });

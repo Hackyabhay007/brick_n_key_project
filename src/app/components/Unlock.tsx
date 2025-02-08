@@ -1,18 +1,5 @@
 "use client"
 
-import { Metadata } from 'next'
-import Head from 'next/head'
-
-export const metadata: Metadata = {
-  title: 'Unlock Premium Properties | Brick N Key',
-  description: 'Unlock access to exclusive properties and premium real estate opportunities with Brick N Key.',
-  keywords: 'premium properties, exclusive listings, luxury real estate, property access',
-  openGraph: {
-    title: 'Unlock Premium Properties | Brick N Key',
-    description: 'Access exclusive properties and premium real estate opportunities',
-    images: ['/images/Unlock_img.png'],
-  }
-}
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";

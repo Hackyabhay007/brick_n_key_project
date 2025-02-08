@@ -35,13 +35,6 @@ interface Buy_Section_Desktop_DropdownProps {
   isLuxury: boolean;
 }
 
-interface MultiSelectState {
-  property_Type: string[];
-  property_Bedroom: string[];
-  property_Construction_status: string[];
-  brand_type: string[];
-}
-
 const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> = ({
   isOpen,
   onClose,
@@ -471,7 +464,7 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
                   {constructionStatus.map((status) => (
                     <button
                       key={status}
-                      onClick={(e) => handleFilterChange('property_Construction_status', status || undefined, "construction_status")}
+                      onClick={() => handleFilterChange('property_Construction_status', status || undefined, "construction_status")}
                       className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${(property_Construction_status.includes(status)) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""}`}
                     >
                       {

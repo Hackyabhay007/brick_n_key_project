@@ -1,15 +1,16 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { StrapiResponse, PropertyAttributes } from "../../types/strapi";
+
+type PopularListingResponse = StrapiResponse<Array<{
+  id: number;
+  attributes: PropertyAttributes;
+}>>;
 
 interface PopularListingState {
-  data: any;
+  data: PopularListingResponse | null;
   loading: boolean;
   error: string | null;
-}
-
-// Define the parameter type for the async thunk
-interface FetchPopularListingParams {
-  propertyType: string;
 }
 
 // Define initial state
@@ -19,21 +20,25 @@ const initialState: PopularListingState = {
   error: null,
 };
 
-// Updated Async Thunk to accept propertyType parameter
-export const fetchPopular_Listing = createAsyncThunk(
-  "popularListing/fetchPopular_Listing",
-  async ({ propertyType }: FetchPopularListingParams, { rejectWithValue }) => {
-    console.log("This is the propertyType from the popular listing slice", propertyType);
-    try {
-      const response = await axios.get(
-        `http://localhost:1337/api/detail-pages?filters[property_Type][$eq]=${propertyType}&populate=*`
+export const fetchPopular_Listing = createAsyncThunk<
+  PopularListingResponse,
+  { propertyType: string },
+  { rejectValue: string }
+>("popularListing/fetchPopular_Listing", async ({ propertyType }, { rejectWithValue }) => {
+  try {
+    const response = await axios.get<PopularListingResponse>(
+      `http://localhost:1337/api/detail-pages?filters[property_Type][$eq]=${propertyType}&populate=*`
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(
+        error.response?.data?.error?.message || "Failed to fetch data"
       );
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || "Failed to fetch data");
     }
+    return rejectWithValue("An unexpected error occurred");
   }
-);
+});
 
 // Create the slice
 const popularListingSlice = createSlice({
@@ -46,13 +51,13 @@ const popularListingSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchPopular_Listing.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchPopular_Listing.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
       })
-      .addCase(fetchPopular_Listing.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(fetchPopular_Listing.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? "An error occurred";
       });
   },
 });

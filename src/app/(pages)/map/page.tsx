@@ -1,64 +1,43 @@
 "use client"
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, MapPinIcon } from 'lucide-react';
+import { MapPinIcon } from 'lucide-react';
 import { IoLocationOutline } from "react-icons/io5";
 
 export default function Map() {
-    // Generate dummy images with unique placeholders
-    const images = useMemo(() => [
-        '/images/master_map_img_2.png',
-        '/images/master_map_img_2.png',
-        '/images/master_map_img_2.png',
-        '/images/master_map_img_2.png',
-        '/images/master_map_img_2.png',
-    ], []);
-
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const [isHovering, setIsHovering] = useState(false);
     const sliderInterval = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
     // Prevent multiple intervals
-    const startAutoSlide = () => {
+    const startAutoSlide = useRef(() => {
         if (sliderInterval.current) {
             clearInterval(sliderInterval.current);
         }
 
         sliderInterval.current = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % images.length);
+            // Keep the interval running but don't update any state
+            // This can be used later when implementing the slider
+            console.log('Auto-sliding...');
         }, 3000);
-    };
+    }).current;
 
-    const stopAutoSlide = () => {
-        if (sliderInterval.current) {
-            clearInterval(sliderInterval.current);
-            sliderInterval.current = undefined;
-        }
-    };
+    // const stopAutoSlide = () => {
+    //     if (sliderInterval.current) {
+    //         clearInterval(sliderInterval.current);
+    //         sliderInterval.current = undefined;
+    //     }
+    // };
 
     // Proper cleanup and dependency management
     useEffect(() => {
-        if (!isHovering) {
-            startAutoSlide();
-        } else {
-            stopAutoSlide();
-        }
+        startAutoSlide();
 
         return () => {
             if (sliderInterval.current) {
                 clearInterval(sliderInterval.current);
             }
         };
-    }, [isHovering, images.length]);
-
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % images.length);
-    };
-
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
-    };
+    }, [startAutoSlide]);
 
     return (
         <div className="bg-bgColor rounded-lg shadow-lg overflow-hidden min-h-screen">
@@ -73,7 +52,7 @@ export default function Map() {
                                 <Image width={100} height={100} src="/images/map_filter_icon_2.svg" alt="filter_icon" className='w-6' />
                                 Filter
                             </button>
-                            <button className=' lg:hidden rounded-[10px] bg-bgRed text-white font-[500] text-[16px] leading-[19.75px]'>Filter</button>
+                            <button className='lg:hidden rounded-[10px] bg-bgRed text-white font-[500] text-[16px] leading-[19.75px]'>Filter</button>
                         </div>
                         <button className='flex justify-between items-center py-1 px-3 bg-bgRed rounded-[10px] mt-4 text-white'>
                             <div className='flex items-center justify-start'>
@@ -151,7 +130,7 @@ export default function Map() {
                         src="/images/master_map_img_1.svg"
                         alt="master_map_main_img"
                         className="w-full h-full object-cover"
-                        quality={100} // Ensures highest rendering quality 
+                        quality={100}
                     />
 
                     <div className="map_btn absolute top-1/2 left-4 flex flex-col gap-8 rounded-full py-4 px-3 bg-[#F1EFE7]">
@@ -162,7 +141,6 @@ export default function Map() {
 
                 <div className='w-full -mt-20 bg-white rounded-[30px] p-6 space-y-6'>
                     <div className='grid grid-cols-[3fr_5fr] gap-4'>
-                        {/* <div></div> */}
                         <Image width={200} height={150}
                             src="/images/master_map_img_2.png"
                             className='w-full h-full aspect-square object-cover rounded-lg'
@@ -203,5 +181,4 @@ export default function Map() {
             </div>
         </div>
     );
-};
-
+}

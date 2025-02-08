@@ -1,8 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import { ChevronDown, MapPin, Search } from 'lucide-react';
-import FilterSection from './FilterSection';
+import { Search } from 'lucide-react';
 import Buy_Section_Desktop_Dropdown from './Buy_Section_Desktop_Dropdown';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
@@ -11,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import { FaChevronUp } from "react-icons/fa6";
 import Image from 'next/image';
 import { Metadata } from 'next'
-import Head from 'next/head'
 
 export const metadata: Metadata = {
   title: 'Buy Properties | Brick N Key',

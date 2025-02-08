@@ -1,32 +1,43 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { BaseStrapiResponse, PopularAttributes } from "../../types/api";
 
-interface PopularSectionSlice {
-  data: any;
+type PopularResponse = BaseStrapiResponse<Array<{
+  id: number;
+  attributes: PopularAttributes;
+}>>;
+
+interface PopularSectionState {
+  data: PopularResponse | null;
   loading: boolean;
   error: string | null;
 }
 
 // Define initial state
-const initialState: PopularSectionSlice = {
+const initialState: PopularSectionState = {
   data: null,
   loading: false,
   error: null,
 };
 
 // Async Thunk for fetching data from Strapi
-export const fetchPopularSection = createAsyncThunk(
-  "popularSection/fetchPopularSection",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get("http://localhost:1337/api/popular-residences?populate=*");
-      // console.log(response)
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || "Failed to fetch data");
+export const fetchPopularSection = createAsyncThunk<
+  PopularResponse,
+  void,
+  { rejectValue: string }
+>("popularSection/fetchPopularSection", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get<PopularResponse>(
+      "http://localhost:1337/api/popular-residences?populate=*"
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch data");
     }
+    return rejectWithValue("An unexpected error occurred");
   }
-);
+});
 
 // Create the slice
 const popularSectionSlice = createSlice({
@@ -39,13 +50,13 @@ const popularSectionSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchPopularSection.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchPopularSection.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
       })
-      .addCase(fetchPopularSection.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(fetchPopularSection.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? "An error occurred";
       });
   },
 });

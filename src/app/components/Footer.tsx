@@ -1,7 +1,6 @@
 "use client"
 
 import { Metadata } from 'next'
-import Head from 'next/head'
 
 export const metadata: Metadata = {
   title: 'Brick N Key | Stay Connected',
@@ -32,8 +31,7 @@ export default function Footer() {
     const isInView = useInView(ref, { once: true });
     const [email, setEmail] = useState("");
     const dispatch = useDispatch<AppDispatch>();
-    const { loading, success, error } = useSelector((state: RootState) => state?.subscribeSection);
-
+    const { success, error } = useSelector((state: RootState) => state?.subscribeSection);
 
     console.log("This is the error of the Footer section", error);
 

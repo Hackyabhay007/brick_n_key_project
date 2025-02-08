@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { setFilter, clearFilters, fetchPropertyItems, setPriceRange } from '@/redux/slices/propertyItemSlice';
 import { IoClose } from "react-icons/io5";
-import { bedrooms, propertyType, constructionStatus } from '../data';
+import { bedrooms, constructionStatus } from '../data';
 
 interface PropertyFilters {
   property_Type?: string;
@@ -42,20 +42,6 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       });
     }
   }, [activeFilters]);
-
-  const handleCheckBoxChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: keyof PropertyFilters,
-    value: string
-  ) => {
-    if (key === 'property_Type') {
-      setProperty_Type(prev => 
-        prev.includes(value) 
-          ? prev.filter(item => item !== value)
-          : [...prev, value]
-      );
-    }
-  };
 
   const handleFilterChange = (
     key: keyof PropertyFilters,
@@ -145,7 +131,9 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
   };
 
   return (
-    <div className={`lg:hidden px-4 bg-bgColor rounded-lg w-full flex flex-col justify-start items-start gap-3`}>
+    <div className={`lg:hidden px-4 bg-bgColor rounded-lg w-full flex flex-col justify-start items-start gap-3 ${
+      showFilter ? 'block' : 'hidden'
+    }`}>
       {/* Last Searched and Popular Localities sections remain unchanged */}
       <div className=" w-full bg-white py-2 px-4 rounded-lg">
         <h3 className="font-semibold text-lg">Last Searched...</h3>

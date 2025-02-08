@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 // Define types for the contact form data
 interface ContactFormData {
@@ -11,8 +11,19 @@ interface ContactFormData {
   listing_Id?: number | undefined; // Optional parameter
 }
 
+// Define type for API response
+interface ContactApiResponse {
+  data: {
+    id: number;
+    attributes: ContactFormData;
+  };
+  meta: {
+    [key: string]: unknown;
+  };
+}
+
 interface ContactSectionState {
-  data: any;
+  data: ContactApiResponse | null;
   loading: boolean;
   error: string | null;
   successMessage: string | null;
@@ -27,7 +38,11 @@ const initialState: ContactSectionState = {
 };
 
 // Async Thunk for submitting contact form data to Strapi
-export const submitContactForm = createAsyncThunk(
+export const submitContactForm = createAsyncThunk<
+  ContactApiResponse,
+  ContactFormData,
+  { rejectValue: string }
+>(
   "contactSection/submitContactForm",
   async (formData: ContactFormData, { rejectWithValue }) => {
     console.log("This is the Form data at the contact section slice", formData);
@@ -36,10 +51,13 @@ export const submitContactForm = createAsyncThunk(
         data: formData
       });
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.error?.details?.errors[0].message || "Failed to submit contact form"
-      );
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(
+          error.response?.data?.error?.details?.errors[0]?.message || "Failed to submit contact form"
+        );
+      }
+      return rejectWithValue("An unexpected error occurred");
     }
   }
 );
@@ -63,14 +81,14 @@ const contactSectionSlice = createSlice({
         state.error = null;
         state.successMessage = null;
       })
-      .addCase(submitContactForm.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(submitContactForm.fulfilled, (state, action: PayloadAction<ContactApiResponse>) => {
         state.loading = false;
         state.data = action.payload;
         state.successMessage = "Thank you for contacting us. We will get back to you soon!";
       })
-      .addCase(submitContactForm.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(submitContactForm.rejected, (state, action: PayloadAction<string | undefined>) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "An unknown error occurred";
         state.successMessage = null;
       });
   },

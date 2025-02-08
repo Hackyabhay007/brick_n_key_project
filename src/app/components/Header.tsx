@@ -5,25 +5,11 @@ import { Menu } from "lucide-react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { giveCorrectImage, navbarData } from "@/app/data";
+import { giveCorrectImage } from "@/app/data";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHeaderSection } from "../../redux/slices/headerSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import { usePathname, useSearchParams } from "next/navigation";
-import path from "path";
-import { Metadata } from 'next'
-import Head from 'next/head'
-
-export const metadata: Metadata = {
-  title: 'Brick N Key | Premium Real Estate Platform',
-  description: 'Navigate through our comprehensive real estate platform. Find your dream property with ease.',
-  keywords: 'real estate navigation, property search, home finder, property listings',
-  openGraph: {
-    title: 'Brick N Key | Premium Real Estate Platform',
-    description: 'Navigate through our comprehensive real estate platform',
-    type: 'website',
-  }
-}
 
 interface NavLink {
     id: number;
@@ -71,7 +57,7 @@ export default function Header() {
         else{
             setSelectedNavLink("")
         }
-    }, [pathname, isLuxury])
+    }, [pathname, isLuxury, newData]) // Added newData to dependency array
 
 
     const logoVariants = {

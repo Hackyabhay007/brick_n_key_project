@@ -9,14 +9,16 @@ import Property_Card from '@/app/components/Property_Card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
-interface SlideItem {
+interface PropertyItem {
   id: number;
-  title: string;
-  image: string;
+  property_price: string;
+  propertyFeature: string;
+  property_Location: string;
+  property_Images: string;
 }
 
 const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
-  const [propertyItemArray, setPropertyItemArray] = useState([]);
+  const [propertyItemArray, setPropertyItemArray] = useState<PropertyItem[]>([]);
   const data = useSelector((state: RootState) => state.popularListingSection?.data);
   const dispatch = useDispatch<AppDispatch>();
   const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});

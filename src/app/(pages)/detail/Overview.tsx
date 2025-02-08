@@ -1,5 +1,4 @@
 import React from 'react';
-import { Square, Building2, MapPin, SlidersHorizontal, Users, Building } from 'lucide-react';
 import Image from 'next/image';
 
 const Overview = ({overViewArray}:{overViewArray: [{id: number, Overview_item_heading: string, Overview_description: string}]}) => {
@@ -25,7 +24,7 @@ const Overview = ({overViewArray}:{overViewArray: [{id: number, Overview_item_he
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {
-          overViewArray?.map((currElem, index) => ( 
+          overViewArray?.map((currElem) => ( 
             <div key={currElem.id} className="flex items-center gap-3">
             <Image width={100} height={100} className='w-8 h-auto' src='/images/detail_overview_img_1.png' alt='detail_overview_img_1' />
             <div>

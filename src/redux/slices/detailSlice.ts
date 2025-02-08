@@ -1,38 +1,37 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { DetailProperty, PropertyResponse } from "@/types/property";
 
 interface DetailPageState {
-  data: any;
-  loading: boolean;
-  error: string | null;
+    data: PropertyResponse<DetailProperty> | null;
+    loading: boolean;
+    error: string | null;
 }
 
-// Define initial state
 const initialState: DetailPageState = {
-  data: null,
-  loading: false,
-  error: null,
+    data: null,
+    loading: false,
+    error: null,
 };
 
-// Modified Async Thunk to accept ID parameter
-export const fetchDetailPage = createAsyncThunk(
-  "detailPage/fetchHeroSection",
-  async (id: number, { rejectWithValue }) => {
+export const fetchDetailPage = createAsyncThunk<
+    PropertyResponse<DetailProperty>,
+    number,
+    { rejectValue: string }
+>("detailPage/fetchDetailPage", async (id, { rejectWithValue }) => {
     try {
-      console.log('Fetching data for ID:', id);
-      const response = await axios.get(
-        `http://localhost:1337/api/detail-pages?filters[id][$eq]=${id}&populate=*`
-      );
-      console.log('API Response:', response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error('API Error:', error);
-      return rejectWithValue(error.response?.data || "Failed to fetch data");
+        const response = await axios.get<PropertyResponse<DetailProperty>>(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/detail-pages?filters[id][$eq]=${id}&populate=*`
+        );
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            return rejectWithValue(error.response?.data?.message || "Failed to fetch data");
+        }
+        return rejectWithValue("An unexpected error occurred");
     }
-  }
-);
+});
 
-// Create the slice
 const detailPageSlice = createSlice({
   name: "detailPage",
   initialState,
@@ -43,13 +42,15 @@ const detailPageSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDetailPage.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchDetailPage.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
+        state.error = null;
       })
-      .addCase(fetchDetailPage.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(fetchDetailPage.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.data = null;
+        state.error = action.payload ?? "An error occurred";
       });
   },
 });

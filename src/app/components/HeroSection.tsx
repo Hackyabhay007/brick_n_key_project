@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image";
 import Buy_Section from "./Buy_Section";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
@@ -9,20 +8,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHeroSection } from "../../redux/slices/heroSectionSlice";
 import { AppDispatch, RootState } from "../../redux/store";
-import { Metadata } from 'next'
-import Head from 'next/head'
 
-// Add metadata export
-export const metadata: Metadata = {
-  title: 'Find Your Dream Property | Brick N Key',
-  description: 'Discover your perfect home with Brick N Key. Browse through our curated selection of premium properties and luxury homes.',
-  keywords: 'real estate, property search, luxury homes, apartments, property listings',
-  openGraph: {
-    title: 'Find Your Dream Property | Brick N Key',
-    description: 'Discover your perfect home with Brick N Key',
-    images: ['/images/Hero_Section.png'],
-  }
-}
 
 export default function HeroSection() {
     const data = useSelector((state: RootState)=>state.heroSection);

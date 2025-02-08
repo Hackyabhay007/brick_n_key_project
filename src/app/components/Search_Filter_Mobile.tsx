@@ -4,19 +4,7 @@ import FilterSection from "./FilterSection";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import { Metadata } from 'next';
-import Head from 'next/head';
 
-export const metadata: Metadata = {
-  title: 'Search Properties | Brick N Key',
-  description: 'Find your perfect property using our advanced mobile search filters. Easy and convenient property hunting.',
-  keywords: 'property search, mobile search, real estate filter, property finder',
-  openGraph: {
-    title: 'Search Properties | Brick N Key',
-    description: 'Find your perfect property using our advanced mobile search',
-    type: 'website',
-  }
-};
 
 export default function Search_Filter_Mobile() {
     const [showFilter, setShowFilter] = useState(false);

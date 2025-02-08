@@ -1,84 +1,51 @@
 "use client"
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLuxuryListingItem } from "../../redux/slices/luxuryListingSlice";
 import { AppDispatch, RootState } from "../../redux/store";
-import { giveCorrectImage } from '../data';
 import Link from 'next/link';
-import { Metadata } from 'next'
-import Head from 'next/head'
-
-export const metadata: Metadata = {
-  title: 'Featured Properties | Brick N Key',
-  description: 'Browse through our featured properties with our interactive slider. View luxurious homes and prime locations.',
-  keywords: 'property slider, featured properties, luxury homes, property showcase',
-  openGraph: {
-    title: 'Featured Properties | Brick N Key',
-    description: 'Browse through our featured properties',
-    type: 'website',
-  }
-}
 
 interface SliderProps {
-  images: string[];
   onLocationChange: (location: string) => void;
-  activeIndex: number;
-  onNext: () => void;
-  onPrev: () => void;
 }
 
-const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, onNext, onPrev }) => {
+const Slider: React.FC<SliderProps> = ({ onLocationChange }) => {
   const data = useSelector((state: RootState) => state.luxuryListingItems?.data);
-  console.log("This is the SLider data", data);
   const dispatch = useDispatch<AppDispatch>();
   const [isClient, setIsClient] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right' | ''>('');
-  const [property_Location, setPropertyLocation] = useState('');
-
-  // const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
     dispatch(fetchLuxuryListingItem());
   }, [dispatch]);
 
-  const slides = data?.data?.map((currElem: { id: number, property_Location: String, property_Description: String, property_Images: [{ url: String }], brand: { brand_name: string } }) => ({
-    id: currElem?.id,
-    title: currElem?.brand?.brand_name || "",
-    location: currElem?.property_Location || "",
-    description: currElem?.property_Description || "",
-    url: currElem?.property_Images?.[0]?.url || "/placeholder.jpg",
-  })) || [];
+  const slides = useMemo(() => 
+    data?.data?.map((currElem: { 
+      id: number, 
+      property_Location: string, 
+      property_Description: string, 
+      property_Images: [{ url: string }], 
+      brand: { brand_name: string } 
+    }) => ({
+      id: currElem?.id,
+      title: currElem?.brand?.brand_name || "",
+      location: currElem?.property_Location || "",
+      description: currElem?.property_Description || "",
+      url: currElem?.property_Images?.[0]?.url || "/placeholder.jpg",
+    })) || [],
+    [data]
+  );
 
-  useEffect(() => {
-    if (slides.length > 0) {
-      onLocationChange?.(getSlide(0).location);
-    }
-  }, [slides, onLocationChange]);
-
-  const nextSlide = useCallback(() => {
-    setSlideDirection('left');
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-    setTimeout(() => setSlideDirection(''), 500);
-    onLocationChange?.(getSlide(1).location);
-  }, [slides.length, onLocationChange]);
-
-  const prevSlide = useCallback(() => {
-    setSlideDirection('right');
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-    setTimeout(() => setSlideDirection(''), 500);
-    onLocationChange?.(getSlide(-1).location);
-  }, [slides.length, onLocationChange]);
-
-  const getSlideIndex = (offset: number) => {
+  const getSlideIndex = useCallback((offset: number) => {
     return (currentSlide + offset + slides.length) % slides.length;
-  };
+  }, [currentSlide, slides.length]);
 
-  const getSlide = (offset: number) => {
+  const getSlide = useCallback((offset: number) => {
     const index = getSlideIndex(offset);
     return slides[index] || {
       id: 0,
@@ -87,7 +54,27 @@ const Slider: React.FC<SliderProps> = ({ images, onLocationChange, activeIndex, 
       description: "",
       url: "/placeholder.jpg"
     };
-  };
+  }, [getSlideIndex, slides]);
+
+  useEffect(() => {
+    if (slides.length > 0) {
+      onLocationChange(getSlide(0).location);
+    }
+  }, [slides, onLocationChange, getSlide]);
+
+  const nextSlide = useCallback(() => {
+    setSlideDirection('left');
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    setTimeout(() => setSlideDirection(''), 500);
+    onLocationChange(getSlide(1).location);
+  }, [slides.length, onLocationChange, getSlide]);
+
+  const prevSlide = useCallback(() => {
+    setSlideDirection('right');
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    setTimeout(() => setSlideDirection(''), 500);
+    onLocationChange(getSlide(-1).location);
+  }, [slides.length, onLocationChange, getSlide]);
 
   const getAnimationClasses = (position: 'prev' | 'current' | 'next') => {
     const baseClasses = 'transition-all duration-700 ease-out';
