@@ -56,8 +56,12 @@ const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, 
   return (
     <div className="w-[90%] mx-auto p-4 overflow-hidden">
       <div className="relative pb-8 flex flex-col gap-8 items-start border border-black rounded-[15px] p-2">
-        <div className="place_nearby_icon">
-          <Image width={100} height={100} src="/images/place_nearby_img.png" className='h-[50px] w-auto' alt="" />
+        <div className="place_nearby_icon flex items-center gap-2">
+          <Image width={100} height={100} src="/images/place_nearby_img.svg" className='h-[50px] w-auto' alt="" />
+          <div className="place_nearby_heading flex flex-col">
+            <h2 className="text-2xl font-semibold text-gray-800">Places Nearby</h2>
+          <span>{propertyAddress && <p className="text-sm font-semibold text-bgBlue">{propertyAddress}</p>}</span>
+          </div>
         </div>
 
         <div
