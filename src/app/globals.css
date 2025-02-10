@@ -106,6 +106,89 @@ body {
   cursor: not-allowed;
 }
 
+/* Trust Us Slider specific styles */
+.trust-us-swiper {
+  padding: 2rem 0 !important;
+}
+
+.trust-us-slide {
+  transition: all 0.5s ease !important;
+  opacity: 0.4;
+  transform: scale(0.85);
+}
+
+.trust-us-slide.swiper-slide-active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.trust-us-slide.swiper-slide-active button {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.trust-us-slide:not(.swiper-slide-active) button {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.trust-us-slide.swiper-slide-prev,
+.trust-us-slide.swiper-slide-next {
+  opacity: 0.6;
+  transform: scale(0.9);
+}
+
+/* Trust Us pagination styles */
+.trust-us-pagination {
+  position: relative !important;
+  bottom: 0 !important;
+  margin-top: 2rem;
+}
+
+.trust-us-pagination .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5) !important;
+  margin: 0 6px;
+  transition: all 0.3s ease;
+}
+
+.trust-us-pagination .swiper-pagination-bullet-active {
+  background: white !important;
+  transform: scale(1.2);
+}
+
+.trust-us-swiper .swiper-pagination {
+  bottom: 0 !important;
+}
+
+.trust-us-swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5) !important;
+  margin: 0 4px;
+}
+
+.trust-us-swiper .swiper-pagination-bullet-active {
+  background: white !important;
+  transform: scale(1.2);
+}
+
+.trust-us-navigation {
+  @apply absolute top-1/2 -translate-y-1/2 z-10;
+}
+
+.trust-us-navigation.prev {
+  @apply left-0 md:left-2;
+}
+
+.trust-us-navigation.next {
+  @apply right-0 md:right-2;
+}
+
 @layer components {
   .nav-button {
     @apply bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full 

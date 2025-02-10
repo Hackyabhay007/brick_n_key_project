@@ -51,8 +51,15 @@ export default function Trust_Us() {
         }
     }, [data]);
 
-    const handleVideoClick = async (id: number, isCenter: boolean) => {
-        if (!isCenter) return; // Only allow center video to play
+    const handleVideoClick = async (id: number) => {
+        // Check if the clicked video is in the center
+        const slideElements = document.querySelectorAll('.trust-us-slide');
+        const centerIndex = Math.floor(slideElements.length / 2);
+        const clickedElement = Array.from(slideElements).findIndex(
+            el => el.contains(document.getElementById(`video-${id}`))
+        );
+
+        if (clickedElement !== centerIndex) return;
 
         const video = videoRefs.current[id];
         if (!video) return;
@@ -109,13 +116,17 @@ export default function Trust_Us() {
                         centeredSlides={true}
                         loop={true}
                         slidesPerView={3}
-                        spaceBetween={30}
                         initialSlide={1}
+                        speed={800} // Slower transition for better visual
+                        pagination={{
+                            clickable: true,
+                            el: '.trust-us-pagination',
+                        }}
                         coverflowEffect={{
                             rotate: 0,
                             stretch: 0,
                             depth: 100,
-                            modifier: 1,
+                            modifier: 1.5,
                             slideShadows: false,
                         }}
                         breakpoints={{
@@ -129,47 +140,46 @@ export default function Trust_Us() {
                             }
                         }}
                         onSlideChange={() => {
-                            // Pause any playing video when sliding
                             if (playingVideo !== null && videoRefs.current[playingVideo]) {
                                 videoRefs.current[playingVideo]?.pause();
                                 setPlayingVideo(null);
                             }
                         }}
-                        pagination={false} // Remove pagination
-                        modules={[EffectCoverflow, Navigation]}
-                        className="swiper-container !overflow-hidden"
+                        modules={[EffectCoverflow, Pagination, Navigation]}
+                        className="trust-us-swiper !overflow-visible"
                         onSwiper={setSwiper}
                         navigation={{
                             enabled: true,
-                            prevEl: '.custom-prev',
-                            nextEl: '.custom-next',
+                            prevEl: '.trust-us-prev',
+                            nextEl: '.trust-us-next',
                         }}
                     >
                         {trustUsArray.map((item, index) => (
-                            <SwiperSlide key={item.id} className="!w-[240px] md:!w-[280px] mx-auto transition-all duration-300">
-                                <div className="relative bg-black rounded-lg overflow-hidden aspect-[9/14] group">
+                            <SwiperSlide 
+                                key={item.id} 
+                                className="trust-us-slide !w-[240px] md:!w-[280px]"
+                            >
+                                <div className="relative bg-black rounded-lg overflow-hidden aspect-[9/14] transition-all duration-500">
                                     <video
+                                        id={`video-${item.id}`}
                                         ref={el => { videoRefs.current[item.id] = el }}
                                         src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${item.video}`}
                                         className="w-full h-full object-cover"
                                         playsInline
+                                        loop
                                     />
                                     {/* Play Button Overlay */}
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <button
-                                            onClick={() => handleVideoClick(item.id, swiper?.realIndex === index)}
-                                            className={`transform transition-all duration-300
-                                                ${playingVideo === item.id ? 'scale-90 opacity-0' : 'scale-100'}
-                                                ${swiper?.realIndex === index ? 'opacity-100 hover:scale-110' : 'opacity-40 cursor-not-allowed'}`}
-                                            disabled={swiper?.realIndex !== index}
+                                            onClick={() => handleVideoClick(item.id)}
+                                            className="transform transition-all duration-300 hover:scale-110"
                                         >
                                             <Image
                                                 src={playingVideo === item.id ? '/images/pause_btn.png' : '/images/play_btn.png'}
                                                 alt={playingVideo === item.id ? "Pause" : "Play"}
                                                 width={60}
                                                 height={60}
-                                                className={`w-12 h-12 md:w-16 md:h-16 
-                                                    ${swiper?.realIndex !== index && 'grayscale'}`}
+                                                className="w-12 h-12 md:w-16 md:h-16"
                                             />
                                         </button>
                                     </div>
@@ -190,14 +200,18 @@ export default function Trust_Us() {
                             </SwiperSlide>
                         ))}
                     </Swiper>
+
+                    {/* Pagination */}
+                    <div className="trust-us-pagination flex justify-center mt-6"></div>
+
                     {/* Navigation Buttons */}
-                    <div className="absolute left-0 md:left-2 top-1/2 -translate-y-1/2 z-10 custom-prev">
-                        <button className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95">
+                    <div className="trust-us-navigation prev">
+                        <button className="nav-button trust-us-prev">
                             <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </button>
                     </div>
-                    <div className="absolute right-0 md:right-2 top-1/2 -translate-y-1/2 z-10 custom-next">
-                        <button className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95">
+                    <div className="trust-us-navigation next">
+                        <button className="nav-button trust-us-next">
                             <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </button>
                     </div>
