@@ -46,6 +46,56 @@ body {
     border-color: #EF233C;
 }
 
+/* Swiper styles */
+.swiper-container {
+  padding: 2rem 0 3rem !important;
+}
+
+.swiper-slide {
+  transition: all 0.3s ease;
+  opacity: 0.5;
+}
+
+.swiper-slide-active {
+  opacity: 1;
+  transform: scale(1.1);
+  z-index: 2;
+}
+
+/* Hide default swiper navigation */
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+.swiper-pagination {
+  position: relative !important;
+  margin-top: 1rem;
+}
+
+.swiper-pagination-bullet {
+  background: #EF233C !important;
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  background: #EF233C !important;
+  opacity: 1;
+}
+
+/* Swiper navigation styles */
+.custom-prev,
+.custom-next {
+  cursor: pointer;
+  z-index: 10;
+}
+
+.custom-prev:disabled,
+.custom-next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @layer components {
   .nav-button {
     @apply bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full 

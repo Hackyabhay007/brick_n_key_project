@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   }
 }
 
+
+
 interface LocationData {
     id: number;
     location: string;
