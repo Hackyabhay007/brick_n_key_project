@@ -156,7 +156,7 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
 
   return (
     <div className="w-[90%] relative max-sm:w-[95%] mx-auto bg-bgBlue text-white p-16 max-lg:py-8 max-lg:px-6 max-lg:rounded-[5px]">
-      <h1 className='font-[600] text-[54px] leading-[65.83px] mb-4 max-lg:text-3xl'>Popular Listing</h1>
+      <h1 className='font-[600] text-[54px] leading-[65.83px] mb-4 max-lg:text-3xl'>Popular Listings</h1>
 
       <div className="relative overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>

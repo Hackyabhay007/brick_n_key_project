@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { submitContactForm, resetFormState } from "../../redux/slices/Contact_Section_Slice";
 import { AppDispatch, RootState } from "../../redux/store";
 import Toast from "./Toast";
+import { ImSpinner9 } from "react-icons/im";
 
 interface ContactFormData {
   first_name: string;
@@ -82,7 +83,9 @@ export default function ContactForm({ component, listingId }: { component: strin
   };
 
   return (
-    <div className={`bg-bgBlue w-full h-full flex flex-col justify-center items-center max-2xl:gap-12 max-lg:gap-4 text-white py-16 px-8 ${(component === "contact") ? "rounded-3xl" : ""}`}>
+    <div className={`bg-bgBlue w-full h-full flex flex-col justify-center items-center text-white 
+      py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 
+      ${component === "contact" ? "rounded-3xl shadow-2xl" : ""}`}>
       <Toast 
         message={toastConfig.message}
         type={toastConfig.type}
@@ -90,68 +93,99 @@ export default function ContactForm({ component, listingId }: { component: strin
         onClose={() => setToastConfig(prev => ({ ...prev, isVisible: false }))}
       />
       
-      <h2 className="text-3xl font-[400] text-center">Still haven't found what you're looking for?</h2>
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-[400] text-center leading-tight">
+        Still haven't found what you're looking for?
+      </h2>
 
-      <form onSubmit={handleSubmit} className="pt-10">
-        <div className="grid grid-cols-2 gap-4 max-2xl:mt-3 max-lg:mt-0">
-          <div>
-            <label className="font-[400] text-[20px]">First Name</label>
+      <form onSubmit={handleSubmit} className="w-full max-w-3xl mt-6 sm:mt-8 lg:mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div className="space-y-2">
+            <label className="block text-sm sm:text-base lg:text-lg font-medium">First Name</label>
             <input
               type="text"
               placeholder="First Name"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
+              className="w-full bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 
+                text-white placeholder-white/60 outline-none border border-transparent
+                focus:border-white/30 focus:bg-white/30 transition-all duration-300
+                hover:bg-white/25"
               value={formData.first_name}
               onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
             />
           </div>
-          <div>
-            <label className="font-[400] text-[20px]">Last Name</label>
+          <div className="space-y-2">
+            <label className="block text-sm sm:text-base lg:text-lg font-medium">Last Name</label>
             <input
               type="text"
               placeholder="Last Name"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
+              className="w-full bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 
+                text-white placeholder-white/60 outline-none border border-transparent
+                focus:border-white/30 focus:bg-white/30 transition-all duration-300
+                hover:bg-white/25"
               value={formData.last_name}
               onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 max-2xl:mt-3 max-lg:mt-0">
-          <div className="my-3">
-            <label className="font-[400] text-[20px]">Phone Number</label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+          <div className="space-y-2">
+            <label className="block text-sm sm:text-base lg:text-lg font-medium">Phone Number</label>
             <input
               type="number"
               placeholder="Phone Number"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
-              value={formData.phone}
+              className="w-full bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 
+                text-white placeholder-white/60 outline-none border border-transparent
+                focus:border-white/30 focus:bg-white/30 transition-all duration-300
+                hover:bg-white/25"
+              value={formData.phone || ''}
               onChange={(e) => setFormData({ ...formData, phone: Number(e.target.value) })}
             />
           </div>
-          <div className="my-3">
-            <label className="font-[400] text-[20px]">I want to</label>
+          <div className="space-y-2">
+            <label className="block text-sm sm:text-base lg:text-lg font-medium">I want to</label>
             <input
               type="text"
               placeholder="Buy Property"
-              className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
+              className="w-full bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 
+                text-white placeholder-white/60 outline-none border border-transparent
+                focus:border-white/30 focus:bg-white/30 transition-all duration-300
+                hover:bg-white/25"
               value={formData.I_want_to}
               onChange={(e) => setFormData({ ...formData, I_want_to: e.target.value })}
             />
-          </div> 
+          </div>
         </div>
 
-        <div className="max-2xl:mt-4 max-lg:mt-0">
-          <label className="font-[400] text-[20px]">Notes</label>
+        <div className="mt-4 sm:mt-6 space-y-2">
+          <label className="block text-sm sm:text-base lg:text-lg font-medium">Notes</label>
           <textarea
-            placeholder="Notes"
-            rows={6}
-            className="w-full bg-white bg-opacity-50 rounded px-4 py-2 text-white placeholder-white/80 outline-none"
+            placeholder="Tell us more about what you're looking for..."
+            rows={4}
+            className="w-full bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 
+              text-white placeholder-white/60 outline-none border border-transparent
+              focus:border-white/30 focus:bg-white/30 transition-all duration-300
+              hover:bg-white/25 resize-none"
             value={formData.Notes}
             onChange={(e) => setFormData({ ...formData, Notes: e.target.value })}
           />
         </div>
 
-        <button type="submit" className="bg-red-500 text-white px-6 py-2 rounded max-2xl:mt-4 max-lg:mt-0 hover:bg-red-600 transition-colors">
-          Submit
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="mt-6 sm:mt-8 w-full sm:w-auto px-8 py-3 bg-red-500 hover:bg-red-600 
+            text-white rounded-lg font-medium text-base sm:text-lg
+            transform transition-all duration-300 hover:scale-[1.02] 
+            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+            shadow-lg hover:shadow-xl active:scale-[0.98]">
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <ImSpinner9 className="animate-spin" />
+              Submitting...
+            </span>
+          ) : (
+            'Submit'
+          )}
         </button>
       </form>
     </div>
