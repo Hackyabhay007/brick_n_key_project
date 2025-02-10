@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { setFilter, clearFilters } from '@/redux/slices/propertyItemSlice';
 import { IoClose } from "react-icons/io5";
+import { motion } from "framer-motion";
 
 type PropertyFilters = {
   property_Bedroom: string;
@@ -49,7 +50,6 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       setFilterData(prev => ({ ...prev, [name]: "" }));
       // dispatch(setFilter({ key: name as keyof PropertyFilters, value: "" }));
     } else {
-      setFilterData(prev => ({ ...prev, [name]: value }));
       // dispatch(setFilter({ key: name as keyof PropertyFilters, value }));
     }
   };
