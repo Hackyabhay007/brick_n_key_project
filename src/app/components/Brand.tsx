@@ -268,7 +268,7 @@ const Brand = () => {
           <Image
             width={100}
             height={100}
-            src="/images/brand_main_img.png"
+            src="/images/brand_main_img.svg"
             className='text-center w-full h-full bg-cover' 
             alt="Brand_img" />
         </div>

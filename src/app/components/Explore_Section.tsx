@@ -1,10 +1,21 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { MapPin } from 'lucide-react';
 import Slider from './Slider';
 import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Explore Luxury Properties | Brick N Key',
+  description: 'Browse through our exclusive collection of luxury properties. From cozy apartments to spacious family homes.',
+  keywords: 'luxury properties, real estate listings, premium homes, property exploration',
+  openGraph: {
+    title: 'Explore Luxury Properties | Brick N Key',
+    description: 'Browse through our exclusive collection of luxury properties',
+    type: 'website',
+  }
+}
 
 interface LocationData {
     id: number;
@@ -32,50 +43,23 @@ const locationData: LocationData[] = [
 
 const Explore = () => {
     const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true });
     const [currentLocation, setCurrentLocation] = useState(locationData[0].location);
     const [activeIndex, setActiveIndex] = useState(0);
-    const sliderRef = useRef<HTMLDivElement>(null);
-    const [isScrolling, setIsScrolling] = useState(false);
     const [currentImageSet, setCurrentImageSet] = useState(locationData[0].images);
 
-    const handleScroll = (direction: 'left' | 'right') => {
-        if (isScrolling || !sliderRef.current) return;
-
-        setIsScrolling(true);
-        const container = sliderRef.current;
-        const scrollAmount = container.clientWidth;
-        
-        const newScrollPosition = direction === 'left' 
-            ? container.scrollLeft - scrollAmount
-            : container.scrollLeft + scrollAmount;
-
-        container.scrollTo({
-            left: newScrollPosition,
-            behavior: 'smooth'
-        });
-
-        // Update active index and current image set
-        const newIndex = direction === 'left'
-            ? (activeIndex - 1 + locationData.length) % locationData.length
-            : (activeIndex + 1) % locationData.length;
-        
+    const handleNext = () => {
+        const newIndex = (activeIndex + 1) % locationData.length;
         setActiveIndex(newIndex);
         setCurrentImageSet(locationData[newIndex].images);
         setCurrentLocation(locationData[newIndex].location);
-
-        // Reset scrolling state after animation
-        setTimeout(() => setIsScrolling(false), 500);
     };
 
-    // Update current image set when active index changes
-    useEffect(() => {
-        setCurrentImageSet(locationData[activeIndex].images);
-        setCurrentLocation(locationData[activeIndex].location);
-    }, [activeIndex]);
-
-    const handleNext = () => handleScroll('right');
-    const handlePrev = () => handleScroll('left');
+    const handlePrev = () => {
+        const newIndex = (activeIndex - 1 + locationData.length) % locationData.length;
+        setActiveIndex(newIndex);
+        setCurrentImageSet(locationData[newIndex].images);
+        setCurrentLocation(locationData[newIndex].location);
+    };
 
     const containerVariants = {
         hidden: { opacity: 0, y: 50 },
@@ -166,23 +150,13 @@ const Explore = () => {
                     }}
                     className="relative overflow-hidden"
                 >
-                    <div 
-                        ref={sliderRef}
-                        className="flex transition-all duration-500 ease-out"
-                        style={{
-                            scrollSnapType: 'x mandatory',
-                            WebkitOverflowScrolling: 'touch',
-                            scrollBehavior: 'smooth'
-                        }}
-                    >
-                        <Slider 
-                            images={currentImageSet}
-                            onLocationChange={setCurrentLocation}
-                            activeIndex={activeIndex}
-                            onNext={handleNext}
-                            onPrev={handlePrev}
-                        />
-                    </div>
+                    <Slider 
+                        images={currentImageSet}
+                        onLocationChange={setCurrentLocation}
+                        activeIndex={activeIndex}
+                        onNext={handleNext}
+                        onPrev={handlePrev}
+                    />
                 </motion.div>
             </motion.div>
         </div>
