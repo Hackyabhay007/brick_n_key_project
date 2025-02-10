@@ -14,11 +14,13 @@ import Popular_Listing from "./Popular_Listing";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Image from "next/image";
 import { giveCorrectImage } from "@/app/data";
+import { ImSpinner9 } from "react-icons/im";
 
-export default function page() {
+const DetailPage = () => {
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(true);
     const [images, setImages] = useState([]);
+    const [imageLoading, setImageLoading] = useState(true);
     // const images = [
     //     "/images/detail_page_img_1.png",
     //     "/images/explore_img_2.png",  // Add more image paths as needed
@@ -50,11 +52,13 @@ export default function page() {
 
         const image_Data = data?.property_Images.map((currElem: { url: string, id: number }) => currElem?.url);
         setImages(image_Data);
+        // Reset currentImageIndex when images change
+        setCurrentImageIndex(0);
     }, [data]);
 
-    // Add auto-sliding effect
+    // Modify auto-sliding effect to only work when there are multiple images
     useEffect(() => {
-        if (images?.length > 0) {
+        if (images?.length > 1) {
             const timer = setInterval(() => {
                 setIsTransitioning(true);
                 setTimeout(() => {
@@ -93,6 +97,10 @@ export default function page() {
         }, 500);
     };
 
+    const handleImageLoad = () => {
+        setImageLoading(false);
+    };
+
     if (loading || isLoading) {
         return <Loader />;
     }
@@ -100,94 +108,114 @@ export default function page() {
     return (
         <>
             <div className="detail_container w-full bg-bgColor">
-                <div className="detail_inner_container relative w-[90%] max-sm:w-[95%] 2xl:w-[80%] z-10 mx-auto">
-                    <div className="carousel_container relative w-[80%] max-lg:w-[90%] mx-auto h-[450px] max-lg:h-[450px] rounded-[20px]">
+                <div className="detail_inner_container group relative w-[90%] max-sm:w-[95%] 2xl:w-[80%] z-10 mx-auto">
+                    <div className="carousel_container cursor-pointer relative w-[80%] max-lg:w-[90%] mx-auto h-[450px] max-lg:h-[450px] rounded-[20px]">
+                        {/* Simple Loader */}
+                        {imageLoading && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-xl">
+                                <div className="simple-loader"></div>
+                            </div>
+                        )}
+
+                        {/* Modern Loader */}
+                        {imageLoading && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-gray-100/50 backdrop-blur-sm rounded-xl">
+                                <ImSpinner9 className="animate-spin text-4xl text-bgRed" />
+                            </div>
+                        )}
+
                         <Image
-                            fill
+                            width={600}
+                            height={400}
                             src={giveCorrectImage(images[currentImageIndex])}
                             alt={`Carousel image ${currentImageIndex + 1}`}
-                            className={`w-full h-full object-container transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'
-                                }`}
+                            onLoad={() => handleImageLoad()} // Ensuring proper function execution
+                            className={`w-full h-full object-cover transition-opacity duration-500 rounded-xl 
+    ${isTransitioning || imageLoading ? 'opacity-0' : 'opacity-100'}`}
                         />
 
                         <div className="feature_container absolute top-2 left-0 w-[150px] h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[24px] tracking-[10%]">
                             Featured
                         </div>
 
-
-                        {/* Add Navigation Buttons */}
-                        <button
-                            onClick={handlePrevClick}
-                            className="absolute -left-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
-                            aria-label="Previous image"
-                        >
-                            <IoIosArrowBack size={24} />
-                        </button>
-                        <button
-                            onClick={handleNextClick}
-                            className="absolute -right-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
-                            aria-label="Next image"
-                        >
-                            <IoIosArrowForward size={24} />
-                        </button>
-
+                        {/* Show navigation buttons only when there are multiple images */}
+                        {images?.length > 1 && (
+                            <>
+                                <button
+                                    onClick={handlePrevClick}
+                                    className="absolute -left-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
+                                    aria-label="Previous image"
+                                >
+                                    <IoIosArrowBack size={24} />
+                                </button>
+                                <button
+                                    onClick={handleNextClick}
+                                    className="absolute -right-5 top-1/2 transform -translate-y-1/2 bg-white hover:bg-opacity-75 rounded-full p-2 transition-all duration-300"
+                                    aria-label="Next image"
+                                >
+                                    <IoIosArrowForward size={24} />
+                                </button>
+                            </>
+                        )}
                     </div>
 
-
-
-
-                    {/* Dot Navigation */}
-                    <div className="dot_navigation absolute lg:bottom-1/3 max-lg:bottom-1/4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                        {(images).map((_, index: number) => (
-                            <button
-                                key={index}
-                                onClick={() => handleDotClick(index)}
-                                className={`w-3 h-3 rounded-full ${currentImageIndex === index
-                                    ? 'bg-[#ED371C]'
-                                    : 'bg-gray-300'
+                    {/* Show dot navigation only when there are multiple images */}
+                    {images?.length > 1 && (
+                        <div className="dot_navigation absolute lg:bottom-1/3 max-lg:bottom-1/3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                            {images.map((_, index: number) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleDotClick(index)}
+                                    className={`w-3 h-3 rounded-full ${
+                                        currentImageIndex === index
+                                            ? 'bg-[#ED371C]'
+                                            : 'bg-gray-300'
                                     }`}
-                            />
-                        ))}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="estimated_EMI_bar transition-all duration-500 ease-in-out relative w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue -mt-32 group-hover:-mt-20 max-lg:-mt-24 max-lg:group-hover:-mt-16 z-20 py-6 text-white flex justify-center max-lg:justify-between items-center px-8 rounded-t-[40px] rounded-b-[10px] gap-6 max-md:gap-4">
+                        <div className="flex flex-col items-start justify-center gap-2">
+                            <h3 className="font-[600] text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-base leading-tight tracking-[0.05em]">
+                                ₹{data?.property_price} Cr
+                            </h3>
+                            <p className="text-xl max-lg:text-base max-md:text-sm max-sm:text-base tracking-[0.05em] text-bgRed">
+                                Estimated EMI ₹{data?.estimated_emi_price}
+                            </p>
+                        </div>
+
+                        <div className="border-r-2 border-[#FFFFFF] h-12 opacity-50" />
+
+                        <div className="flex flex-col gap-1">
+                            <p className="text-base max-lg:text-sm font-[400] tracking-[0.05em] text-white/50">
+                                @ {data?.per_sqm_price} Per Sq.M.
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <p className="text-base max-lg:text-sm max-sm:text-xs text-white/70">
+                                {
+                                    data?.propertyFeature?.slice(0, 2)?.map((currElem: { item: string, id: number }, index: number) => (
+                                        <span key={currElem?.id}>
+                                            {currElem?.item}
+                                            {index < data?.propertyFeature?.length - 1 ? " " : ""}
+                                        </span>
+                                    ))
+                                }
+                            </p>
+                            <p className="text-sm max-lg:text-xs max-sm:text-[10px] text-white/50">
+                                {data?.property_Type}
+                            </p>
+                            <p className="text-sm max-lg:text-xs text-white/50">
+                                {data?.property_Location}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="estimated_EMI_bar relative w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue -mt-32 max-lg:-mt-24 z-20 py-6 text-white flex justify-center max-lg:justify-between items-center px-8 rounded-t-[40px] rounded-b-[10px] gap-6 max-md:gap-4">
-                    <div className="flex flex-col items-start justify-center gap-2">
-                        <h3 className="font-[600] text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-base leading-tight tracking-[0.05em]">
-                            ₹{data?.property_price} Cr
-                        </h3>
-                        <p className="text-xl max-lg:text-base max-md:text-sm max-sm:text-base tracking-[0.05em] text-bgRed">
-                            Estimated EMI ₹{data?.estimated_emi_price}
-                        </p>
-                    </div>
 
-                    <div className="border-r-2 border-[#FFFFFF] h-12 opacity-50" />
-
-                    <div className="flex flex-col gap-1">
-                        <p className="text-base max-lg:text-sm font-[400] tracking-[0.05em] text-white/50">
-                            @ {data?.per_sqm_price} Per Sq.M.
-                        </p>
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                        <p className="text-base max-lg:text-sm max-sm:text-xs text-white/70">
-                            {
-                                data?.propertyFeature?.slice(0, 2)?.map((currElem: { item: string, id: number }, index: number) => (
-                                    <span key={currElem?.id}>
-                                        {currElem?.item}
-                                        {index < data?.propertyFeature?.length - 1 ? " " : ""}
-                                    </span>
-                                ))
-                            }
-                        </p>
-                        <p className="text-sm max-lg:text-xs max-sm:text-[10px] text-white/50">
-                            {data?.property_Type}
-                        </p>
-                        <p className="text-sm max-lg:text-xs text-white/50">
-                            {data?.property_Location}
-                        </p>
-                    </div>
-                </div>
 
                 <Overview overViewArray={data?.property_Overview_container} />
 
@@ -199,3 +227,5 @@ export default function page() {
         </>
     )
 }
+
+export default DetailPage;
