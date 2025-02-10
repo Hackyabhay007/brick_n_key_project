@@ -1,16 +1,15 @@
 "use client"
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect } from "react";
 import { fetchPopularSection } from "../../redux/slices/popularSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilter } from '@/redux/slices/propertyItemSlice';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { giveCorrectImage } from '../data';
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface ResidenceItem {
     id: number;
@@ -71,92 +70,49 @@ const residenceData: ResidenceItem[] = [
 ];
 
 const Popular_Residence = () => {
-    const [startIndex, setStartIndex] = useState(0);
-    const [touchStart, setTouchStart] = useState(0);
-    const [touchEnd, setTouchEnd] = useState(0);
+    const [emblaRef, emblaApi] = useEmblaCarousel({
+        align: 'start',
+        containScroll: 'trimSnaps',
+        loop: false,
+        dragFree: true,
+        slidesToScroll: 1,
+        watchDrag: true,
+        inViewThreshold: 0.7
+    });
+
     const data = useSelector((state: RootState) => state.popularSection?.data);
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
-    // const { data, loading, error } = useSelector(
-    //     (state: RootState) => state.heroSection
-    // );
-
 
     useEffect(() => {
-        
         dispatch(fetchPopularSection());
     }, [dispatch]);
 
-    // if (data?.loading) return <p>Loading...</p>;
-    // if (data?.error) return <p>Error: {data?.error}</p>;
-    // if (data) console.log(data.data);
+    const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
+    const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
-    // Responsive calculation for different screen sizes
-    const getVisibleItems = () => {
-        const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const [canScrollPrev, setCanScrollPrev] = React.useState(false);
+    const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-        if (screenWidth >= 1024) {
-            // Desktop: 6 items
-            return {
-                itemsToShow: 6,
-                canSlideNext: startIndex < residenceData.length - 6,
-                canSlidePrev: startIndex > 0
-            };
-        } else if (screenWidth >= 768) {
-            // Tablet: 5.5 items
-            return {
-                
-                itemsToShow: 5.5,
-                canSlideNext: startIndex < residenceData.length - 5.5,
-                canSlidePrev: startIndex > 0
-            };
-        } else {
-            // Mobile: 4.5 items
-            return {
-                itemsToShow: 4.5,
-                canSlideNext: startIndex < residenceData.length - 4.5,
-                canSlidePrev: startIndex > 0
-            };
-        }
-    };
+    useEffect(() => {
+        if (!emblaApi) return;
 
-    const { itemsToShow, canSlideNext, canSlidePrev } = getVisibleItems();
+        const onSelect = () => {
+            setCanScrollPrev(emblaApi.canScrollPrev());
+            setCanScrollNext(emblaApi.canScrollNext());
+        };
 
-    const handleNext = () => {
-        if (canSlideNext) {
-            setStartIndex(prev => prev + 1);
-        }
-    };
+        emblaApi.on('select', onSelect);
+        emblaApi.on('reInit', onSelect);
+        onSelect();
 
-    const handlePrev = () => {
-        if (canSlidePrev) {
-            setStartIndex(prev => prev - 1);
-        }
-    };
-
-    const handleTouchStart = (e: React.TouchEvent) => {
-        setTouchStart(e.touches[0].clientX);
-    };
-
-    const handleTouchMove = (e: React.TouchEvent) => {
-        setTouchEnd(e.touches[0].clientX);
-    };
-
-    const handleTouchEnd = () => {
-        const touchDiff = touchStart - touchEnd;
-        if (Math.abs(touchDiff) > 50) { // minimum swipe distance
-            if (touchDiff > 0 && canSlideNext) {
-                handleNext();
-            } else if (touchDiff < 0 && canSlidePrev) {
-                handlePrev();
-            }
-        }
-        setTouchStart(0);
-        setTouchEnd(0);
-    };
+        return () => {
+            emblaApi.off('select', onSelect);
+            emblaApi.off('reInit', onSelect);
+        };
+    }, [emblaApi]);
 
     const handleFilterChange = (key: string, value: string | number | undefined) => {
-        console.log(key, value);
         if (value !== undefined) {
             router.push(`/listing?${key}=${encodeURIComponent(value)}`);
         }
@@ -164,14 +120,14 @@ const Popular_Residence = () => {
 
     return (
         <div className="w-full relative flex justify-end bg-bgColor">
-            <div className="w-[95%] 2xl:w-[90%] max-sm:w-full -mt-24 z-20 py-10 max-lg:py-4 pl-10 max-sm:pl-4 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue">
-                <div className="flex justify-between items-center mb-8 max-lg:mb-4">
+            <div className="w-[95%] 2xl:w-[90%] max-sm:w-full -mt-24 z-20 py-10 max-lg:py-4 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue">
+                <div className="flex justify-between items-center mb-8 max-lg:mb-4 px-10 max-sm:px-4">
                     <h2 className="text-white font-[500] text-[28px] max-lg:text-lg leading-[39.81px]">Popular Residence</h2>
                     <div className="flex gap-2 mr-16 max-lg:mr-10">
                         <button
-                            onClick={handlePrev}
-                            disabled={!canSlidePrev}
-                            className={`border-2 border-white rounded-lg ${!canSlidePrev
+                            onClick={scrollPrev}
+                            disabled={!canScrollPrev}
+                            className={`border-2 border-white rounded-lg ${!canScrollPrev
                                 ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
                                 : 'bg-slate-800 hover:bg-slate-700 text-white'
                                 }`}
@@ -179,9 +135,9 @@ const Popular_Residence = () => {
                             <ChevronLeft className="h-6 w-fit max-sm:h-4" />
                         </button>
                         <button
-                            onClick={handleNext}
-                            disabled={!canSlideNext}
-                            className={`border-2 border-white rounded-lg ${!canSlideNext
+                            onClick={scrollNext}
+                            disabled={!canScrollNext}
+                            className={`border-2 border-white rounded-lg ${!canScrollNext
                                 ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
                                 : 'bg-slate-800 hover:bg-slate-700 text-white'
                                 }`}
@@ -191,37 +147,30 @@ const Popular_Residence = () => {
                     </div>
                 </div>
 
-                <div className="overflow-hidden">
-                    <div
-                        className="flex gap-6 max-sm:gap-4 transition-transform duration-500 ease-in-out"
-                        style={{
-                            transform: `translateX(-${startIndex * (100 / itemsToShow)}%)`,
-                        }}
-                        onTouchStart={handleTouchStart}
-                        onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}
-                    >
-                        {(data?.data)?.map((item: { id: number, property_Images: { url: string }, property_Location: string, property_Type: String }, index: Number) => (
+                <div className="overflow-hidden px-10 max-sm:px-4" ref={emblaRef}>
+                    <div className="flex">
+                        {(data?.data)?.map((item: { id: number, property_Images: { url: string }, property_Location: string, property_Type: String }) => (
                             <div
                                 key={"string" + item.id}
-                                className="min-w-[calc((100%-5*1.5rem)/6)] flex-shrink-0 
-                                    lg:min-w-[calc((100%-5*1.5rem)/6)]
-                                    md:min-w-[calc((100%-4*1.5rem)/5.5)]
-                                    max-md:min-w-[calc((100%-3*1rem)/4.5)] 
-                                    max-sm:min-w-[calc((100%-2*1rem)/3.2)] cursor-pointer"
-                                onClick={(e) => handleFilterChange('property_Location', item.property_Location || undefined)}
+                                className="pl-0 pr-6 max-sm:pr-4 flex-[0_0_16.666%] 
+                                    md:flex-[0_0_18.18%] 
+                                    max-md:flex-[0_0_22.22%] 
+                                    max-sm:flex-[0_0_31.25%] cursor-pointer"
+                                onClick={() => handleFilterChange('property_Location', item.property_Location || undefined)}
                             >
                                 <div className="rounded-lg overflow-hidden flex flex-col justify-start items-start text-[16px] font-[500] leading-[19.5px]">
                                     <div className="relative group">
                                         <Image
                                             width={100}
                                             height={100}
-                                            src={ giveCorrectImage(item.property_Images.url)}
+                                            src={giveCorrectImage(item.property_Images.url)}
                                             alt="popular_residence_img"
-                                            className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full object-cover rounded-[10px]"
+                                            className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full object-cover rounded-[10px] transition-transform duration-300 group-hover:scale-105"
                                         />
-                                        <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-[10px]">
-                                            <span className="py-1.5 px-2 text-sm border-2 border-white text-white rounded-full">View more</span>
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center rounded-[10px]">
+                                            <span className="py-1.5 px-4 text-sm border border-white text-white rounded-full translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                                View
+                                            </span>
                                         </div>
                                     </div>
                                     <h3 className="text-white mt-3 max-sm:mt-0.5 max-sm:text-xs">{item.property_Type}</h3>
