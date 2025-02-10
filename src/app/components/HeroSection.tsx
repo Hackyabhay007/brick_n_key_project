@@ -111,6 +111,7 @@ export default function HeroSection() {
                             autoPlay
                             muted
                             loop
+                            playsInline
                             poster="/images/Hero_Section.png"
                         />
                     </motion.div>

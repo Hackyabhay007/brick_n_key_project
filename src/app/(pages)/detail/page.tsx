@@ -15,12 +15,14 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Image from "next/image";
 import { giveCorrectImage } from "@/app/data";
 import { ImSpinner9 } from "react-icons/im";
+import ImageViewer from "@/app/components/ImageViewer";
 
 const DetailPage = () => {
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(true);
     const [images, setImages] = useState([]);
     const [imageLoading, setImageLoading] = useState(true);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     // const images = [
     //     "/images/detail_page_img_1.png",
     //     "/images/explore_img_2.png",  // Add more image paths as needed
@@ -101,6 +103,26 @@ const DetailPage = () => {
         setImageLoading(false);
     };
 
+    const handleImageClick = () => {
+        setIsFullscreen(true);
+    };
+
+    const handleCloseFullscreen = () => {
+        setIsFullscreen(false);
+    };
+
+    const handleFullscreenNext = () => {
+        setCurrentImageIndex((prevIndex) =>
+            prevIndex === images.length - 1 ? 0 : prevIndex + 1
+        );
+    };
+
+    const handleFullscreenPrev = () => {
+        setCurrentImageIndex((prevIndex) =>
+            prevIndex === 0 ? images.length - 1 : prevIndex - 1
+        );
+    };
+
     if (loading || isLoading) {
         return <Loader />;
     }
@@ -122,16 +144,18 @@ const DetailPage = () => {
                             </div>
                         )}
 
-                        <Image
-                            width={600}
-                            height={400}
-                            src={giveCorrectImage(images[currentImageIndex])}
-                            alt={`Carousel image ${currentImageIndex + 1}`}
-                            onLoad={handleImageLoad}
-                            className={`w-full h-full object-cover transition-opacity duration-500 rounded-xl 
-                                ${isTransitioning || imageLoading ? 'opacity-0' : 'opacity-100'}`}
-                            priority
-                        />
+                        <div onClick={handleImageClick}>
+                            <Image
+                                width={600}
+                                height={400}
+                                src={giveCorrectImage(images[currentImageIndex])}
+                                alt={`Carousel image ${currentImageIndex + 1}`}
+                                onLoad={handleImageLoad}
+                                className={`w-full h-full object-cover transition-opacity duration-500 rounded-xl 
+                                    ${isTransitioning || imageLoading ? 'opacity-0' : 'opacity-100'}`}
+                                priority
+                            />
+                        </div>
 
                         <div className="feature_container absolute top-2 left-2 w-[100px] sm:w-[150px] h-[35px] sm:h-[50px] flex justify-center items-center rounded-[10px] bg-[#ED371C] text-white font-[600] text-[16px] sm:text-[24px] tracking-[10%]">
                             Featured
@@ -222,6 +246,16 @@ const DetailPage = () => {
                 <MapContactForm listingId={data?.id} />
                 <Popular_Listing propertyType={data?.property_Type} />
             </div>
+
+            {isFullscreen && (
+                <ImageViewer
+                    images={images.map(img => giveCorrectImage(img))}
+                    currentIndex={currentImageIndex}
+                    onClose={handleCloseFullscreen}
+                    onNext={handleFullscreenNext}
+                    onPrev={handleFullscreenPrev}
+                />
+            )}
         </>
     )
 }
