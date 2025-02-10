@@ -120,7 +120,7 @@ export default function HeroSection() {
                         animate={isInView ? "visible" : "hidden"}
                         className="absolute z-30 flex justify-center items-center w-[80%] max-sm:w-[90%] -mt-4 sm:-mt-6 md:-mt-8 lg:-mt-10"
                     >
-                        <Buy_Section component="herosection"/>
+                        <Buy_Section component="herosection" isLuxury={false}/>
                     </motion.div>
                 </div>
             </div>

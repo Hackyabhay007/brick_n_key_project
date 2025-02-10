@@ -94,12 +94,12 @@ const buildApiUrl = (filters: PropertyFilters): string => {
     }
   }
 
-  // Handle multiple values for brand_name
+  // Handle brand name filter - Update this section
   if (filters.brand_name) {
-    const brands = filters.brand_name.split(',');
+    const brands = filters.brand_name.split(',,'); // Updated delimiter
     if (brands.length > 0) {
       const brandFilters = brands.map(brand => 
-        `filters[brand][brand_type][$eq]=${encodeURIComponent(brand)}`
+        `filters[brand][brand_name][$eq]=${encodeURIComponent(brand)}`
       ).join('&');
       filterParams.push(brandFilters);
     }

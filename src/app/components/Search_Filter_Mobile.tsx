@@ -46,7 +46,7 @@ export default function Search_Filter_Mobile() {
         maxPrice: 100
     });
     const [isLuxuryVal, setIsLuxuryVal] = useState<boolean>(false);
-    const [brand_type, setBrand_Type] = useState<string[]>([]);
+    const [brand_name, setBrand_Name] = useState<string[]>([]); // Changed from brand_type
 
     useEffect(() => {
         if (activeFilters) {
@@ -58,7 +58,7 @@ export default function Search_Filter_Mobile() {
             setProperty_Type(typeValue ? typeValue.split(',,').filter(Boolean) : []);
             setProperty_Bedroom(bedroomValue ? bedroomValue.split(',,').filter(Boolean) : []);
             setProperty_Construction_status(constructionValue ? constructionValue.split(',,').filter(Boolean) : []);
-            setBrand_Type(brandValue ? brandValue.split(',,').filter(Boolean) : []);
+            setBrand_Name(brandValue ? brandValue.split(',,').filter(Boolean) : []); // Changed from setBrand_Type
             setBudgetRange({
                 minPrice: activeFilters.minPrice || 1,
                 maxPrice: activeFilters.maxPrice || 100
@@ -104,10 +104,10 @@ export default function Search_Filter_Mobile() {
             }));
         }
         
-        if (brand_type.length > 0) {
+        if (brand_name.length > 0) { // Changed from brand_type
             dispatch(setFilter({ 
-                key: 'brand_name', 
-                value: brand_type.join(',,') 
+                key: 'brand_name', // Make sure this matches exactly
+                value: brand_name.join(',,') // Changed from brand_type
             }));
         }
 
@@ -117,6 +117,7 @@ export default function Search_Filter_Mobile() {
 
         dispatch(setFilter({ key: 'isLuxury', value: isLuxuryVal }));
         dispatch(fetchPropertyItems());
+        router.push('/listing');
     }
 
     const handleClearFilters = () => {
@@ -124,7 +125,7 @@ export default function Search_Filter_Mobile() {
         setProperty_Type([]);
         setProperty_Bedroom([]);
         setProperty_Construction_status([]);
-        setBrand_Type([]);
+        setBrand_Name([]); // Changed from setBrand_Type
         setBudgetRange({ minPrice: 1, maxPrice: 100 });
         setIsLuxuryVal(false);
     }
@@ -174,12 +175,16 @@ export default function Search_Filter_Mobile() {
         }
     }
 
-    const handleBrandTypeChange = (value: string) => {
-        setBrand_Type(prev => 
+    const handleBrandNameChange = (value: string) => { // Changed from handleBrandTypeChange
+        setBrand_Name(prev => // Changed from setBrand_Type
             prev.includes(value)
                 ? prev.filter(item => item !== value)
                 : [...prev, value]
         );
+    }
+
+    const handleClose = () => {
+        setShowFilter(false);
     }
 
     return (
@@ -198,7 +203,12 @@ export default function Search_Filter_Mobile() {
                     className="search_filter_header bg-bgBlue w-full py-12 flex justify-between items-center px-6 text-white"
                 >
                     <button className="text-lg py-2 px-4 bg-gray-600 rounded-xl">Buy</button>
-                    <Link href="/"><button className="text-lg">X</button></Link>
+                    <button 
+                        onClick={handleClose}
+                        className="text-lg"
+                    >
+                        X
+                    </button>
                 </motion.div>
 
                 {/* Search input section */}
@@ -349,12 +359,12 @@ export default function Search_Filter_Mobile() {
                             {brandData.map((brand) => (
                                 <button
                                     key={brand}
-                                    onClick={() => handleBrandTypeChange(brand)}
+                                    onClick={() => handleBrandNameChange(brand)} // Changed from handleBrandTypeChange
                                     className={`px-3 py-1.5 flex justify-center items-center gap-2 border border-[#8F90A6] rounded-full text-sm ${
-                                        brand_type.includes(brand) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : ""
+                                        brand_name.includes(brand) ? "bg-bgRed bg-opacity-20 text-black border-bgRed" : "" // Changed from brand_type
                                     }`}
                                 >
-                                    {brand_type.includes(brand) ? (
+                                    {brand_name.includes(brand) ? ( // Changed from brand_type
                                         <IoClose className="text-[#8F90A6] text-xl" />
                                     ) : (
                                         <Image width={100} height={100} className="w-3 h-auto" src="/images/buy_section_icon_5.svg" alt="brand" />
