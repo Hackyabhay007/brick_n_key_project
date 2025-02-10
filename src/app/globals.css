@@ -115,30 +115,21 @@ body {
   transition: all 0.5s ease !important;
   opacity: 0.4;
   transform: scale(0.85);
+  filter: brightness(0.7);
 }
 
 .trust-us-slide.swiper-slide-active {
   opacity: 1;
-  transform: scale(1);
+  transform: scale(1.1);
   z-index: 2;
-  cursor: pointer;
-}
-
-.trust-us-slide.swiper-slide-active button {
-  opacity: 1;
-  cursor: pointer;
-}
-
-.trust-us-slide:not(.swiper-slide-active) button {
-  opacity: 0.5;
-  cursor: default;
-  pointer-events: none;
+  filter: brightness(1);
 }
 
 .trust-us-slide.swiper-slide-prev,
 .trust-us-slide.swiper-slide-next {
   opacity: 0.6;
   transform: scale(0.9);
+  filter: brightness(0.8);
 }
 
 /* Trust Us pagination styles */

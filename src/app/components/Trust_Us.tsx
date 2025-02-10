@@ -52,14 +52,10 @@ export default function Trust_Us() {
     }, [data]);
 
     const handleVideoClick = async (id: number) => {
-        // Check if the clicked video is in the center
-        const slideElements = document.querySelectorAll('.trust-us-slide');
-        const centerIndex = Math.floor(slideElements.length / 2);
-        const clickedElement = Array.from(slideElements).findIndex(
-            el => el.contains(document.getElementById(`video-${id}`))
-        );
-
-        if (clickedElement !== centerIndex) return;
+        // Only allow playback if this video is in the active (center) slide
+        if (swiper?.realIndex !== trustUsArray.findIndex(item => item.id === id)) {
+            return;
+        }
 
         const video = videoRefs.current[id];
         if (!video) return;
@@ -125,8 +121,8 @@ export default function Trust_Us() {
                         coverflowEffect={{
                             rotate: 0,
                             stretch: 0,
-                            depth: 100,
-                            modifier: 1.5,
+                            depth: 200,
+                            modifier: 2,
                             slideShadows: false,
                         }}
                         breakpoints={{
@@ -157,9 +153,9 @@ export default function Trust_Us() {
                         {trustUsArray.map((item, index) => (
                             <SwiperSlide 
                                 key={item.id} 
-                                className="trust-us-slide !w-[240px] md:!w-[280px]"
+                                className="trust-us-slide"
                             >
-                                <div className="relative bg-black rounded-lg overflow-hidden aspect-[9/14] transition-all duration-500">
+                                <div className="relative bg-black rounded-lg overflow-hidden aspect-[9/14]">
                                     <video
                                         id={`video-${item.id}`}
                                         ref={el => { videoRefs.current[item.id] = el }}
@@ -168,11 +164,14 @@ export default function Trust_Us() {
                                         playsInline
                                         loop
                                     />
-                                    {/* Play Button Overlay */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className={`absolute inset-0 flex items-center justify-center
+                                        transition-opacity duration-300`}
+                                    >
                                         <button
                                             onClick={() => handleVideoClick(item.id)}
-                                            className="transform transition-all duration-300 hover:scale-110"
+                                            className={`transform transition-all duration-300
+                                                ${playingVideo === item.id ? 'scale-90' : 'scale-100'}
+                                                hover:scale-110`}
                                         >
                                             <Image
                                                 src={playingVideo === item.id ? '/images/pause_btn.png' : '/images/play_btn.png'}
