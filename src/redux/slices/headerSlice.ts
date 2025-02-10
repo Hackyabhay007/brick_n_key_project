@@ -47,7 +47,7 @@ export const fetchHeaderSection = createAsyncThunk<
 >("headerSection/fetchHeaderSection", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get<HeaderResponse>(
-      "http://localhost:1337/api/global?populate=header_container.LogoLink.image&populate[1]=header_container.navLinks"
+      "http://147.93.106.161:1337/api/global?populate=header_container.LogoLink.image&populate[1]=header_container.navLinks"
     );
     return response.data;
   } catch (error) {

@@ -26,7 +26,7 @@ export const fetch_whyChooseUsSection = createAsyncThunk<
 >("whyChooseUsSection/fetch_whyChooseUsSection", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get<WhyChooseUsResponse>(
-      "http://localhost:1337/api/why-choose-us-section"
+      "http://147.93.106.161:1337/api/why-choose-us-section"
     );
     return response.data;
   } catch (error) {

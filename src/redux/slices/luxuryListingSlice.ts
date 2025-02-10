@@ -39,7 +39,7 @@ export const fetchLuxuryListingItem = createAsyncThunk<
 >("luxuryListingItem/fetchLuxuryListingItem", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get<LuxuryListingResponse>(
-      "http://localhost:1337/api/detail-pages?filters[isLuxury][$eq]=true&populate=*"
+      "http://147.93.106.161:1337/api/detail-pages?filters[isLuxury][$eq]=true&populate=*"
     );
     return response.data;
   } catch (error) {

@@ -36,7 +36,7 @@ export const fetchPeopleTrustUs_Slice = createAsyncThunk<
 >("peopleTrustUs/fetchPeopleTrustUs_Slice", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get<PeopleTrustResponse>(
-      "http://localhost:1337/api/people-trust-uses?populate=*"
+      "http://147.93.106.161:1337/api/people-trust-uses?populate=*"
     );
     return response.data;
   } catch (error) {

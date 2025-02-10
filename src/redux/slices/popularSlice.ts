@@ -28,7 +28,7 @@ export const fetchPopularSection = createAsyncThunk<
 >("popularSection/fetchPopularSection", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get<PopularResponse>(
-      "http://localhost:1337/api/popular-residences?populate=*"
+      "http://147.93.106.161:1337/api/popular-residences?populate=*"
     );
     return response.data;
   } catch (error) {

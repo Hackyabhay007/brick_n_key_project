@@ -27,7 +27,7 @@ export const fetchPopular_Listing = createAsyncThunk<
 >("popularListing/fetchPopular_Listing", async ({ propertyType }, { rejectWithValue }) => {
   try {
     const response = await axios.get<PopularListingResponse>(
-      `http://localhost:1337/api/detail-pages?filters[property_Type][$eq]=${propertyType}&populate=*`
+      `http://147.93.106.161:1337/api/detail-pages?filters[property_Type][$eq]=${propertyType}&populate=*`
     );
     return response.data;
   } catch (error) {

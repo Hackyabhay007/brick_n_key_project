@@ -106,7 +106,7 @@ export default function HeroSection() {
                         className="w-full h-full"
                     >
                         <video
-                            src={`http://localhost:1337${data?.data?.data[0]?.HeroSection_video?.url}`}
+                            src={`http://147.93.106.161:1337${data?.data?.data[0]?.HeroSection_video?.url}`}
                             className="rounded-[20px] w-full h-full object-cover"
                             autoPlay
                             muted

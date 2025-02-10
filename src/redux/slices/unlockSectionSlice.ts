@@ -26,7 +26,7 @@ export const fetchUnlockSection = createAsyncThunk<
 >("unlockSection/fetchUnlockSection", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get<UnlockSectionResponse>(
-      "http://localhost:1337/api/unlock-section"
+      "http://147.93.106.161:1337/api/unlock-section"
     );
     return response.data;
   } catch (error) {
