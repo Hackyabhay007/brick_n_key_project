@@ -38,8 +38,8 @@ const Page = () => {
         const propertyLocation = searchParams.get('property_Location');
         const propertyBedroom = searchParams.get('property_Bedroom');
         const constructionStatus = searchParams.get('property_Construction_status');
-        const minPrice = searchParams.get('minPrice');
-        const maxPrice = searchParams.get('maxPrice');
+        // const minPrice = searchParams.get('minPrice');
+        // const maxPrice = searchParams.get('maxPrice');
         const isLuxury = searchParams.get('isLuxury');
         const newData = searchParams.get('new');
         console.log("new Data: ", newData);
@@ -81,7 +81,7 @@ const Page = () => {
     useEffect(() => {
         dispatch(setFilter({ key: 'page', value: currentPage }));
         dispatch(setFilter({ key: 'pageSize', value: itemsPerPage }));
-    }, [currentPage]);
+    }, [currentPage, dispatch]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);

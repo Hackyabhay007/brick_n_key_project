@@ -1,6 +1,6 @@
 "use client"
 
-import { Metadata } from "next";
+// import { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Provider } from "react-redux";

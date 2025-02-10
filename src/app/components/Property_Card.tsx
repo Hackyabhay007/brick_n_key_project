@@ -1,18 +1,18 @@
 "use client"
 
-import { Metadata } from 'next'
-import Head from 'next/head'
+// import { Metadata } from 'next'
+// import Head from 'next/head'
 
-export const metadata: Metadata = {
-  title: 'Property Details | Brick N Key',
-  description: 'Detailed view of our premium properties. View high-quality images, locations, and property features.',
-  keywords: 'property details, real estate listings, property features, home details',
-  openGraph: {
-    title: 'Property Details | Brick N Key',
-    description: 'Detailed view of our premium properties',
-    type: 'website',
-  }
-}
+// export const metadata: Metadata = {
+//   title: 'Property Details | Brick N Key',
+//   description: 'Detailed view of our premium properties. View high-quality images, locations, and property features.',
+//   keywords: 'property details, real estate listings, property features, home details',
+//   openGraph: {
+//     title: 'Property Details | Brick N Key',
+//     description: 'Detailed view of our premium properties',
+//     type: 'website',
+//   }
+// }
 
 import { motion } from 'framer-motion';
 import { MapPin } from 'lucide-react'; 

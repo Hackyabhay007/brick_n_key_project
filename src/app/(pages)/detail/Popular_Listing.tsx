@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useDispatch, useSelector } from "react-redux";
-import { fetchPopular_Listing } from '../../../redux/slices/popularListingSlice';
-import { AppDispatch, RootState } from "../../../redux/store";
+import {  useSelector } from "react-redux";
+// import { fetchPopular_Listing } from '../../../redux/slices/popularListingSlice';
+import { RootState } from "../../../redux/store";
 import Property_Card from '@/app/components/Property_Card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -17,22 +17,22 @@ interface PropertyItem {
   property_Images: string;
 }
 
-const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
+const Popular_Listing = () => {
   const [propertyItemArray, setPropertyItemArray] = useState<PropertyItem[]>([]);
   const data = useSelector((state: RootState) => state.popularListingSection?.data);
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
   const [isImageTransitioning, setIsImageTransitioning] = useState<{ [key: string]: boolean }>({});
 
   const router = useRouter();
 
-  const fetchListings = (propertyType: string) => {
-    dispatch(fetchPopular_Listing({ propertyType: propertyType }));
-  };
+  // const fetchListings = (propertyType: string) => {
+  //   dispatch(fetchPopular_Listing({ propertyType: propertyType }));
+  // };
 
-  useEffect(() => {
-    if (propertyType) fetchListings(propertyType);
-  }, [propertyType]);
+  // useEffect(() => {
+  //   if (propertyType) fetchListings(propertyType);
+  // }, [propertyType]);
 
   useEffect(() => {
     if (data?.data) {
