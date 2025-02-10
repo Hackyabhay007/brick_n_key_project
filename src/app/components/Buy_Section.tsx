@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, MapPin, Search } from 'lucide-react';
 import FilterSection from './FilterSection';
 import Buy_Section_Desktop_Dropdown from './Buy_Section_Desktop_Dropdown';
@@ -21,12 +21,23 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
   const dispatch = useDispatch();
   const router = useRouter();
 
+  // Add useEffect to handle URL search params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const locationParam = params.get('property_Location');
+    if (locationParam) {
+      setProperty_Location(decodeURIComponent(locationParam));
+    }
+  }, []);
+
   const handleSearchButtonClick = () => {
     if (component === "herosection") {
-      // When in hero section, redirect to listing page
-      router.push('/listing');
+      if (property_Location.trim()) {
+        router.push(`/listing?property_Location=${encodeURIComponent(property_Location)}`);
+      } else {
+        router.push('/listing');
+      }
     } else {
-      // When in listing page, open the filter modal
       setIsMobileFilterOpen(true);
     }
   };
