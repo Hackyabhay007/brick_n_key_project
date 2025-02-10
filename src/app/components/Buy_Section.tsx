@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, MapPin, Search } from 'lucide-react';
 import FilterSection from './FilterSection';
 import Buy_Section_Desktop_Dropdown from './Buy_Section_Desktop_Dropdown';
@@ -10,7 +10,8 @@ import { setFilter } from '@/redux/slices/propertyItemSlice';
 import { useRouter } from 'next/navigation';
 import { FaChevronUp } from "react-icons/fa6";
 import Image from 'next/image';
-import { IoClose } from "react-icons/io5";
+
+
 
 const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boolean }) => {
   const [showFilter, setShowFilter] = useState(false);
@@ -99,13 +100,19 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
               onChange={(e) => setProperty_Location(e.target.value)} 
               value={property_Location} 
               className='font-medium text-base sm:text-lg leading-relaxed bg-transparent outline-none w-full placeholder:text-gray-500/70 transition-all duration-300 focus:placeholder:text-gray-500/50' 
-              placeholder='Search location' 
+              placeholder='Search location, project or landmark...' 
             />
             {property_Location && (
               <button 
               onClick={() => setProperty_Location('')}
               className='p-1.5 rounded-full hover:bg-gray-100/10 transition-colors'
               >
+              <Image 
+                width={16} 
+                height={16} 
+                src="/images/close-icon.svg" 
+                alt="clear search" 
+              />
               </button>
             )}
             </div>

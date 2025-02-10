@@ -17,15 +17,10 @@ export default {
         bgRed: "#ED371C",
         textGray: "#8F90A6",
         textDark: "#110229",
-        overlay: {
-          black: "rgba(0, 0, 0, 0.5)",
-          white: "rgba(255, 255, 255, 0.85)",
-        },
-        whiteAlpha: {
-          10: "rgba(255, 255, 255, 0.1)",
-          20: "rgba(255, 255, 255, 0.2)",
-          50: "rgba(255, 255, 255, 0.5)",
-        },
+        overlayBlack: "rgba(0, 0, 0, 0.5)",
+        overlayWhite: "rgba(255, 255, 255, 0.85)",
+        whiteAlpha10: "rgba(255, 255, 255, 0.1)",
+        whiteAlpha20: "rgba(255, 255, 255, 0.2)",
       },
       aspectRatio: {
         'w-16': '16',
