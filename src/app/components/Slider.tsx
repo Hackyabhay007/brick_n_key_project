@@ -20,9 +20,19 @@ import 'swiper/css/effect-coverflow';
 
 interface SliderProps {
   onLocationChange: (location: string) => void;
+  images?: string[];
+  activeIndex?: number;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
-const Slider: React.FC<SliderProps> = ({ onLocationChange }) => {
+const Slider: React.FC<SliderProps> = ({ 
+  onLocationChange, 
+  images,
+  activeIndex,
+  onNext,
+  onPrev 
+}) => {
   const data = useSelector((state: RootState) => state.luxuryListingItems?.data);
   const dispatch = useDispatch<AppDispatch>();
   const [activeLocation, setActiveLocation] = useState('');

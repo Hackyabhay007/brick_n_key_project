@@ -153,11 +153,11 @@ const Explore = () => {
                     className="relative overflow-hidden"
                 >
                     <Slider 
-                        images={currentImageSet}
                         onLocationChange={setCurrentLocation}
-                        activeIndex={activeIndex}
-                        onNext={handleNext}
-                        onPrev={handlePrev}
+                        images={currentImageSet}        // Now TypeScript won't complain
+                        activeIndex={activeIndex}      // Now TypeScript won't complain
+                        onNext={handleNext}            // Now TypeScript won't complain
+                        onPrev={handlePrev}           // Now TypeScript won't complain
                     />
                 </motion.div>
             </motion.div>
