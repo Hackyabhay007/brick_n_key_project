@@ -74,10 +74,10 @@ export default function Trust_Us() {
     };
 
     return (
-        <div className="w-full py-16 bg-bgColor overflow-hidden">
+        <div className="w-full py-16 bg-bgColor">
             <motion.div
                 ref={containerRef}
-                className="w-[95%] md:w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue rounded-[20px] p-6 md:p-10 lg:p-14"
+                className="w-[95%] md:w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue rounded-[20px] p-6 md:p-10 lg:p-14 overflow-hidden"
                 initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                 transition={{ duration: 0.6 }}
@@ -102,20 +102,20 @@ export default function Trust_Us() {
                 </motion.div>
 
                 {/* New Swiper Implementation */}
-                <div className="relative px-8 md:px-16">
+                <div className="relative px-4 md:px-12">
                     <Swiper
                         effect={'coverflow'}
                         grabCursor={true}
                         centeredSlides={true}
                         loop={true}
                         slidesPerView={3}
-                        spaceBetween={38}
-                        initialSlide={3}
+                        spaceBetween={30}
+                        initialSlide={1}
                         coverflowEffect={{
                             rotate: 0,
                             stretch: 0,
-                            depth: 40,
-                            modifier: 1.2,
+                            depth: 100,
+                            modifier: 1,
                             slideShadows: false,
                         }}
                         breakpoints={{
@@ -124,7 +124,7 @@ export default function Trust_Us() {
                                 spaceBetween: 20
                             },
                             768: {
-                                slidesPerView: 2,
+                                slidesPerView: 3,
                                 spaceBetween: 30
                             }
                         }}
@@ -135,9 +135,9 @@ export default function Trust_Us() {
                                 setPlayingVideo(null);
                             }
                         }}
-                        pagination={{ clickable: true }}
-                        modules={[EffectCoverflow, Pagination, Navigation]}
-                        className="swiper-container !overflow-visible"
+                        pagination={false} // Remove pagination
+                        modules={[EffectCoverflow, Navigation]}
+                        className="swiper-container !overflow-hidden"
                         onSwiper={setSwiper}
                         navigation={{
                             enabled: true,
@@ -191,12 +191,12 @@ export default function Trust_Us() {
                         ))}
                     </Swiper>
                     {/* Navigation Buttons */}
-                    <div className="absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 z-10 custom-prev">
+                    <div className="absolute left-0 md:left-2 top-1/2 -translate-y-1/2 z-10 custom-prev">
                         <button className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95">
                             <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </button>
                     </div>
-                    <div className="absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 z-10 custom-next">
+                    <div className="absolute right-0 md:right-2 top-1/2 -translate-y-1/2 z-10 custom-next">
                         <button className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95">
                             <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </button>
