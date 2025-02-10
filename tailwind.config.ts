@@ -22,7 +22,13 @@ export default {
         whiteAlpha10: "rgba(255, 255, 255, 0.1)",
         whiteAlpha20: "rgba(255, 255, 255, 0.2)",
       },
+      aspectRatio: {
+        'w-16': '16',
+        'h-9': '9',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/aspect-ratio'),
+  ],
 } satisfies Config;

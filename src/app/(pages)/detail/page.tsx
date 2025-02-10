@@ -141,14 +141,14 @@ const DetailPage = () => {
                             <>
                                 <button
                                     onClick={handlePrevClick}
-                                    className="absolute left-2 sm:-left-5 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-1.5 sm:p-2 transition-all duration-300 shadow-lg"
+                                    className="absolute left-1 sm:-left-1 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-1.5 sm:p-2 transition-all duration-300 shadow-lg"
                                     aria-label="Previous image"
                                 >
                                     <IoIosArrowBack className="w-4 h-4 sm:w-6 sm:h-6" />
                                 </button>
                                 <button
                                     onClick={handleNextClick}
-                                    className="absolute right-2 sm:-right-5 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-1.5 sm:p-2 transition-all duration-300 shadow-lg"
+                                    className="absolute right-1 sm:-right-1 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-1.5 sm:p-2 transition-all duration-300 shadow-lg"
                                     aria-label="Next image"
                                 >
                                     <IoIosArrowForward className="w-4 h-4 sm:w-6 sm:h-6" />
@@ -161,7 +161,8 @@ const DetailPage = () => {
                         <div className="dot_navigation absolute bottom-[25%] sm:bottom-1/3 left-1/2 transform -translate-x-1/2 flex space-x-1.5 sm:space-x-2">
                             {images.map((_, index: number) => (
                                 <button
-                                    key={index}
+                             
+                                key={index}
                                     onClick={() => handleDotClick(index)}
                                     className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${
                                         currentImageIndex === index
