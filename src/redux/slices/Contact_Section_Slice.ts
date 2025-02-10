@@ -32,7 +32,7 @@ export const submitContactForm = createAsyncThunk(
   async (formData: ContactFormData, { rejectWithValue }) => {
     console.log("This is the Form data at the contact section slice", formData);
     try {
-      const response = await axios.post("http://localhost:1337/api/contacts", {
+      const response = await axios.post("http://147.93.106.161:1337/api/contacts", {
         data: formData
       });
       return response.data;

@@ -21,7 +21,7 @@ export const fetchDetailPage = createAsyncThunk(
     try {
       console.log('Fetching data for ID:', id);
       const response = await axios.get(
-        `http://localhost:1337/api/detail-pages?filters[id][$eq]=${id}&populate=*`
+        `http://147.93.106.161:1337/api/detail-pages?filters[id][$eq]=${id}&populate=*`
       );
       console.log('API Response:', response.data);
       return response.data;

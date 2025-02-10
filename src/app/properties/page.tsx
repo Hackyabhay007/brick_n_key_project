@@ -88,7 +88,7 @@ const PropertiesPage = () => {
                         {/* Property Image */}
                         <div className="w-full h-[15rem] relative">
                           <Image
-                            src={`http://localhost:1337${property.attributes?.property_Images?.data[0]?.attributes?.url}`}
+                            src={`http://147.93.106.161:1337${property.attributes?.property_Images?.data[0]?.attributes?.url}`}
                             alt={property.attributes?.property_Title || "Property Image"}
                             fill
                             className='object-cover'

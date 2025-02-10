@@ -26,7 +26,7 @@ export const fetchPopular_Listing = createAsyncThunk(
     console.log("This is the propertyType from the popular listing slice", propertyType);
     try {
       const response = await axios.get(
-        `http://localhost:1337/api/detail-pages?filters[property_Type][$eq]=${propertyType}&populate=*`
+        `http://147.93.106.161:1337/api/detail-pages?filters[property_Type][$eq]=${propertyType}&populate=*`
       );
       return response.data;
     } catch (error: any) {

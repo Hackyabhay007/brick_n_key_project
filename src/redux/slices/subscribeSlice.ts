@@ -17,7 +17,7 @@ const initialState: SubscribeState = {
   error: null
 };
 
-const API_URL = 'http://localhost:1337/api/subscribe-models';
+const API_URL = 'http://147.93.106.161:1337/api/subscribe-models';
 
 export const subscribeToNewsletter = createAsyncThunk(
   'subscribe/submitEmail',

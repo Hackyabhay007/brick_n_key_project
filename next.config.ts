@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
         pathname: "/uploads/**",
       },
       {
+        protocol: "http",
+        hostname: "147.93.106.161",
+        port: "1337",
+        pathname: "/uploads/**",
+      },
+      {
         protocol: "https",
         hostname: "your-production-strapi.com", // Change this for production
         pathname: "/uploads/**",

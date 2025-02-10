@@ -19,7 +19,7 @@ export const fetchBrandSectionSlice = createAsyncThunk(
   "brandSection/fetchBrandSectionSlice",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://localhost:1337/api/brands?populate=brand_logo&populate[1]=brand_relations.property_Images&populate[2]=brand_relations.propertyFeature");
+      const response = await axios.get("http://147.93.106.161:1337/api/brands?populate=brand_logo&populate[1]=brand_relations.property_Images&populate[2]=brand_relations.propertyFeature");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to fetch data");

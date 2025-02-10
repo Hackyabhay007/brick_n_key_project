@@ -43,7 +43,7 @@ export const brandData = ["Sobha", "Prestige", "Godrej", "Brigade", "Total Envir
 
 
 export const giveCorrectImage = (image) => {
-    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://147.93.106.161:1337";
     // console.log("This is the iamge value", image)
     const imagePath = image;
 
