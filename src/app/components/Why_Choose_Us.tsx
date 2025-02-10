@@ -1,15 +1,14 @@
 "use client"
 
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetch_whyChooseUsSection } from "../../redux/slices/whyChooseUsSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import Link from "next/link";
 
-export default function Why_Choose_Us() {
+export default function WhyChooseUs() {
     const data = useSelector((state: RootState) => state.whyChooseUsSection?.data);
     const dispatch = useDispatch<AppDispatch>();
 
@@ -28,116 +27,30 @@ export default function Why_Choose_Us() {
         }
     };
 
-    // New animation variants for the left side container
-    const leftSideVariants = {
+    const buttonVariants = {
         hidden: { 
-            opacity: 0,
-            x: -100,
-            scale: 0.9
+            opacity: 0, 
+            scale: 0.8,
+            y: 20
         },
         visible: {
-            opacity: 1,
-            x: 0,
+            opacity: 1, 
             scale: 1,
-            transition: {
-                type: "spring",
-                damping: 20,
-                stiffness: 100,
-                staggerChildren: 0.2,
-                delayChildren: 0.3
-            }
-        }
-    };
-
-    // New animation variants for children elements
-    const childVariants = {
-        hidden: { 
-            opacity: 0,
-            y: 20,
-        },
-        visible: {
-            opacity: 1,
             y: 0,
             transition: {
                 type: "spring",
-                damping: 12,
-                stiffness: 100
+                stiffness: 300,
+                damping: 20
+            }
+        },
+        hover: {
+            scale: 1.05,
+            transition: { 
+                type: "spring", 
+                stiffness: 300 
             }
         }
     };
-
-    const imageVariants = {
-        hidden: { opacity: 0, x: 100 },
-        visible: {
-            opacity: 1,
-            x: 0,
-            transition: { duration: 0.6 }
-        }
-    };
-
-    const buttonVariants = {
-        rotate: {
-            rotate: 360,
-            transition: {
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear"
-            }
-        }
-    };
-
-    const [currentPositions, setCurrentPositions] = useState([0, 1, 2, 3]);
-
-    const positions = {
-        desktop: [
-            { x: 0, y: -120 },    // top
-            { x: 120, y: 0 },     // right
-            { x: 0, y: 120 },     // bottom
-            { x: -120, y: 0 }     // left
-        ],
-        tablet: [
-            { x: 0, y: -80 },     // top
-            { x: 80, y: 0 },      // right
-            { x: 0, y: 80 },      // bottom
-            { x: -80, y: 0 }      // left
-        ],
-        mobile: [
-            { x: 0, y: -60 },     // top
-            { x: 60, y: 0 },      // right
-            { x: 0, y: 60 },      // bottom
-            { x: -60, y: 0 }      // left
-        ]
-    };
-
-    const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowWidth(window.innerWidth);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    const getCurrentPositions = () => {
-        if (windowWidth <= 640) return positions.mobile;
-        if (windowWidth <= 1024) return positions.tablet;
-        return positions.desktop;
-    };
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentPositions(prev => {
-                const newPositions = [...prev];
-                const last = newPositions.pop()!;
-                newPositions.unshift(last);
-                return newPositions;
-            });
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, []);
 
     const buttonTexts = [
         data?.data?.Right_sideBtn_1_text,
@@ -147,75 +60,84 @@ export default function Why_Choose_Us() {
     ];
 
     return (
-        <>
-            <div className="why_choose_us_container relative bg-bgColor pt-4 sm:pt-6 md:pt-8 lg:pt-16 overflow-hidden">
-                <motion.div
-                    ref={ref}
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate={isInView ? "visible" : "hidden"}
-                    className="why_choose_us_inner_container relative 2xl:w-[80%] w-[92%] md:w-[90%] z-10 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 bg-bgBlue p-4 sm:p-6 md:p-8 lg:py-12 text-white rounded-[20px] overflow-hidden"
+        <div className="why_choose_us_container relative bg-bgColor py-8 md:py-16 overflow-hidden">
+            <motion.div
+                ref={ref}
+                variants={containerVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+                className="why_choose_us_inner_container relative 
+                    2xl:w-[80%] w-[92%] md:w-[90%] 
+                    z-10 mx-auto 
+                    grid grid-cols-1 lg:grid-cols-2 
+                    gap-8 lg:gap-12 
+                    bg-bgBlue 
+                    p-6 md:p-12 
+                    text-white rounded-[20px]"
+            >
+                {/* Left side content */}
+                <div className="leftSide_Container 
+                    flex flex-col justify-center items-start 
+                    gap-4 md:gap-6 
+                    text-center lg:text-left"
                 >
-                    <div className="diagonal_img_container absolute hidden lg:block -translate-x-[100px] -translate-y-[80px]" style={{ backgroundImage: "url('/images/why_choose_us_img_2.png')" }}>
-                        <Image width={100} height={100} className="w-full" src="/images/why_choose_us_img_2.png" alt="diagonal_line_img" />
-                    </div>
-
-                    <motion.div
-                        variants={leftSideVariants}
-                        className="leftSide_Container flex flex-col justify-start items-start gap-2 sm:gap-3 relative"
+                    <h1 className="w-full text-3xl md:text-4xl 
+                        font-bold leading-tight"
                     >
-                        <motion.h1
-                            variants={childVariants}
-                            className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-[600] leading-tight md:leading-snug lg:leading-[65.83px]"
-                        >
-                            {data?.data?.heading}
-                        </motion.h1>
-                        <motion.p
-                            variants={childVariants}
-                            className="text-[13px] sm:text-[14px] leading-relaxed md:leading-[31px] font-[400]"
-                        >
-                            {data?.data?.description}
-                        </motion.p>
-                        <motion.button
-                            variants={childVariants}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="py-0.5 px-4 sm:px-6 bg-[#ED371C] font-[600] z-50 text-[14px] sm:text-[16px] leading-[36px] rounded-[20px] mt-3 sm:mt-4 md:mt-6"
-                        >
-                            <Link href="/about">{data?.data?.Button_text}</Link>
-                        </motion.button>
-                    </motion.div>
-
-                    <motion.div
-                        variants={imageVariants}
-                        className="rightSide_Container w-full h-full flex justify-center items-start bg-center"
+                        {data?.data?.heading}
+                    </h1>
+                    <p className="w-full text-base 
+                        leading-relaxed opacity-80"
                     >
-                        <div className="relative w-full h-[280px]">
-                            <div className="absolute w-full h-full">
-                                <div className="buttonsContainer relative w-full 2xl:w-[500px] mx-auto h-full">
-                                    {buttonTexts.map((text, index) => (
-                                        <motion.button
-                                            key={index}
-                                            className={`
-                                                button absolute uppercase bg-red-600 text-white 
-                                                w-[200px] h-[50px] 
-                                                flex justify-center items-center 
-                                                rounded-[10px] text-sm
-                                                ${index === 0 ? 'top-0 left-1/2 -translate-x-1/2' : ''}
-                                                ${index === 1 ? 'right-0 top-1/2 -translate-y-1/2' : ''}
-                                                ${index === 2 ? 'bottom-0 left-1/2 -translate-x-1/2' : ''}
-                                                ${index === 3 ? 'left-0 top-1/2 -translate-y-1/2' : ''}
-                                            `}
-                                        >
-                                            {text}
-                                        </motion.button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                </motion.div>
-            </div>
-        </>
-    )
+                        {data?.data?.description}
+                    </p>
+                    <Link 
+                        href="/about" 
+                        className="mx-auto lg:mx-0 
+                        inline-block px-6 py-2 
+                        bg-[#ED371C] 
+                        text-white 
+                        rounded-full 
+                        hover:bg-opacity-90 
+                        transition-colors"
+                    >
+                        {data?.data?.Button_text}
+                    </Link>
+                </div>
+
+                {/* Right side content */}
+                <div className="rightSide_Container 
+                    w-full 
+                    grid grid-cols-2 gap-4"
+                >
+                    {buttonTexts.map((text, index) => (
+                        <motion.div
+                            key={index}
+                            variants={buttonVariants}
+                            whileHover="hover"
+                            className="bg-white/10 
+                                backdrop-blur-sm 
+                                rounded-xl 
+                                p-4 
+                                flex items-center justify-center 
+                                text-center 
+                                border border-white/20 
+                                hover:border-white/40 
+                                transition-all 
+                                group"
+                        >
+                            <span className="text-sm md:text-base 
+                                font-medium 
+                                text-white 
+                                group-hover:scale-105 
+                                transition-transform"
+                            >
+                                {text}
+                            </span>
+                        </motion.div>
+                    ))}
+                </div>
+            </motion.div>
+        </div>
+    );
 }
