@@ -3,10 +3,10 @@ import { seoData } from '@/app/seoMetadata';
 
 export const metadata: Metadata = seoData.map;
 
-export default function MapLayout({
+export default async function MapLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
-    return children;
+    return <>{children}</>;
 }

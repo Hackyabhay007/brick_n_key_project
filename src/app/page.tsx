@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import Brand from "./components/Brand"
 import Explore_Section from "./components/Explore_Section"
 import HeroSection from "./components/HeroSection"
@@ -32,13 +32,13 @@ export default function Page() {
   }
 
   return(
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
         <HeroSection />
         <Popular_Residence />
         <Brand />
         <Explore_Section />
         <Why_Choose_Us />
         <Trust_Us />
-    </>
+    </Suspense>
   )
 }

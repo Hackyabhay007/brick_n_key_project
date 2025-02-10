@@ -1,3 +1,5 @@
+"use client"
+
 const ShimmerEffect = () => {
     return (
         <div className="animate-pulse flex flex-col gap-4 w-full">

@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Square, Building2, MapPin, SlidersHorizontal, Users, Building } from 'lucide-react';
 import Image from 'next/image';
