@@ -1,6 +1,27 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+interface RemotePattern {
+  protocol: 'http' | 'https';
+  hostname: string;
+  port?: string;
+  pathname: string;
+}
+
+interface ImageConfig {
+  remotePatterns: RemotePattern[];
+}
+
+interface CustomNextConfig extends NextConfig {
+  webpackDevMiddleware: (config: any) => any;
+  images: ImageConfig;
+}
+
+const nextConfig: CustomNextConfig = {
+  reactStrictMode: true,
+  webpackDevMiddleware: (config) => {
+    config.dev.overlay = false;
+    return config;
+  },
   images: {
     remotePatterns: [
       {
