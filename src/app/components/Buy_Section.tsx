@@ -10,33 +10,39 @@ import { setFilter } from '@/redux/slices/propertyItemSlice';
 import { useRouter } from 'next/navigation';
 import { FaChevronUp } from "react-icons/fa6";
 import Image from 'next/image';
-
-
+import Search_Filter_Mobile from './Search_Filter_Mobile';
 
 const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boolean }) => {
   const [showFilter, setShowFilter] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  // const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [property_Location, setProperty_Location] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // console.log(component)
+  const handleSearchButtonClick = () => {
+    if (component === "herosection") {
+      // When in hero section, redirect to listing page
+      router.push('/listing');
+    } else {
+      // When in listing page, open the filter modal
+      setIsMobileFilterOpen(true);
+    }
+  };
 
   const handleInputSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (property_Location.trim() !== "") {
       dispatch(setFilter({ key: 'property_Location', value: property_Location }));
-      if (component === "herosection") {
-        router.push(`/listing?property_Location=${encodeURIComponent(property_Location)}`);
-      }
+      router.push(`/listing?property_Location=${encodeURIComponent(property_Location)}`);
+    } else if (component === "herosection") {
+      router.push('/listing');
     }
     setProperty_Location('');
   };
 
   const handleAllResidentialClick = () => {
-    // console.log("All Residential Click");
-    // console.log("Component: ", component);
     if(component === "herosection") {
       router.push('/listing');
     }
@@ -47,8 +53,10 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
 
   const handleInputClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // setShowFilterSection(false);
   };
+
+  const openFilter = () => setIsFilterOpen(true);
+  const closeFilter = () => setIsFilterOpen(false);
 
   return (
     <>
@@ -129,37 +137,37 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
         </form>
       </div>
 
-      {/* Mobile view remains the same */}
+      {/* Mobile view - Updated */}
       <div className='w-full lg:hidden'>
-        <Link href="mobile_filter">
-          <div className="relative w-full p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/90">
-        <div className="flex items-center gap-3">
-          <div className="flex-1 relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2">
-          {/* <Image 
-            width={20} 
-            height={20} 
-            src="/images/buy_section_icon_2.svg" 
-            alt="search" 
-            className="opacity-70" 
-          /> */}
+        <div className="relative w-full p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/90">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2">
+              </div>
+              <input 
+                type="text" 
+                placeholder='Search location' 
+                value={property_Location}
+                onChange={(e) => setProperty_Location(e.target.value)}
+                className='w-full py-3 pl-10 pr-3 bg-white/50 rounded-xl outline-none text-gray-800 placeholder:text-gray-500/70 focus:ring-2 focus:ring-bgRed/30 transition-all duration-300'
+              />
             </div>
-            <input 
-          type="text" 
-          placeholder='Search location' 
-          className='w-full py-3 pl-10 pr-3 bg-white/50 rounded-xl outline-none text-gray-800 placeholder:text-gray-500/70 focus:ring-2 focus:ring-bgRed/30 transition-all duration-300'
-            />
+            <button 
+              className='flex items-center justify-center w-12 h-12 bg-bgRed rounded-xl shadow-lg shadow-bgRed/30 transition-transform active:scale-95'
+              onClick={handleSearchButtonClick}
+            >
+              <Search className="w-5 h-5 text-white" />
+            </button>
           </div>
-          <button 
-            className='flex items-center justify-center w-12 h-12 bg-bgRed rounded-xl shadow-lg shadow-bgRed/30 transition-transform active:scale-95'
-            onClick={() => setShowFilter(!showFilter)}
-          >
-            <Search className="w-5 h-5 text-white" />
-          </button>
         </div>
-  
-          </div>
-        </Link>
+
+        {/* Only show filter modal in listing page */}
+        {component !== "herosection" && (
+          <Search_Filter_Mobile 
+            isOpen={isMobileFilterOpen}
+            onClose={() => setIsMobileFilterOpen(false)}
+          />
+        )}
       </div>
     </>
   );
