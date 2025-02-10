@@ -275,74 +275,91 @@ const Brand = () => {
 
         {/* Brands Slider */}
         <div className="relative mx-auto mb-12 px-4 w-full mt-20 max-xl:mt-10 max-lg:mt-0">
-          <button
-            onClick={prevBrandSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-          >
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
+          {data?.data && data.data.length > 5 && (
+            <>
+              <button
+                onClick={prevBrandSlide}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 transition-all duration-300"
+              >
+                <svg
+                  className="w-6 h-6 text-white/80"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+
+              <button
+                onClick={nextBrandSlide}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 transition-all duration-300"
+              >
+                <svg
+                  className="w-6 h-6 text-white/80"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </>
+          )}
 
           {/* Brand Logos */}
-          <div className="overflow-hidden w-full">
+            <div className="overflow-hidden w-full px-4 md:px-8">
             <div
-              className="w-full flex transition-transform duration-500 ease-in-out"
+              className="w-full flex transition-all duration-700 ease-in-out"
               style={{
-                transform: `translateX(-${currentIndex * (100 / 5)}%)`
+              transform: `translateX(-${currentIndex * (100 / (window.innerWidth >= 768 ? 5 : 3))}%)`
               }}
             >
               {(data?.data)?.map((currElem: { id: number, brand_ID: string, brand_name: string, brand_logo: { url: string } }, index: number) => (
-                <div
-                  key={"brand" + currElem.id}
-                  className="flex-shrink-0 w-1/5 px-4 cursor-pointer"
-                  onClick={() => { handleBrandClick(index); setShowPropertyCard(true); setBrand_name(currElem?.brand_name); }}
-                >
-                  <div className="flex flex-col items-center justify-center h-20">
-                    <Image
-                      width={100}
-                      height={100}
-                      src={giveCorrectImage(currElem.brand_logo.url)}
-                      alt={currElem.brand_name}
-                      className="h-14 max-lg:h-10 max-md:h-8 w-auto object-contain"
-                    />
-                  </div>
+              <div
+                key={"brand" + currElem.id}
+                className="flex-shrink-0 w-1/3 md:w-1/5 px-2 md:px-3 cursor-pointer"
+                onClick={() => { handleBrandClick(index); setShowPropertyCard(true); setBrand_name(currElem?.brand_name); }}
+              >
+                <div className="group flex flex-col items-center justify-center  p-2 md:p-6 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300">
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <Image
+                  width={200}
+                  height={200}
+                  src={giveCorrectImage(currElem.brand_logo.url)}
+                  alt={currElem.brand_name}
+                  className="w-auto h-auto object-contain transition-all duration-300 group-hover:scale-110"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: window.innerWidth >= 768 ? '60px' : '60px',
+                    objectFit: 'contain'
+                  }}
+                  priority
+                  />
                 </div>
+                </div>
+              </div>
               ))}
             </div>
-          </div>
-
-          <button
-            onClick={nextBrandSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-colors"
-          >
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+            </div>
         </div>
 
-        <h3 className={`max-lg:text-xs max-md:text-[10px] text-white font-semibold text-4xl ${(brand_name)?"":"hidden"} `}>{brand_name}</h3>
+        <h3 className={`max-lg:text-2xl max-md:text-xl text-white font-semibold text-4xl ${(brand_name)?"":"hidden"} transition-all duration-300`}>
+          {brand_name}
+        </h3>
+
         {/* Replace Property Cards Section with new component */}
                     <AnimatePresence mode="wait">
                         {showPropertyCard && (
