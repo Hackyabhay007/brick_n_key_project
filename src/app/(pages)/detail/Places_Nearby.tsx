@@ -41,7 +41,7 @@ const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, 
                 <button
                   className="bg-gray-900 text-white py-2 px-4 rounded-full flex items-center gap-2 hover:bg-gray-800 transition-colors"
                 >
-                  <IconComponent className="w-4 h-4" />
+                  {/* <IconComponent className="w-4 h-4" /> */}
                   <span className="text-sm whitespace-nowrap">{currElem?.item}</span>
                 </button>
               </motion.div>
