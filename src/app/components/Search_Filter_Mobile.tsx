@@ -146,8 +146,14 @@ export default function Search_Filter_Mobile({ isOpen, onClose }: SearchFilterMo
         onClose(); // Close the modal instead of routing
     }
 
+    const clearSearch = () => {
+        setSearchQuery('');
+        dispatch(setFilter({ key: 'property_Location', value: '' }));
+    };
+
     const handleClearFilters = () => {
         dispatch(clearFilters());
+        clearSearch();
         setProperty_Type([]);
         setProperty_Bedroom([]);
         setProperty_Construction_status([]);
@@ -250,14 +256,24 @@ export default function Search_Filter_Mobile({ isOpen, onClose }: SearchFilterMo
                                 transition={{ duration: 0.4, delay: 0.3 }}
                                 className="buy_section_in_mobile w-[93%] border border-black -mt-6 lg:hidden rounded-lg flex justify-between items-center bg-bgColor mx-auto mb-4 sticky top-[5rem] z-[5]"
                             >
-                                <input 
-                                    type="text" 
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    onKeyPress={handleKeyPress}
-                                    placeholder='Try - New Projects in Noida' 
-                                    className='w-full py-3 bg-transparent px-2 rounded-lg' 
-                                />
+                                <div className="w-full flex items-center">
+                                    <input 
+                                        type="text" 
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyPress={handleKeyPress}
+                                        placeholder='Try - New Projects in Noida' 
+                                        className='w-full py-3 bg-transparent px-2 rounded-lg' 
+                                    />
+                                    {searchQuery && (
+                                        <button 
+                                            onClick={clearSearch}
+                                            className='p-1.5 mx-1 rounded-full hover:bg-gray-100/10'
+                                        >
+                                            <IoClose className="w-4 h-4 text-gray-500 hover:text-bgRed" />
+                                        </button>
+                                    )}
+                                </div>
                                 <button 
                                     onClick={handleSearch}
                                     className='bg-bgRed p-1.5 mx-1 rounded-lg'
@@ -267,7 +283,7 @@ export default function Search_Filter_Mobile({ isOpen, onClose }: SearchFilterMo
                             </motion.div>
 
                             {/* Filter sections */}
-                            <div className="px-6 pb-32"> {/* Added more bottom padding for the fixed button */}
+                            <div className="px-6 pb-20">
                                 {/* Property Type Section */}
                                 <div className="mb-6">
                                     <div className="flex justify-between items-center mb-4">
@@ -406,17 +422,17 @@ export default function Search_Filter_Mobile({ isOpen, onClose }: SearchFilterMo
                                         ))}
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        {/* Bottom button stays fixed */}
-                        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg">
-                            <button 
-                                onClick={handleApplyFilter}
-                                className="w-full bg-bgRed text-white py-3 rounded-lg"
-                            >
-                                Apply Filters
-                            </button>
+                                {/* Apply Filter button - Moved inside scrollable area */}
+                                <div className="mt-8">
+                                    <button 
+                                        onClick={handleApplyFilter}
+                                        className="w-full bg-bgRed text-white py-3 rounded-lg"
+                                    >
+                                        Apply Filters
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </motion.div>

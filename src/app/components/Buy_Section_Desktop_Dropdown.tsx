@@ -125,6 +125,10 @@ const Buy_Section_Desktop_Dropdown: React.FC<Buy_Section_Desktop_DropdownProps> 
   // handleOnClose to reset all the existing filter 
   const handleOnClose = () => {
     dispatch(clearFilters());
+    // Clear search query from URL if it exists
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('property_Location');
+    window.history.replaceState({}, '', currentUrl.toString());
     onClose();
   }
 

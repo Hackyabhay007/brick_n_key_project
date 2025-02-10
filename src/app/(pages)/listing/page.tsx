@@ -34,6 +34,18 @@ const Page = () => {
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
 
+    const clearSearch = () => {
+        // Clear the search query from the URL
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.delete('property_Location');
+        window.history.replaceState({}, '', currentUrl.toString());
+        
+        // Clear the search state and filters
+        setLocation('');
+        dispatch(clearFilters());
+        dispatch(fetchPropertyItems());
+    };
+
     useEffect(() => {
         const propertyLocation = searchParams.get('property_Location');
         const propertyBedroom = searchParams.get('property_Bedroom');
@@ -52,6 +64,7 @@ const Page = () => {
         }
 
         if (propertyLocation) {
+            setLocation(propertyLocation); // Add this line to set the location state
             dispatch(setFilter({ key: 'property_Location', value: propertyLocation }));
         }
         if (propertyBedroom) {
@@ -137,7 +150,7 @@ const Page = () => {
             className="listing_container w-full bg-bgColor pb-20"
         >
             <div className="listing_inner_container w-[95%] mx-auto">
-                <Buy_Section component='listing' isLuxury={luxury}/>
+                <Buy_Section component='listing' isLuxury={luxury} onClearSearch={clearSearch}/>
 
                 <motion.div
                     className={`filter_data_container_and_pagination mt-12 w-full flex flex-col items-center justify-start gap-16 bg-bgBlue p-16 max-lg:px-6 max-lg:py-10 rounded-[20px]`}
