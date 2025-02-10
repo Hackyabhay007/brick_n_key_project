@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -97,17 +97,37 @@ export default function Trust_Us() {
     // if (data?.error) return <p>Error: {data?.error}</p>;
     if (data) console.log(data?.data);
 
-    const nextSlide = () => {
-        setCurrentIndex((prevIndex) => {
-            const maxIndex = trustUsArray.length - 3;
-            return prevIndex >= maxIndex ? 0 : prevIndex + 1;
-        });
+    const slideVariants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 1000 : -1000,
+            opacity: 0
+        }),
+        center: {
+            zIndex: 1,
+            x: 0,
+            opacity: 1
+        },
+        exit: (direction: number) => ({
+            zIndex: 0,
+            x: direction < 0 ? 1000 : -1000,
+            opacity: 0
+        })
     };
 
-    const prevSlide = () => {
+    const swipeConfidenceThreshold = 10000;
+    const swipePower = (offset: number, velocity: number) => {
+        return Math.abs(offset) * velocity;
+    };
+
+    const paginate = (newDirection: number) => {
         setCurrentIndex((prevIndex) => {
             const maxIndex = trustUsArray.length - 3;
-            return prevIndex <= 0 ? maxIndex : prevIndex - 1;
+            let newIndex = prevIndex + newDirection;
+            
+            if (newIndex < 0) newIndex = maxIndex;
+            if (newIndex > maxIndex) newIndex = 0;
+            
+            return newIndex;
         });
     };
 
@@ -191,7 +211,7 @@ export default function Trust_Us() {
                     <h2 className="text-white font-[600] max-lg:text-3xl max-sm:text-xl lg:text-[54px] leading-tight lg:leading-[65px]">
                         Over 1000+ People Trust Us
                     </h2>
-                    <p className="font-[250] max-lg:text-sm max-[480px]:text-[10px] lg:text-[24px] leading-normal lg:leading-[29px] text-[#FFFFFF] opacity-20">
+                    <p className="   lg:text-[24px] leading-normal lg:leading-[29px] text-[#f6f6f6] opacity-60">
                         Brick N Key supports a variety of the most popular properties.
                     </p>
                 </motion.div>
@@ -200,111 +220,127 @@ export default function Trust_Us() {
                 <div className="relative w-full mx-auto mt-8 md:mt-12 lg:mt-20 mb-8">
                     {/* Navigation Buttons */}
                     <motion.button
-                        variants={buttonVariants}
-                        initial="hidden"
-                        animate={isInView ? "visible" : "hidden"}
-                        onClick={prevSlide}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => paginate(-1)}
                         className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-8 lg:-translate-x-12 bg-white/10 hover:bg-white/20 p-1 rounded-lg border-2 border-white z-10"
                     >
                         <ChevronLeft className="w-4 h-4 md:w-6 md:h-6 text-white" />
                     </motion.button>
+                    
                     <motion.button
-                        variants={buttonVariants}
-                        initial="hidden"
-                        animate={isInView ? "visible" : "hidden"}
-                        onClick={nextSlide}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => paginate(1)}
                         className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-8 lg:translate-x-12 bg-white/10 hover:bg-white/20 p-1 rounded-lg border-2 border-white z-10"
                     >
                         <ChevronRight className="w-4 h-4 md:w-6 md:h-6 text-white" />
                     </motion.button>
 
-                    {/* Testimonials Container */}
-                    <motion.div
-                        variants={sliderVariants}
-                        initial="hidden"
-                        animate={isInView ? "visible" : "hidden"}
-                        className="overflow-hidden"
-                    >
-                        <div
-                            className="w-full flex gap-8 max-xl:gap-4 max-sm:gap-0 transition-all duration-500 ease-in-out"
-                            style={{
-                                transform: `translateX(-${currentIndex * 33.333}%)`,
-                            }}
+                    <AnimatePresence initial={false} custom={currentIndex}>
+                        <motion.div 
+                            className="overflow-hidden"
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
                         >
-                            {trustUsArray?.map((currElem:{id:number,title: string, designation: string, video: string }, index:number) => {
-                                const isVisible = index >= currentIndex && index < currentIndex + 3;
-                                const isCenterSlide = index === currentIndex + 1;
-                                
-                                return (
-                                    <div
-                                        key={currElem?.id}
-                                        className={`
-                                            transition-all duration-500 
-                                            // lg:min-w-[31.333%] 
-                                            ${isVisible ? 'opacity-100' : 'opacity-0'}
-                                            ${isCenterSlide ? 
-                                                'max-lg:min-w-[60%] max-lg:z-20 max-lg:scale-110' : 
-                                                'max-lg:min-w-[27.5%] max-lg:opacity-75'
-                                            }
-                                        `}
-                                    >
-                                        <div className={`
-                                            mx-2 rounded-lg overflow-hidden
-                                            ${isCenterSlide ? 'max-lg:aspect-[3/4]' : ''}
-                                        `}>
-                                            <div className="relative w-full h-full flex justify-center items-center bg-center">
-                                                <video
-                                                    className={`
-                                                        w-full object-cover
-                                                        ${isCenterSlide ? 
-                                                            'max-lg:h-full  lg:h-[400px] 2xl:h-[500px]' : 
-                                                            'h-[240px] sm:h-[350px] lg:h-[400px] 2xl:h-[500px]'
-                                                        }
-                                                    `}
-                                                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.video}`}
-                                                    ref={el => { videoRefs.current[currElem?.id] = el; }}
-                                                ></video>
-                                                <div className={`
-                                                    video_info absolute bottom-2 md:bottom-5 w-full 
-                                                    flex justify-between items-center text-white px-2 md:px-3
-                                                    ${isCenterSlide ? 'max-lg:bottom-8' : ''}
-                                                `}>
-                                                    <div className='h-full flex flex-col justify-center items-start'>
-                                                        <h3 className={`
-                                                            text-sm md:text-base
-                                                            ${isCenterSlide ? 'max-lg:text-lg' : ''}
-                                                        `}>
-                                                            {currElem?.title}
-                                                        </h3>
-                                                        <p className={`
-                                                            text-xs
-                                                            ${isCenterSlide ? 'max-lg:text-sm' : ''}
-                                                        `}>
-                                                            {currElem?.designation}
-                                                        </p>
-                                                    </div>
-                                                    <Image
-                                                        width={46}
-                                                        height={46}
-                                                        src={playingVideo === currElem?.id ?  '/images/pause_btn.png' : '/images/play_btn.png'}
-                                                        alt="testimonial img"
+                            <motion.div
+                                className="w-full flex gap-8 max-xl:gap-4 max-sm:gap-0"
+                                initial={{ x: 0 }}
+                                animate={{ x: `-${currentIndex * 33.333}%` }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 300,
+                                    damping: 30,
+                                    duration: 0.5
+                                }}
+                                drag="x"
+                                dragConstraints={{ left: 0, right: 0 }}
+                                dragElastic={1}
+                                onDragEnd={(e, { offset, velocity }) => {
+                                    const swipe = swipePower(offset.x, velocity.x);
+                                    if (swipe < -swipeConfidenceThreshold) {
+                                        paginate(1);
+                                    } else if (swipe > swipeConfidenceThreshold) {
+                                        paginate(-1);
+                                    }
+                                }}
+                            >
+                                {trustUsArray?.map((currElem:{id:number,title: string, designation: string, video: string }, index:number) => {
+                                    const isVisible = index >= currentIndex && index < currentIndex + 3;
+                                    const isCenterSlide = index === currentIndex + 1;
+                                    
+                                    return (
+                                        <div
+                                            key={currElem?.id}
+                                            className={`
+                                                transition-all duration-500 
+                                                // lg:min-w-[31.333%] 
+                                                ${isVisible ? 'opacity-100' : 'opacity-0'}
+                                                ${isCenterSlide ? 
+                                                    'max-lg:min-w-[60%] max-lg:z-20 max-lg:scale-110' : 
+                                                    'max-lg:min-w-[27.5%] max-lg:opacity-75'
+                                                }
+                                            `}
+                                        >
+                                            <div className={`
+                                                mx-2 rounded-lg overflow-hidden
+                                                ${isCenterSlide ? 'max-lg:aspect-[3/4]' : ''}
+                                            `}>
+                                                <div className="relative w-full h-full flex justify-center items-center bg-center">
+                                                    <video
                                                         className={`
-                                                            cursor-pointer w-8 h-8 md:w-12 md:h-12
+                                                            w-full object-cover
                                                             ${isCenterSlide ? 
-                                                                'max-lg:w-14 max-lg:h-14 max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2 max-lg:bottom-16' : 
-                                                                ''
+                                                                'max-lg:h-full  lg:h-[400px] 2xl:h-[500px]' : 
+                                                                'h-[240px] sm:h-[350px] lg:h-[400px] 2xl:h-[500px]'
                                                             }
                                                         `}
-                                                        onClick={() => handleVideoClick(currElem?.id)}
-                                                    />
+                                                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.video}`}
+                                                        ref={el => { videoRefs.current[currElem?.id] = el; }}
+                                                    ></video>
+                                                    <div className={`
+                                                        video_info absolute bottom-2 md:bottom-5 w-full 
+                                                        flex justify-between items-center text-white px-2 md:px-3
+                                                        ${isCenterSlide ? 'max-lg:bottom-8' : ''}
+                                                    `}>
+                                                        <div className='h-full flex flex-col justify-center items-start'>
+                                                            <h3 className={`
+                                                                text-sm md:text-base
+                                                                ${isCenterSlide ? 'max-lg:text-lg' : ''}
+                                                            `}>
+                                                                {currElem?.title}
+                                                            </h3>
+                                                            <p className={`
+                                                                text-xs
+                                                                ${isCenterSlide ? 'max-lg:text-sm' : ''}
+                                                            `}>
+                                                                {currElem?.designation}
+                                                            </p>
+                                                        </div>
+                                                        <Image
+                                                            width={46}
+                                                            height={46}
+                                                            src={playingVideo === currElem?.id ?  '/images/pause_btn.png' : '/images/play_btn.png'}
+                                                            alt="testimonial img"
+                                                            className={`
+                                                                cursor-pointer w-8 h-8 md:w-12 md:h-12
+                                                                ${isCenterSlide ? 
+                                                                    'max-lg:w-14 max-lg:h-14 max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2 max-lg:bottom-16' : 
+                                                                    ''
+                                                                }
+                                                            `}
+                                                            onClick={() => handleVideoClick(currElem?.id)}
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </motion.div>
+                                    );
+                                })}
+                            </motion.div>
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
             </motion.div>
         </div>
