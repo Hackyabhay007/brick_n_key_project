@@ -7,6 +7,18 @@
   --foreground: #000000;
 }
 
+.range-input {
+  @apply appearance-none bg-transparent pointer-events-none h-full;
+}
+
+.range-input::-webkit-slider-thumb {
+  @apply appearance-none pointer-events-auto h-5 w-5 rounded-full bg-bgRed border-2 border-white shadow-md cursor-pointer;
+}
+
+.range-input::-moz-range-thumb {
+  @apply appearance-none pointer-events-auto h-5 w-5 rounded-full bg-bgRed border-2 border-white shadow-md cursor-pointer;
+}
+
 *{
   margin: 0;
   padding: 0;

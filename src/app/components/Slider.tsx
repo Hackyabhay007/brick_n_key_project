@@ -128,7 +128,7 @@ const Slider: React.FC<SliderProps> = ({ onLocationChange }) => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="relative w-[50%] max-lg:w-[70%] z-10"
+            className="relative w-[50%] max-lg:w-[90%] z-10"
           >
             <Link href={`/detail?id=${encodeURIComponent(getSlide(0)?.id)}`}>
               <div className="group relative">

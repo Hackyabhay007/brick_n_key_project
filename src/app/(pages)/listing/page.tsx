@@ -136,7 +136,7 @@ const Page = () => {
             transition={{ duration: 0.5 }}
             className="listing_container w-full bg-bgColor pb-20"
         >
-            <div className="listing_inner_container w-[90%] mx-auto">
+            <div className="listing_inner_container w-[95%] mx-auto">
                 <Buy_Section component='listing' isLuxury={luxury}/>
 
                 <motion.div

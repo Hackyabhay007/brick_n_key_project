@@ -157,7 +157,7 @@ export default function Footer() {
                                     alt=""
                                 />
                                 <div className="panel1_info_and_logo leading-[31px]">
-                                    <p className="font-[400] text-[14px] max-md:text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                    <p className="font-[400] text-[14px] max-md:text-sm">Your trusted real estate partner for buying, selling, renting, and managing properties.</p>
                                     <div className="footer_panel_1_logo flex gap-6 my-4">
                                         {[
                                             "facebook_logo.png",
@@ -197,7 +197,7 @@ export default function Footer() {
                                 alt=""
                             />
                             <div className="panel1_info_and_logo leading-[31px] max-sm:leading-[20px]">
-                                <p className="font-[400] text-[14px] max-md:text-[10px]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                <p className="font-[400] text-[14px] max-md:text-[10px]">Your trusted real estate partner for buying, selling, renting, and managing properties. </p>
                             </div>
                             <div className="flex flex-col gap-2 mt-3">
                                 <div className="footer_panel_1_logo flex gap-2.5">
@@ -218,7 +218,7 @@ export default function Footer() {
                                         </motion.div>
                                     ))}
                                 </div>
-                                <p className="font-[400] text-[13px] max-md:text-[10px]">© 2021 . All rights reserved.</p>
+                                <p className="font-[400] text-[13px] max-md:text-[10px]">© 2025 . All rights reserved.</p>
                             </div>
                         </div>
                     </motion.div>

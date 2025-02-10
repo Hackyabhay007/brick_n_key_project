@@ -85,18 +85,37 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
             )}
           </div>
 
-          {/* Search Input Section */}
-          <div className='w-full flex justify-start items-center gap-2'>
-            <Image width={100} height={100} className='w-5 h-auto' src="/images/buy_section_icon_2.svg" alt="buy_section_searchBtn" />
+            {/* Search Input Section */}
+            <div className='w-full flex justify-start items-center gap-3 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-xl transition-all duration-300 hover:bg-white/10 focus-within:ring-2 focus-within:ring-bgRed/30'>
+            <Image 
+              width={100} 
+              height={100} 
+              className='w-5 h-5 opacity-70 transition-opacity group-hover:opacity-100' 
+              src="/images/buy_section_icon_2.svg" 
+              alt="buy_section_searchBtn" 
+            />
             <input 
               type="text" 
               onClick={handleInputClick}
               onChange={(e) => setProperty_Location(e.target.value)} 
               value={property_Location} 
-              className='font-[400] text-sm leading-[36px] bg-transparent outline-none w-full' 
-              placeholder='Search "Flats for rent in sector 77 Noida"' 
+              className='font-medium text-base sm:text-lg leading-relaxed bg-transparent outline-none w-full placeholder:text-gray-500/70 transition-all duration-300 focus:placeholder:text-gray-500/50' 
+              placeholder='Search location, project or landmark...' 
             />
-          </div>
+            {property_Location && (
+              <button 
+              onClick={() => setProperty_Location('')}
+              className='p-1.5 rounded-full hover:bg-gray-100/10 transition-colors'
+              >
+              <Image 
+                width={16} 
+                height={16} 
+                src="/images/close-icon.svg" 
+                alt="clear search" 
+              />
+              </button>
+            )}
+            </div>
 
           <div className='flex justify-center items-center gap-4'>
             <div className='flex justify-center items-center w-12 h-12 rounded-full bg-bgRed bg-opacity-20'>
@@ -111,11 +130,35 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
       </div>
 
       {/* Mobile view remains the same */}
-      <div className='w-full flex flex-col lg:hidden border border-black bg-bgColor outline-none rounded-2xl'>
-        <Link href="mobile_filter"><div onClick={() => setShowFilter(!showFilter)} className="buy_section_in_mobile w-full lg:hidden rounded-lg flex justify-between items-center bg-bgColor">
-          <input type="text" placeholder='Try - New Projects in Noida' className='w-full py-3 bg-transparent px-2 rounded-lg outline-none' />
-          <button className='bg-bgRed p-1.5 mx-1 rounded-lg'><Search /></button>
+      <div className='w-full lg:hidden'>
+        <Link href="mobile_filter">
+          <div className="relative w-full p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/90">
+        <div className="flex items-center gap-3">
+          <div className="flex-1 relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+          {/* <Image 
+            width={20} 
+            height={20} 
+            src="/images/buy_section_icon_2.svg" 
+            alt="search" 
+            className="opacity-70" 
+          /> */}
+            </div>
+            <input 
+          type="text" 
+          placeholder='Search location' 
+          className='w-full py-3 pl-10 pr-3 bg-white/50 rounded-xl outline-none text-gray-800 placeholder:text-gray-500/70 focus:ring-2 focus:ring-bgRed/30 transition-all duration-300'
+            />
+          </div>
+          <button 
+            className='flex items-center justify-center w-12 h-12 bg-bgRed rounded-xl shadow-lg shadow-bgRed/30 transition-transform active:scale-95'
+            onClick={() => setShowFilter(!showFilter)}
+          >
+            <Search className="w-5 h-5 text-white" />
+          </button>
         </div>
+  
+          </div>
         </Link>
       </div>
     </>
