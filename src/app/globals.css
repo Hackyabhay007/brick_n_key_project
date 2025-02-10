@@ -180,6 +180,68 @@ body {
   @apply right-0 md:right-2;
 }
 
+/* Popular Listings Swiper Styles */
+.popular-listings-swiper .swiper-slide {
+  transition: all 0.3s ease;
+  opacity: 0.3;
+  filter: brightness(0.5);
+  transform: scale(0.85);
+}
+
+.popular-listings-swiper .swiper-slide-active {
+  opacity: 1;
+  filter: brightness(1);
+  transform: scale(1);
+  z-index: 2;
+}
+
+.popular-listings-swiper .swiper-slide-prev,
+.popular-listings-swiper .swiper-slide-next {
+  opacity: 0.5;
+  filter: brightness(0.7);
+  transform: scale(0.9);
+}
+
+.popular-listings-swiper .swiper-button-next,
+.popular-listings-swiper .swiper-button-prev {
+  background: rgba(255, 255, 255, 0.9);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.popular-listings-swiper .swiper-button-next::after,
+.popular-listings-swiper .swiper-button-prev::after {
+  font-size: 18px;
+  color: black;
+}
+
+.popular-listings-swiper .swiper-pagination-bullet {
+  background: white;
+}
+
+.popular-listings-swiper .swiper-pagination-bullet-active {
+  background: #007aff;
+}
+
+/* Embla Carousel styles */
+.embla__slide {
+  transition: all 0.3s ease;
+  opacity: 0.5;
+  transform: scale(0.9);
+}
+
+.embla__slide.is-selected {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.embla__slide.is-prev,
+.embla__slide.is-next {
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+
 @layer components {
   .nav-button {
     @apply bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full 
