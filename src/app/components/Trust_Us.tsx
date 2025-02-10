@@ -220,21 +220,33 @@ export default function Trust_Us() {
                 <div className="relative w-full mx-auto mt-8 md:mt-12 lg:mt-20 mb-8">
                     {/* Navigation Buttons */}
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        variants={buttonVariants}
+                        initial="hidden"
+                        animate={isInView ? "visible" : "hidden"}
+                        whileHover={{ 
+                            backgroundColor: "rgba(255, 255, 255, 0.3)",
+                            transition: { duration: 0.2 }
+                        }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => paginate(-1)}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-8 lg:-translate-x-12 bg-white/10 hover:bg-white/20 p-1 rounded-lg border-2 border-white z-10"
+                        className="fixed-nav-button left-2 md:left-4 lg:left-8"
                     >
-                        <ChevronLeft className="w-4 h-4 md:w-6 md:h-6 text-white" />
+                        <ChevronLeft className="nav-icon" />
                     </motion.button>
                     
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        variants={buttonVariants}
+                        initial="hidden"
+                        animate={isInView ? "visible" : "hidden"}
+                        whileHover={{ 
+                            backgroundColor: "rgba(255, 255, 255, 0.3)",
+                            transition: { duration: 0.2 }
+                        }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => paginate(1)}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-8 lg:translate-x-12 bg-white/10 hover:bg-white/20 p-1 rounded-lg border-2 border-white z-10"
+                        className="fixed-nav-button right-2 md:right-4 lg:right-8"
                     >
-                        <ChevronRight className="w-4 h-4 md:w-6 md:h-6 text-white" />
+                        <ChevronRight className="nav-icon" />
                     </motion.button>
 
                     <AnimatePresence initial={false} custom={currentIndex}>
@@ -343,6 +355,59 @@ export default function Trust_Us() {
                     </AnimatePresence>
                 </div>
             </motion.div>
+
+            {/* Add this style block at the end of the component */}
+            <style jsx global>{`
+                .fixed-nav-button {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(255, 255, 255, 0.15);
+                    backdrop-filter: blur(4px);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    padding: 8px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    z-index: 10;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+
+                @media (min-width: 768px) {
+                    .fixed-nav-button {
+                        padding: 12px;
+                    }
+                }
+
+                @media (min-width: 1024px) {
+                    .fixed-nav-button {
+                        padding: 16px;
+                    }
+                }
+
+                .nav-icon {
+                    width: 16px;
+                    height: 16px;
+                    color: white;
+                }
+
+                @media (min-width: 768px) {
+                    .nav-icon {
+                        width: 20px;
+                        height: 20px;
+                    }
+                }
+
+                @media (min-width: 1024px) {
+                    .nav-icon {
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
+            `}</style>
         </div>
     );
 }
