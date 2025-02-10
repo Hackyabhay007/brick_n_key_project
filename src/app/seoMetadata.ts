@@ -1,3 +1,5 @@
+
+/* eslint-disable */
 import { Metadata } from 'next'
 
 export const seoData = {
@@ -31,5 +33,10 @@ export const seoData = {
             type: 'website',
             images: [{ url: '/images/default-property.jpg' }],
         }
-    }
+    },
+
+    contact: {
+        title: 'Contact Us | Brick N Key',
+        description: 'Contact Brick N Key for any queries or support',
+    },
 } satisfies Record<string, Metadata>

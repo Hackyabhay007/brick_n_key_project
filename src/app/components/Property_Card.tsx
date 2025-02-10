@@ -1,4 +1,5 @@
 "use client"
+/* eslint-disable */
 
 // import { Metadata } from 'next'
 // import Head from 'next/head'

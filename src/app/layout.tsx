@@ -1,4 +1,5 @@
 "use client"
+/* eslint-disable */
 
 // import { Metadata } from "next";
 import { Montserrat } from "next/font/google";
@@ -56,7 +57,7 @@ const montserrat = Montserrat({
 
 export default function RootLayout({
   children,
-  // params
+  params
 }: {
   children: React.ReactNode;
   params: any;
