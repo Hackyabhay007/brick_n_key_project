@@ -287,8 +287,8 @@ const Brand = () => {
             <div className="group flex flex-col items-center justify-center p-2 md:p-6 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300">
               <div className="relative w-full h-full flex items-center justify-center">
           <Image
-            width={200}
-            height={200}
+            width={400}
+            height={400}
             src={giveCorrectImage(currElem.brand_logo.url)}
             alt={currElem.brand_name}
             className="w-auto h-auto object-contain transition-all duration-300 group-hover:scale-110"
@@ -297,7 +297,7 @@ const Brand = () => {
               maxHeight: '100%',
               width: 'auto',
               height: window.innerWidth >= 768 ? '60px' : '60px',
-              objectFit: 'contain'
+              // objectFit: 'contain'
             }}
             priority
           />

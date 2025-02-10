@@ -93,15 +93,12 @@ const Slider: React.FC<SliderProps> = ({ onLocationChange }) => {
             </SwiperSlide>
           ))}
         </Swiper>
-
-
-        <Link 
+ <Link 
             href="/listing?isLuxury=true"
-            className="text-sm text-center text-gray-600 hover:text-bgRed transition-colors duration-300 font-medium"
+            className="text-sm text-gray-600 hover:text-bgRed transition-colors duration-300 font-medium"
           >
             View All Properties
           </Link>
-
         {/* Navigation and View All Buttons Container */}
         <div className="absolute right-4 md:right-24 bottom-0 flex items-center justify-center gap-4 max-sm:gap-1 z-20">
           <motion.button

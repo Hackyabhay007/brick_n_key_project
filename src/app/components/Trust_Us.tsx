@@ -3,11 +3,19 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Navigation, EffectCoverflow } from 'swiper/modules';
 import { fetchPeopleTrustUs_Slice } from "../../redux/slices/peopleTrust_usSlice";
 import { AppDispatch, RootState } from "../../redux/store";
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import 'swiper/css/effect-coverflow';
 
 interface TrustUsItem {
     id: number;
@@ -17,13 +25,12 @@ interface TrustUsItem {
 }
 
 export default function Trust_Us() {
-    const [currentIndex, setCurrentIndex] = useState(0);
     const [playingVideo, setPlayingVideo] = useState<number | null>(null);
     const [trustUsArray, setTrustUsArray] = useState<TrustUsItem[]>([]);
-    const sliderRef = useRef<HTMLDivElement>(null);
     const videoRefs = useRef<{ [key: number]: HTMLVideoElement | null }>({});
     const containerRef = useRef(null);
     const isInView = useInView(containerRef, { once: true });
+    const [swiper, setSwiper] = useState<any>(null);
 
     const dispatch = useDispatch<AppDispatch>();
     const data = useSelector((state: RootState) => state.peopleTrustUsSection?.data);
@@ -44,20 +51,9 @@ export default function Trust_Us() {
         }
     }, [data]);
 
-    const handleScroll = (direction: 'left' | 'right') => {
-        if (!sliderRef.current) return;
-        
-        const scrollWidth = sliderRef.current.offsetWidth;
-        const itemWidth = scrollWidth / 2; // Adjust scroll amount for smoother transition
-        const scrollAmount = direction === 'left' ? -itemWidth : itemWidth;
-        
-        sliderRef.current.scrollBy({
-            left: scrollAmount,
-            behavior: 'smooth'
-        });
-    };
+    const handleVideoClick = async (id: number, isCenter: boolean) => {
+        if (!isCenter) return; // Only allow center video to play
 
-    const handleVideoClick = async (id: number) => {
         const video = videoRefs.current[id];
         if (!video) return;
 
@@ -65,7 +61,6 @@ export default function Trust_Us() {
             video.pause();
             setPlayingVideo(null);
         } else {
-            // Pause previous video
             if (playingVideo !== null && videoRefs.current[playingVideo]) {
                 videoRefs.current[playingVideo]?.pause();
             }
@@ -106,84 +101,105 @@ export default function Trust_Us() {
                     </div>
                 </motion.div>
 
-                {/* Video Slider */}
-                <div className="relative">
-                    {/* Navigation Buttons */}
-                    <div className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-10">
-                        <button
-                            onClick={() => handleScroll('left')}
-                            className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95"
-                        >
-                            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                        </button>
-                    </div>
-                    <div className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-10">
-                        <button
-                            onClick={() => handleScroll('right')}
-                            className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95"
-                        >
-                            <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                        </button>
-                    </div>
-
-                    {/* Slider Container */}
-                    <div 
-                        ref={sliderRef}
-                        className="overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth"
+                {/* New Swiper Implementation */}
+                <div className="relative px-8 md:px-16">
+                    <Swiper
+                        effect={'coverflow'}
+                        grabCursor={true}
+                        centeredSlides={true}
+                        loop={true}
+                        slidesPerView={3}
+                        spaceBetween={38}
+                        initialSlide={3}
+                        coverflowEffect={{
+                            rotate: 0,
+                            stretch: 0,
+                            depth: 40,
+                            modifier: 1.2,
+                            slideShadows: false,
+                        }}
+                        breakpoints={{
+                            320: {
+                                slidesPerView: 1,
+                                spaceBetween: 20
+                            },
+                            768: {
+                                slidesPerView: 2,
+                                spaceBetween: 30
+                            }
+                        }}
+                        onSlideChange={() => {
+                            // Pause any playing video when sliding
+                            if (playingVideo !== null && videoRefs.current[playingVideo]) {
+                                videoRefs.current[playingVideo]?.pause();
+                                setPlayingVideo(null);
+                            }
+                        }}
+                        pagination={{ clickable: true }}
+                        modules={[EffectCoverflow, Pagination, Navigation]}
+                        className="swiper-container !overflow-visible"
+                        onSwiper={setSwiper}
+                        navigation={{
+                            enabled: true,
+                            prevEl: '.custom-prev',
+                            nextEl: '.custom-next',
+                        }}
                     >
-                        <div className="flex gap-6 md:gap-8 pb-4">
-                            {/* Add empty div for initial spacing */}
-                            <div className="flex-shrink-0 w-[120px] md:w-[160px] lg:w-[190px]" />
-                            
-                            {trustUsArray.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="flex-shrink-0 w-[280px] md:w-[320px] lg:w-[380px] snap-center"
-                                >
-                                    <div className="relative bg-black rounded-lg overflow-hidden aspect-[9/16] group">
-                                        <video
-                                            ref={el => { videoRefs.current[item.id] = el }}
-                                            src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${item.video}`}
-                                            className="w-full h-full object-cover"
-                                            playsInline
-                                        />
-                                        {/* Centered Play Button Overlay */}
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <button
-                                                onClick={() => handleVideoClick(item.id)}
-                                                className={`transform transition-all duration-300 
-                                                    ${playingVideo === item.id ? 'scale-90 opacity-0' : 'scale-100 opacity-100'} 
-                                                    group-hover:scale-110`}
-                                            >
-                                                <Image
-                                                    src={playingVideo === item.id ? '/images/pause_btn.png' : '/images/play_btn.png'}
-                                                    alt={playingVideo === item.id ? "Pause" : "Play"}
-                                                    width={60}
-                                                    height={60}
-                                                    className="w-12 h-12 md:w-16 md:h-16"
-                                                />
-                                            </button>
-                                        </div>
-                                        {/* Bottom Info Gradient */}
-                                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <h3 className="text-white font-medium text-sm md:text-base">
-                                                        {item.title}
-                                                    </h3>
-                                                    <p className="text-white/80 text-xs md:text-sm">
-                                                        {item.designation}
-                                                    </p>
-                                                </div>
+                        {trustUsArray.map((item, index) => (
+                            <SwiperSlide key={item.id} className="!w-[240px] md:!w-[280px] mx-auto transition-all duration-300">
+                                <div className="relative bg-black rounded-lg overflow-hidden aspect-[9/14] group">
+                                    <video
+                                        ref={el => { videoRefs.current[item.id] = el }}
+                                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${item.video}`}
+                                        className="w-full h-full object-cover"
+                                        playsInline
+                                    />
+                                    {/* Play Button Overlay */}
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <button
+                                            onClick={() => handleVideoClick(item.id, swiper?.realIndex === index)}
+                                            className={`transform transition-all duration-300
+                                                ${playingVideo === item.id ? 'scale-90 opacity-0' : 'scale-100'}
+                                                ${swiper?.realIndex === index ? 'opacity-100 hover:scale-110' : 'opacity-40 cursor-not-allowed'}`}
+                                            disabled={swiper?.realIndex !== index}
+                                        >
+                                            <Image
+                                                src={playingVideo === item.id ? '/images/pause_btn.png' : '/images/play_btn.png'}
+                                                alt={playingVideo === item.id ? "Pause" : "Play"}
+                                                width={60}
+                                                height={60}
+                                                className={`w-12 h-12 md:w-16 md:h-16 
+                                                    ${swiper?.realIndex !== index && 'grayscale'}`}
+                                            />
+                                        </button>
+                                    </div>
+                                    {/* Bottom Info Gradient */}
+                                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <h3 className="text-white font-medium text-sm md:text-base">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="text-white/80 text-xs md:text-sm">
+                                                    {item.designation}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-                            
-                            {/* Add empty div for end spacing */}
-                            <div className="flex-shrink-0 w-[120px] md:w-[160px] lg:w-[190px]" />
-                        </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                    {/* Navigation Buttons */}
+                    <div className="absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 z-10 custom-prev">
+                        <button className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95">
+                            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                        </button>
+                    </div>
+                    <div className="absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 z-10 custom-next">
+                        <button className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95">
+                            <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                        </button>
                     </div>
                 </div>
             </motion.div>
