@@ -55,7 +55,7 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
-  const [totalSlides, setTotalSlides] = useState(0);
+  // const [totalSlides, setTotalSlides] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -73,11 +73,11 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    if (propertyItemArray?.length) {
-      setTotalSlides(Math.ceil(propertyItemArray.length / itemsPerSlide));
-    }
-  }, [propertyItemArray, itemsPerSlide]);
+  // useEffect(() => {
+  //   if (propertyItemArray?.length) {
+  //     setTotalSlides(Math.ceil(propertyItemArray.length / itemsPerSlide));
+  //   }
+  // }, [propertyItemArray, itemsPerSlide]);
 
   const handleNext = () => {
     if (isAnimating || currentIndex >= propertyItemArray.length - itemsPerSlide) return;
@@ -97,32 +97,32 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
     setTimeout(() => setIsAnimating(false), 500);
   };
 
-  const visibleItems = propertyItemArray?.slice(currentIndex, currentIndex + itemsPerSlide);
+  // const visibleItems = propertyItemArray?.slice(currentIndex, currentIndex + itemsPerSlide);
 
-  const containerVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.8,
-    },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        staggerChildren: 0.5,
-        delayChildren: 0.4,
-        duration: 1.2,
-        ease: "easeOut"
-      }
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.9,
-      transition: {
-        duration: 0.8,
-        ease: "easeInOut"
-      }
-    }
-  };
+  // const containerVariants = {
+  //   hidden: {
+  //     opacity: 0,
+  //     scale: 0.8,
+  //   },
+  //   visible: {
+  //     opacity: 1,
+  //     scale: 1,
+  //     transition: {
+  //       staggerChildren: 0.5,
+  //       delayChildren: 0.4,
+  //       duration: 1.2,
+  //       ease: "easeOut"
+  //     }
+  //   },
+  //   exit: {
+  //     opacity: 0,
+  //     scale: 0.9,
+  //     transition: {
+  //       duration: 0.8,
+  //       ease: "easeInOut"
+  //     }
+  //   }
+  // };
 
   const cycleImage = (propertyId: string, imagesLength: number) => {
     setIsImageTransitioning(prev => ({ ...prev, [propertyId]: true }));

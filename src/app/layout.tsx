@@ -13,50 +13,50 @@ const montserrat = Montserrat({
   weight: ['400', '500', '600', '700', '800', '900'],
 });
 
-const metadata: Metadata = {
-  title: 'Brick N Key - Premium Real Estate Properties',
-  description: 'Discover luxurious properties, premium apartments, and exclusive real estate listings. Find your dream home with Brick N Key - your trusted property partner.',
-  keywords: 'real estate, luxury homes, premium properties, apartments, houses for sale, property listings, Brick N Key, real estate agency',
-  authors: [{ name: 'Brick N Key' }],
-  icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/images/Nav_logo.png', type: 'image/png' },
-    ],
-  },
-  openGraph: {
-    title: 'Brick N Key - Premium Real Estate Properties',
-    description: 'Explore exclusive properties and find your perfect home. Premium real estate listings curated by Brick N Key.',
-    images: ['/images/Nav_logo.png'],
-    type: 'website',
-    locale: 'en_US',
-    siteName: 'Brick N Key',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Brick N Key - Luxury Real Estate',
-    description: 'Discover premium properties and exclusive real estate listings at Brick N Key.',
-    images: ['/images/Nav_logo.png'],
-    creator: '@BrickNKey',
-    site: '@BrickNKey',
-  },
-  verification: {
-    google: 'your-google-verification-code',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-    },
-  },
-};
+// const metadata: Metadata = {
+//   title: 'Brick N Key - Premium Real Estate Properties',
+//   description: 'Discover luxurious properties, premium apartments, and exclusive real estate listings. Find your dream home with Brick N Key - your trusted property partner.',
+//   keywords: 'real estate, luxury homes, premium properties, apartments, houses for sale, property listings, Brick N Key, real estate agency',
+//   authors: [{ name: 'Brick N Key' }],
+//   icons: {
+//     icon: [
+//       { url: '/favicon.ico' },
+//       { url: '/images/Nav_logo.png', type: 'image/png' },
+//     ],
+//   },
+//   openGraph: {
+//     title: 'Brick N Key - Premium Real Estate Properties',
+//     description: 'Explore exclusive properties and find your perfect home. Premium real estate listings curated by Brick N Key.',
+//     images: ['/images/Nav_logo.png'],
+//     type: 'website',
+//     locale: 'en_US',
+//     siteName: 'Brick N Key',
+//   },
+//   twitter: {
+//     card: 'summary_large_image',
+//     title: 'Brick N Key - Luxury Real Estate',
+//     description: 'Discover premium properties and exclusive real estate listings at Brick N Key.',
+//     images: ['/images/Nav_logo.png'],
+//     creator: '@BrickNKey',
+//     site: '@BrickNKey',
+//   },
+//   verification: {
+//     google: 'your-google-verification-code',
+//   },
+//   robots: {
+//     index: true,
+//     follow: true,
+//     googleBot: {
+//       index: true,
+//       follow: true,
+//       'max-image-preview': 'large',
+//     },
+//   },
+// };
 
 export default function RootLayout({
   children,
-  params
+  // params
 }: {
   children: React.ReactNode;
   params: any;

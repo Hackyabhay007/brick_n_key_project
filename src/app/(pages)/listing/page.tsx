@@ -2,26 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, MapPin, SlidersHorizontal } from 'lucide-react';
+// import { Search, MapPin, SlidersHorizontal } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import { useDispatch, useSelector } from "react-redux";
-import { clearFilters, fetchPropertyItems, setFilter, fetchNewPropertyItems, fetchPropertiesByPriceRange } from "../../../redux/slices/propertyItemSlice";
+import { clearFilters, fetchPropertyItems, setFilter } from "../../../redux/slices/propertyItemSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import Buy_Section from '@/app/components/Buy_Section';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import Loader from '../../components/Loader';
+// import Loader from '../../components/Loader';
 import PropertySkeleton from '../../components/PropertySkeleton';
 import Property_Card from '@/app/components/Property_Card';
 
 const Page = () => {
     const searchParams = useSearchParams();
-    const [location, setLocation] = useState('');
-    const [propertyType, setPropertyType] = useState('Residence');
-    const [priceRange, setPriceRange] = useState('₹1 Cr - ₹5 Cr');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [isSticky, setIsSticky] = useState(false);
-    const [newDataValue, setNewDataValue] = useState(false);
+    // const [location, setLocation] = useState('');
+    // const [propertyType, setPropertyType] = useState('Residence');
+    // const [priceRange, setPriceRange] = useState('₹1 Cr - ₹5 Cr');
+    // const [searchQuery, setSearchQuery] = useState('');
+    // const [isSticky, setIsSticky] = useState(false);
+    // const [newDataValue, setNewDataValue] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [luxury, setLuxury] = useState(false);
     const itemsPerPage = 5;
@@ -43,13 +43,14 @@ const Page = () => {
         const isLuxury = searchParams.get('isLuxury');
         const newData = searchParams.get('new');
         console.log("new Data: ", newData);
+        setIsImageTransitioning({});
 
         dispatch(clearFilters());
 
-        if (minPrice && maxPrice) {
-            // In your component
-            dispatch(fetchPropertiesByPriceRange({ minPrice: Number(minPrice), maxPrice: Number(maxPrice) }));
-        }
+        // if (minPrice && maxPrice) {
+        //     // In your component
+        //     dispatch(fetchPropertiesByPriceRange({ minPrice: Number(minPrice), maxPrice: Number(maxPrice) }));
+        // }
 
         if (propertyLocation) {
             dispatch(setFilter({ key: 'property_Location', value: propertyLocation }));
@@ -65,11 +66,11 @@ const Page = () => {
             setLuxury(true);
         }
 
-        if (newData) {
-            setNewDataValue(newData === 'true');
-            setLuxury(false);
-            dispatch(fetchNewPropertyItems());
-        }
+        // if (newData) {
+        //     setNewDataValue(newData === 'true');
+        //     setLuxury(false);
+        //     dispatch(fetchNewPropertyItems());
+        // }
 
     }, [searchParams, dispatch]);
 
@@ -89,18 +90,18 @@ const Page = () => {
 
     if (data) console.log("This is the Listing data", data.data);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const filterSection = document.querySelector('.filter_data_container_and_pagination');
-            if (filterSection) {
-                const sectionTop = filterSection.getBoundingClientRect().top;
-                setIsSticky(sectionTop <= 0);
-            }
-        };
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         const filterSection = document.querySelector('.filter_data_container_and_pagination');
+    //         if (filterSection) {
+    //             const sectionTop = filterSection.getBoundingClientRect().top;
+    //             setIsSticky(sectionTop <= 0);
+    //         }
+    //     };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    //     window.addEventListener('scroll', handleScroll);
+    //     return () => window.removeEventListener('scroll', handleScroll);
+    // }, []);
 
     const fadeInUp = {
         initial: { opacity: 0, y: 20 },
