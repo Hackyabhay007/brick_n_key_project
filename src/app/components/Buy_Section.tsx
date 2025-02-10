@@ -65,7 +65,7 @@ const Buy_Section = ({ component, isLuxury }: { component: string, isLuxury: boo
               <div className='w-full'>
                 <div className="location_section w-full flex justify-center items-center gap-3 border-r-2 border-[#DCDCEB] pr-4 max-xl:pr-0">
                   <h3 className='text-[18px] text-[##110229] font-[600] flex justify-center items-center gap-4'>
-                    All Residential
+                    Filters
                     <span>{ 
                             (showDropdown) ? 
                             <FaChevronUp />
