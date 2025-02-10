@@ -50,7 +50,8 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       setFilterData(prev => ({ ...prev, [name]: "" }));
       // dispatch(setFilter({ key: name as keyof PropertyFilters, value: "" }));
     } else {
-      // dispatch(setFilter({ key: name as keyof PropertyFilters, value }));
+      setFilterData(prev => ({ ...prev, [name]: value }));
+      // dispatch(setFilter({ key: name as keyof PropertyFilters, value })); 
     }
   };
 
@@ -106,7 +107,12 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
   };
 
   return (
-    <div className={`lg:hidden px-4 bg-bgColor rounded-lg w-full flex flex-col justify-start items-start gap-3`}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.4 }}
+      className={`lg:hidden px-4 bg-bgColor rounded-lg w-full flex flex-col justify-start items-start gap-3`}
+    >
 
       {/* Last Searched */}
       <div className=" w-full bg-white py-2 px-4 rounded-lg">
@@ -260,7 +266,7 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
       </div>
 
       {/* Buttons */}
-      <div className=" w-full py-6 px-10 flex justify-between items-center rounded-t-lg rounded-b-full bg-white">
+      <div className=" w-full py-6 px-10 flex justify-between items-center rounded-t-sm rounded-b-md bg-white">
         <button
           onClick={handleClearAll}
           className="text-red-500"
@@ -274,7 +280,7 @@ const FilterSection = ({ hidden, showFilter }: { hidden: () => void, showFilter:
           See all Properties
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
