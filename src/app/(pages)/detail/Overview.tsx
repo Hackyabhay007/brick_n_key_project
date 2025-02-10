@@ -1,52 +1,53 @@
 import React from 'react';
-import { Square, Building2, MapPin, SlidersHorizontal, Users, Building } from 'lucide-react';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Building2, Home, Gauge, Map, Bed, Bath, Ruler, Key } from 'lucide-react';
 
 const Overview = ({overViewArray}:{overViewArray: [{id: number, Overview_item_heading: string, Overview_description: string}]}) => {
-  const propertyData = {
-    area: {
-      size: 1200,
-      unit: 'Sq.M'
-    },
-    price: {
-      amount: 2.5,
-      perSqm: 12500
-    },
-    totalFloors: 15,
-    propertyAge: '2 years',
-    configuration: '3 BHK + 2T',
-    address: '123 Park Avenue, Central District, Mumbai',
-    overlooking: ['Garden', 'Swimming Pool', 'City View']
+  const getIcon = (index: number) => {
+    const icons = [Building2, Home, Gauge, Map, Bed, Bath, Ruler, Key];
+    return icons[index % icons.length];
   };
 
   return (
-    <div className="w-[90%] max-sm:w-[95%] mx-auto bg-bgBlue text-white my-16 rounded-[20px] p-10">
-      <h2 className="text-[36px] leading-[43.88px] tracking-[0.01em] font-[700] mb-8">Overview</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {
-          overViewArray?.map((currElem, index) => ( 
-            <div key={currElem.id} className="flex items-center gap-3">
-            <Image width={100} height={100} className='w-8 h-auto' src='/images/detail_overview_img_1.png' alt='detail_overview_img_1' />
-            <div>
-              <p className="text-white text-opacity-50 font-[400] text-[24px] leading-[29.26px]">{currElem?.Overview_item_heading}</p>
-              <div className="flex items-center gap-2 font-[500] text-sm leading-[29.26px] text-[#F1EFE7]">
-                <p>{currElem?.Overview_description?.slice(0, 30)} {propertyData.area.size} {propertyData.area.unit}</p>
-                <svg 
-                  className="w-4 h-4 text-gray-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-          ))
-        }
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="overview-container w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8"
+    >
+      <div className="bg-bgBlue text-white rounded-[30px] p-4 sm:p-6 lg:p-8 shadow-xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">Overview</h2>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {overViewArray?.map((item, index) => {
+            const IconComponent = getIcon(index);
+            return (
+              <motion.div 
+                key={item.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-center space-x-3 p-3 rounded-xl 
+                  bg-white/5 hover:bg-white/10 transition-all duration-300"
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="flex-shrink-0 p-2 bg-white/10 rounded-lg">
+                  <IconComponent className="w-5 h-5 text-white" />
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <p className="text-white/90 text-sm font-medium">
+                    {item?.Overview_item_heading}
+                  </p>
+                  <p className="text-white/70 text-xs">
+                    {item?.Overview_description}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

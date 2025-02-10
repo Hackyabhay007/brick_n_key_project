@@ -180,7 +180,7 @@ const DetailPage = () => {
                                 ₹{data?.property_price} Cr
                             </h3>
                             <p className="text-sm sm:text-base lg:text-xl tracking-[0.05em] text-bgRed">
-                                Estimated EMI ₹{data?.estimated_emi_price}
+                                Estimated PRICE
                             </p>
                         </div>
 

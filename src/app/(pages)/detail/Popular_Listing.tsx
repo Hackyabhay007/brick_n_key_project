@@ -57,9 +57,9 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 768) {
+      if (window.innerWidth < 640) {
         setItemsPerSlide(1);
-      } else if (window.innerWidth <= 1024) {
+      } else if (window.innerWidth < 1024) {
         setItemsPerSlide(2);
       } else {
         setItemsPerSlide(3);
@@ -78,21 +78,24 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
   }, [propertyItemArray, itemsPerSlide]);
 
   const handleNext = () => {
-    if (isAnimating || currentIndex >= propertyItemArray.length - itemsPerSlide) return;
-
+    if (isAnimating || currentIndex >= data?.data?.length - itemsPerSlide) return;
     setIsAnimating(true);
     setDirection('right');
-    setCurrentIndex(prev => prev + 1);
-    setTimeout(() => setIsAnimating(false), 500);
+    setCurrentIndex(prev => Math.min(prev + itemsPerSlide, data?.data?.length - itemsPerSlide));
+    setTimeout(() => setIsAnimating(false), 300);
   };
 
   const handlePrev = () => {
     if (isAnimating || currentIndex === 0) return;
-
     setIsAnimating(true);
     setDirection('left');
-    setCurrentIndex(prev => prev - 1);
-    setTimeout(() => setIsAnimating(false), 500);
+    
+    setCurrentIndex(prev => Math.max(prev - itemsPerSlide, 0));
+    setTimeout(() => setIsAnimating(false), 300);
+  };
+
+  const shouldShowNavigation = () => {
+    return data?.data?.length > itemsPerSlide;
   };
 
   const visibleItems = propertyItemArray?.slice(currentIndex, currentIndex + itemsPerSlide);
@@ -139,7 +142,7 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
 
   const slideVariants = {
     enter: (direction: 'left' | 'right') => ({
-      x: direction === 'right' ? 1000 : -1000,
+      x: direction === 'right' ? '50%' : '-50%',
       opacity: 0
     }),
     center: {
@@ -149,19 +152,21 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
     },
     exit: (direction: 'left' | 'right') => ({
       zIndex: 0,
-      x: direction === 'left' ? 1000 : -1000,
+      x: direction === 'left' ? '50%' : '-50%',
       opacity: 0
     })
   };
 
   return (
-    <div className="w-[90%] relative max-sm:w-[95%] mx-auto bg-bgBlue text-white p-16 max-lg:py-8 max-lg:px-6 max-lg:rounded-[5px]">
-      <h1 className='font-[600] text-[54px] leading-[65.83px] mb-4 max-lg:text-3xl'>Popular Listings</h1>
+    <div className="w-full max-w-[1440px] relative mx-auto bg-bgBlue text-white px-4 py-8 md:p-16">
+      <h1 className='font-semibold text-2xl md:text-4xl lg:text-[54px] leading-tight mb-8'>
+        Popular Listings
+      </h1>
 
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden px-4">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
-            className="grid grid-cols-3 gap-6 max-lg:grid-cols-2 max-md:grid-cols-1"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
             key={currentIndex}
             custom={direction}
             variants={slideVariants}
@@ -169,19 +174,17 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
             animate="center"
             exit="exit"
             transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
+              x: { type: "spring", stiffness: 400, damping: 35 },
               opacity: { duration: 0.2 }
             }}
           >
-            {data?.data?.slice(
-              currentIndex,
-              currentIndex + (window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3)
-            ).map((currElem: any, index: number) => (
+            {data?.data?.slice(currentIndex, currentIndex + itemsPerSlide).map((currElem: any, index: number) => (
               <motion.div
                 key={currElem.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
+                transition={{ delay: index * 0.1 }}
+                className="w-full"
               >
                 <Property_Card
                   currElem={currElem}
@@ -209,21 +212,33 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
         </AnimatePresence>
       </div>
 
-      <button
-        onClick={handlePrev}
-        disabled={currentIndex === 0 || isAnimating}
-        className="absolute -left-4 top-1/2 z-10 p-1.5 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:bg-opacity-50 disabled:cursor-not-allowed"
-      >
-        <ChevronLeft className="w-5 h-5 text-black" />
-      </button>
+      {shouldShowNavigation() && (
+        <>
+          <button
+            onClick={handlePrev}
+            disabled={currentIndex === 0 || isAnimating}
+            className={`absolute left-0 md:-left-4 top-1/2 transform -translate-y-1/2 z-10 p-2 
+              rounded-full bg-white/90 shadow-lg hover:bg-gray-100 transition-all 
+              ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}
+              ${isAnimating ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}
+              touch-manipulation`}
+          >
+            <ChevronLeft className="w-5 h-5 text-black" />
+          </button>
 
-      <button
-        onClick={handleNext}
-        disabled={currentIndex >= (data?.data?.length || 0) - (window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3) || isAnimating}
-        className="absolute top-1/2 -right-4 z-10 p-1.5 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors disabled:bg-opacity-50 disabled:cursor-not-allowed"
-      >
-        <ChevronRight className="w-5 h-5 text-black" />
-      </button>
+          <button
+            onClick={handleNext}
+            disabled={currentIndex >= (data?.data?.length || 0) - itemsPerSlide || isAnimating}
+            className={`absolute right-0 md:-right-4 top-1/2 transform -translate-y-1/2 z-10 p-2 
+              rounded-full bg-white/90 shadow-lg hover:bg-gray-100 transition-all
+              ${currentIndex >= (data?.data?.length || 0) - itemsPerSlide ? 'opacity-0 pointer-events-none' : 'opacity-100'}
+              ${isAnimating ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}
+              touch-manipulation`}
+          >
+            <ChevronRight className="w-5 h-5 text-black" />
+          </button>
+        </>
+      )}
     </div>
   );
 };

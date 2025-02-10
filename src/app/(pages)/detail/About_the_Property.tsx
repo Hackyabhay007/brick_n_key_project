@@ -35,6 +35,7 @@ export default function About_the_Property({
                     <span className="font-[400] leading-[39.01px] tracking-[0.005em]">
                         Address:{" "}
                     </span>
+                    
                     {propertyAddress || ""}
                 </p>
                 <div className="relative">
