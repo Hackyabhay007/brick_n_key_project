@@ -35,6 +35,11 @@ const metadata: Metadata = {
   },
 };
 
+
+  console.error = () => {};
+  console.warn = () => {};
+  console.log = () => {};
+
 export default function RootLayout({
   children,
 }: Readonly<{

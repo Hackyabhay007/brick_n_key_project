@@ -72,6 +72,8 @@ const residenceData: ResidenceItem[] = [
 
 const Popular_Residence = () => {
     const [startIndex, setStartIndex] = useState(0);
+    const [touchStart, setTouchStart] = useState(0);
+    const [touchEnd, setTouchEnd] = useState(0);
     const data = useSelector((state: RootState) => state.popularSection?.data);
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
@@ -81,6 +83,7 @@ const Popular_Residence = () => {
 
 
     useEffect(() => {
+        
         dispatch(fetchPopularSection());
     }, [dispatch]);
 
@@ -102,6 +105,7 @@ const Popular_Residence = () => {
         } else if (screenWidth >= 768) {
             // Tablet: 5.5 items
             return {
+                
                 itemsToShow: 5.5,
                 canSlideNext: startIndex < residenceData.length - 5.5,
                 canSlidePrev: startIndex > 0
@@ -130,6 +134,26 @@ const Popular_Residence = () => {
         }
     };
 
+    const handleTouchStart = (e: React.TouchEvent) => {
+        setTouchStart(e.touches[0].clientX);
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = () => {
+        const touchDiff = touchStart - touchEnd;
+        if (Math.abs(touchDiff) > 50) { // minimum swipe distance
+            if (touchDiff > 0 && canSlideNext) {
+                handleNext();
+            } else if (touchDiff < 0 && canSlidePrev) {
+                handlePrev();
+            }
+        }
+        setTouchStart(0);
+        setTouchEnd(0);
+    };
 
     const handleFilterChange = (key: string, value: string | number | undefined) => {
         console.log(key, value);
@@ -140,7 +164,7 @@ const Popular_Residence = () => {
 
     return (
         <div className="w-full relative flex justify-end bg-bgColor">
-            <div className="w-[95%] 2xl:w-[90%] max-sm:w-[97.5%] -mt-24 z-20 py-10 max-lg:py-4 pl-10 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue">
+            <div className="w-[95%] 2xl:w-[90%] max-sm:w-full -mt-24 z-20 py-10 max-lg:py-4 pl-10 max-sm:pl-4 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue">
                 <div className="flex justify-between items-center mb-8 max-lg:mb-4">
                     <h2 className="text-white font-[500] text-[28px] max-lg:text-lg leading-[39.81px]">Popular Residence</h2>
                     <div className="flex gap-2 mr-16 max-lg:mr-10">
@@ -173,6 +197,9 @@ const Popular_Residence = () => {
                         style={{
                             transform: `translateX(-${startIndex * (100 / itemsToShow)}%)`,
                         }}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
                     >
                         {(data?.data)?.map((item: { id: number, property_Images: { url: string }, property_Location: string, property_Type: String }, index: Number) => (
                             <div
@@ -180,7 +207,8 @@ const Popular_Residence = () => {
                                 className="min-w-[calc((100%-5*1.5rem)/6)] flex-shrink-0 
                                     lg:min-w-[calc((100%-5*1.5rem)/6)]
                                     md:min-w-[calc((100%-4*1.5rem)/5.5)]
-                                    max-md:min-w-[calc((100%-3*1.5rem)/4.5)] cursor-pointer"
+                                    max-md:min-w-[calc((100%-3*1rem)/4.5)] 
+                                    max-sm:min-w-[calc((100%-2*1rem)/3.2)] cursor-pointer"
                                 onClick={(e) => handleFilterChange('property_Location', item.property_Location || undefined)}
                             >
                                 <div className="rounded-lg overflow-hidden flex flex-col justify-start items-start text-[16px] font-[500] leading-[19.5px]">

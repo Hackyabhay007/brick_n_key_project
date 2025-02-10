@@ -38,7 +38,7 @@ export default function Footer() {
             console.log(error)
             setToastConfig({
                 isVisible: true,
-                message: error?.error?.message || 'An error occurred. Please try again later.',
+                message: error || 'An error occurred. Please try again later.',
                 type: 'error'
             });
             setTimeout(() => dispatch(resetSubscribeState()), 3000);
@@ -117,171 +117,68 @@ export default function Footer() {
                 isVisible={toastConfig.isVisible}
                 onClose={closeToast}
             />
-            <div className="footer_container rel w-full bg-bgColor relative -mt-4 z-10">
-                <div ref={ref} className="footer_inner_container w-[90%] max-sm:w-[95%] 2xl:w-[80%] mx-auto py-12 max-lg:py-10 px-4 md:px-8  bg-bgBlue rounded-b-[20px] max-lg:flex max-lg:flex-col max-lg:gap-12">
-                <motion.div
-                            variants={subscribeVariants}
-                            initial="hidden"
-                            animate={isInView ? "visible" : "hidden"}
-                            className="footer_panel_4 leading-[52px] lg:hidden text-center max-md:leading-[30px] flex flex-col items-start text-white"
-                        >
-                            <h3 className=" w-full font-[600] text-[20px] max-lg:text-lg">Subscribe</h3>
-                            <p className=" w-full text-center text-[14px] max-md:text-sm max-md:font-[400] leading-[23px] text-[#8F90A6]">Subscribe to get latest property, blog news from us</p>
-                            <form onSubmit={handleFormSubmit} className="panel_4_search_bar w-full mt-4 flex justify-between items-center gap-2">
-                                <input
-                                    type="text"
-                                    placeholder="Email Address"
-                                    value={email}
-                                    onChange={(e)=>{setEmail(e.target.value)}}
-                                    className="w-full h-full bg-white p-4 max-md:py-0 max-md:h-[38.93px] rounded-[15px] outline-none text-black text-xs"
-                                /> 
-                                 <button type="submit" className="bg-[#ED371C] px-6 max-sm:px-2 max-sm:py-2 max-sm:text-xs rounded-full mr-3 flex justify-center items-center whitespace-nowrap">
-                                    Subscribe
-                                </button>
-                            </form>
-                        </motion.div>
-                    <div className="grid grid-cols-[4fr_2fr_2fr] max-lg:grid-cols-[3fr_2fr] place-items-end items-start gap-2 lg:gap-6 max-lg:gap-8 md:gap-2">
+            <div className="w-full bg-bgColor relative -mt-4 z-10">
+                <div ref={ref} className="w-[90%] mx-auto py-8 sm:py-12 px-4 sm:px-8 bg-bgBlue rounded-b-[20px]">
+               
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[3fr_2fr_2fr] gap-8">
+                        {/* Logo and Social Section */}
                         <motion.div
                             variants={panelVariants}
                             custom={0}
                             initial="hidden"
                             animate={isInView ? "visible" : "hidden"}
-                            className="footer_panel_1 text-[#8F90A6] max-lg:hidden"
+                            className="text-[#8F90A6]"
                         >
-                            <div className="flex flex-col justify-between items-start gap-6">
-                                <Image
-                                    width={182}
-                                    height={63}
-                                    src="/images/footer_icon.png"
-                                    className="h-[63px] rounded-full bg-white"
-                                    alt=""
-                                />
-                                <div className="panel1_info_and_logo leading-[31px]">
-                                    <p className="font-[400] text-[14px] max-md:text-sm">Your trusted real estate partner for buying, selling, renting, and managing properties.</p>
-                                    <div className="footer_panel_1_logo flex gap-6 my-4">
-                                        {[
-                                            "facebook_logo.png",
-                                            "twitter_logo.png",
-                                            "instagram_logo.png",
-                                            "linkedIn_logo.png"
-                                        ].map((icon, index) => (
-                                            <motion.div
-                                                key={icon}
-                                                variants={socialIconVariants}
-                                                custom={index}
-                                                initial="hidden"
-                                                animate={isInView ? "visible" : "hidden"}
-                                            >
-                                                <Image width={22} height={22} src={`/images/${icon}`} alt="" className="w-[22px] h-[22px]" />
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <p className="font-[400] text-[13px]">© 2021 . All rights reserved.</p>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                        variants={panelVariants}
-                        custom={0}
-                        initial="hidden"
-                        animate={isInView ? "visible" : "hidden"}
-                        className="footer_panel_1 text-[#8F90A6] lg:hidden"
-                    >
-                        <div className="flex flex-col justify-between items-start gap-6">
                             <Image
                                 width={182}
                                 height={63}
                                 src="/images/footer_icon.png"
-                                className="h-[30px] w-auto rounded-full bg-white"
-                                alt=""
+                                className="h-[40px] sm:h-[63px] w-auto rounded-full bg-white mb-6"
+                                alt="Footer Logo"
                             />
-                            <div className="panel1_info_and_logo leading-[31px] max-sm:leading-[20px]">
-                                <p className="font-[400] text-[14px] max-md:text-[10px]">Your trusted real estate partner for buying, selling, renting, and managing properties. </p>
+                            <p className="text-sm sm:text-base mb-6">Your trusted real estate partner for buying, selling, renting, and managing properties.</p>
+                            <div className="flex gap-4 mb-4">
+                                {["facebook_logo.png", "twitter_logo.png", "instagram_logo.png", "linkedIn_logo.png"].map((icon, index) => (
+                                    <motion.div
+                                        key={icon}
+                                        variants={socialIconVariants}
+                                        custom={index}
+                                        initial="hidden"
+                                        animate={isInView ? "visible" : "hidden"}
+                                    >
+                                        <Image 
+                                            width={22} 
+                                            height={22} 
+                                            src={`/images/${icon}`} 
+                                            alt={`${icon.split('_')[0]} icon`}
+                                            className="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]"
+                                        />
+                                    </motion.div>
+                                ))}
                             </div>
-                            <div className="flex flex-col gap-2 mt-3">
-                                <div className="footer_panel_1_logo flex gap-2.5">
-                                    {[
-                                        "facebook_logo.png",
-                                        "twitter_logo.png",
-                                        "instagram_logo.png",
-                                        "linkedIn_logo.png"
-                                    ].map((icon, index) => (
-                                        <motion.div
-                                            key={icon}
-                                            variants={socialIconVariants}
-                                            custom={index}
-                                            initial="hidden"
-                                            animate={isInView ? "visible" : "hidden"}
-                                        >
-                                            <Image width={22} height={22} src={`/images/${icon}`} alt="" className="w-[22px] h-[22px] max-md:w-[10px] max-md:h-[10px]" />
-                                        </motion.div>
-                                    ))}
-                                </div>
-                                <p className="font-[400] text-[13px] max-md:text-[10px]">© 2025 . All rights reserved.</p>
-                            </div>
-                        </div>
-                    </motion.div>
+                            <p className="text-xs sm:text-sm">© 2025 . All rights reserved.</p>
+                        </motion.div>
 
-                        {/* <motion.div
+                        {/* Company Links */}
+                        <motion.div
                             variants={panelVariants}
                             custom={1}
                             initial="hidden"
                             animate={isInView ? "visible" : "hidden"}
-                            className="footer_panel_2 max-[450px]:w-full"
+                            className="text-white"
                         >
-                            <ul className="flex flex-col justify-between items-start max-sm:leading-[45px] sm:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white">
-                                <li className="font-[600] max-md:font-semibold text-[20px] max-md:text-base mb-2 text-start">Take a tour</li>
-                                <li>Features</li>
-                                <li>Partners</li>
-                                <li>Pricing</li>
-                                <li>Product</li>
-                                <li>Support</li>
-                            </ul>
-                        </motion.div> */}
-
-                        <motion.div
-                            variants={panelVariants}
-                            custom={2}
-                            initial="hidden"
-                            animate={isInView ? "visible" : "hidden"}
-                            className="footer_panel_3 w-full"
-                        >
-                            <ul className="flex flex-col justify-between items-start max-sm:leading-[45px] sm:leading-[52px] max-md:text-sm max-md:leading-[30px] text-white pl-8 max-lg:pl-16 max-md:pl-12 max-sm:pl-0">
-                                <li className="font-[600] max-md:font-semibold text-[20px] max-md:text-base mb-2 text-start">Our Company</li>
-                                <li className='cursor-pointer'><Link href="/about">About Us</Link></li>
-                                <li className='cursor-pointer'><Link href="/listing?new=true">All Listing</Link></li>
-                                <li className='cursor-pointer'><Link href="/map">Master Map</Link></li>
-                                {/* <li className='cursor-pointer'>Media</li> */}
-                                <li className='cursor-pointer'><Link href="/contact">Contact Us</Link></li>
+                            <h3 className="font-semibold text-xl mb-4">Our Company</h3>
+                            <ul className="space-y-3 sm:space-y-4">
+                                <li><Link href="/about" className="hover:text-[#ED371C] transition-colors">About Us</Link></li>
+                                <li><Link href="/listing?new=true" className="hover:text-[#ED371C] transition-colors">All Listing</Link></li>
+                                <li><Link href="/map" className="hover:text-[#ED371C] transition-colors">Master Map</Link></li>
+                                <li><Link href="/contact" className="hover:text-[#ED371C] transition-colors">Contact Us</Link></li>
                             </ul>
                         </motion.div>
 
-                        <motion.div
-                            variants={subscribeVariants}
-                            initial="hidden"
-                            animate={isInView ? "visible" : "hidden"}
-                            className="footer_panel_4 leading-[52px] max-lg:hidden max-md:leading-[30px] flex flex-col items-start gap-3 text-white"
-                        >
-                            <h3 className="font-[600] text-[20px] max-md:text-[12px]">Subscribe</h3>
-                            <p className="text-[14px] max-md:text-[10px] max-md:font-[400] leading-[23px] text-[#8F90A6]">Subscribe to get latest property, blog news from us</p>
-                            <form onSubmit={handleFormSubmit} className="panel_4_search_bar w-full bg-white flex justify-between items-center rounded-[15px]">
-                                <input
-                                    type="text"
-                                    placeholder="Email Address"
-                                    value={email}
-                                    onChange={(e)=>{setEmail(e.target.value)}}
-                                    className="w-full h-full p-4 max-md:py-0 max-md:h-[38.93px] rounded-tl-[15px] outline-none text-black rounded-bl-[15px] text-xs"
-                                /> 
-                                 <button type='submit' className="bg-[#ED371C] p-2 max-sm:px-1 max-sm:py-0 rounded-full mr-3 flex justify-center items-center text-xs whitespace-nowrap">
-                                    Subscribe
-                                </button>
-                            </form>
-                        </motion.div>
                     </div>
-             
                 </div>
-
             </div>
         </>
     );
