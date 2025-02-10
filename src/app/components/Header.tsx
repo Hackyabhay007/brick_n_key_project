@@ -42,7 +42,6 @@ export default function Header() {
     // // Ensure `imagePath` is a valid string before concatenating
     // const imageUrl = imagePath ? `${baseUrl}${imagePath}` : ""; 
     
-    
 
     useEffect(() => {
         dispatch(fetchHeaderSection());
@@ -152,6 +151,7 @@ export default function Header() {
                                 )
                             )}
                         </ul>
+                        
                     </nav>
 
                     {/* Mobile Menu Button and Dropdown */}
@@ -181,11 +181,21 @@ export default function Header() {
                                                 custom={index}
                                                 initial="hidden"
                                                 animate="visible"
-                                                className={`px-4 py-1.5  ${(selectedNavLink == item?.label) ? "text-bgRed" : ""}`}
+                                                className="px-4 py-1.5"
+                                                onClick={() => {
+                                                    setIsMenuOpen(false);
+                                                    setSelectedNavLink(item?.label);
+                                                }}
                                             >
-                                                <div onClick={()=>{setIsMenuOpen(false)}} className="bg-gray-800 rounded-full py-2 px-6 w-fit text-center text-white font-medium tracking-wide hover:bg-gray-700 transition-colors whitespace-nowrap">
+                                                <div className={`rounded-full py-2 px-6 w-fit text-center transition-colors whitespace-nowrap ${
+                                                    selectedNavLink === item.label 
+                                                    ? "bg-bgRed" 
+                                                    : "bg-gray-800 hover:bg-gray-700"
+                                                }`}>
                                                     <Link href={item?.link}>
-                                                        {item.label}
+                                                        <span className="text-white font-medium tracking-wide">
+                                                            {item.label}
+                                                        </span>
                                                     </Link>
                                                 </div>
                                             </motion.li>
