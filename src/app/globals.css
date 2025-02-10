@@ -45,3 +45,23 @@ body {
     background-color: #ed371c; /* This is the bgRed color with 20% opacity */
     border-color: #EF233C;
 }
+
+@layer components {
+  .nav-button {
+    @apply bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full 
+           flex items-center justify-center transition-all duration-300
+           hover:bg-white/20 hover:scale-105 active:scale-95;
+  }
+  
+  .video-card {
+    @apply flex-shrink-0 w-[300px] md:w-[350px] lg:w-[400px] mx-auto;
+  }
+  
+  .video-container {
+    @apply relative bg-black rounded-lg overflow-hidden aspect-[9/16];
+  }
+  
+  .video-overlay {
+    @apply absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent;
+  }
+}

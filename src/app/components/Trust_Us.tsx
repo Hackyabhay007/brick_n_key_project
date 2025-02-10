@@ -1,413 +1,192 @@
 "use client"
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPeopleTrustUs_Slice } from "../../redux/slices/peopleTrust_usSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 
-interface Testimonial {
+interface TrustUsItem {
     id: number;
-    name: string;
-    position: string;
-    company: string;
-    image: string;
+    title: string;
+    designation: string;
+    video: string;
 }
-
-const testimonials: Testimonial[] = [
-    {
-        id: 1,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    },
-    {
-        id: 2,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    },
-    {
-        id: 3,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    },
-    {
-        id: 4,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    },
-    {
-        id: 5,
-        name: 'Mr. XYZ',
-        position: 'CEO',
-        company: 'at ABC',
-        image: '/images/Trusted_by_img.png'
-    }
-];
 
 export default function Trust_Us() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [playingVideo, setPlayingVideo] = useState<number | null>(null);
-    const [trustUsArray, setTrustUsArray] = useState([]);
+    const [trustUsArray, setTrustUsArray] = useState<TrustUsItem[]>([]);
+    const sliderRef = useRef<HTMLDivElement>(null);
     const videoRefs = useRef<{ [key: number]: HTMLVideoElement | null }>({});
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true });
+    const containerRef = useRef(null);
+    const isInView = useInView(containerRef, { once: true });
 
-    const data = useSelector((state: RootState) => state.peopleTrustUsSection?.data);
     const dispatch = useDispatch<AppDispatch>();
-    // const { data, loading, error } = useSelector(
-    //     (state: RootState) => state.heroSection
-    // );
-
-    useEffect(() => {
-        if(data){
-            const newArr = data?.data.map((currElem: {id: number, People_Trust_Us_video: {url: string}, People_Trust_Us_title: string, People_Trust_Us_designation: string}, index: number) => {
-                return {
-                    id : currElem.id,
-                    title: currElem.People_Trust_Us_title,
-                    designation: currElem.People_Trust_Us_designation,  
-                    video: currElem.People_Trust_Us_video.url
-                }
-            })
-
-            if(newArr.length > 0){
-                setTrustUsArray(newArr);
-            }
-        }
-    }, [data]);
-
-    console.log("This is the trust us array", trustUsArray);
+    const data = useSelector((state: RootState) => state.peopleTrustUsSection?.data);
 
     useEffect(() => {
         dispatch(fetchPeopleTrustUs_Slice());
     }, [dispatch]);
 
-    // if (data?.loading) return <p>Loading...</p>;
-    // if (data?.error) return <p>Error: {data?.error}</p>;
-    if (data) console.log(data?.data);
+    useEffect(() => {
+        if (data?.data) {
+            const newArr = data.data.map((item: any) => ({
+                id: item.id,
+                title: item.People_Trust_Us_title,
+                designation: item.People_Trust_Us_designation,
+                video: item.People_Trust_Us_video.url
+            }));
+            setTrustUsArray(newArr);
+        }
+    }, [data]);
 
-    const slideVariants = {
-        enter: (direction: number) => ({
-            x: direction > 0 ? 1000 : -1000,
-            opacity: 0
-        }),
-        center: {
-            zIndex: 1,
-            x: 0,
-            opacity: 1
-        },
-        exit: (direction: number) => ({
-            zIndex: 0,
-            x: direction < 0 ? 1000 : -1000,
-            opacity: 0
-        })
-    };
-
-    const swipeConfidenceThreshold = 10000;
-    const swipePower = (offset: number, velocity: number) => {
-        return Math.abs(offset) * velocity;
-    };
-
-    const paginate = (newDirection: number) => {
-        setCurrentIndex((prevIndex) => {
-            const maxIndex = trustUsArray.length - 3;
-            let newIndex = prevIndex + newDirection;
-            
-            if (newIndex < 0) newIndex = maxIndex;
-            if (newIndex > maxIndex) newIndex = 0;
-            
-            return newIndex;
+    const handleScroll = (direction: 'left' | 'right') => {
+        if (!sliderRef.current) return;
+        
+        const scrollWidth = sliderRef.current.offsetWidth;
+        const itemWidth = scrollWidth / 2; // Adjust scroll amount for smoother transition
+        const scrollAmount = direction === 'left' ? -itemWidth : itemWidth;
+        
+        sliderRef.current.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
         });
     };
 
-    const handleVideoClick = (testimonialId: number) => {
-        const video = videoRefs.current[testimonialId];
+    const handleVideoClick = async (id: number) => {
+        const video = videoRefs.current[id];
         if (!video) return;
 
-        if (playingVideo === testimonialId) {
+        if (playingVideo === id) {
             video.pause();
             setPlayingVideo(null);
         } else {
-            // Pause any currently playing video
+            // Pause previous video
             if (playingVideo !== null && videoRefs.current[playingVideo]) {
                 videoRefs.current[playingVideo]?.pause();
             }
-            video.play();
-            setPlayingVideo(testimonialId);
-        }
-    };
-
-    const headerVariants = {
-        hidden: {
-            opacity: 0,
-            y: 30
-        },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.6,
-                ease: "easeOut"
-            }
-        }
-    };
-
-    const sliderVariants = {
-        hidden: {
-            opacity: 0,
-            scale: 0.95
-        },
-        visible: {
-            opacity: 1,
-            scale: 1,
-            transition: {
-                duration: 0.8,
-                delay: 0.3,
-                ease: "easeOut"
-            }
-        }
-    };
-
-    const buttonVariants = {
-        hidden: {
-            opacity: 0,
-            scale: 0.8
-        },
-        visible: {
-            opacity: 1,
-            scale: 1,
-            transition: {
-                duration: 0.5,
-                delay: 0.5,
-                ease: "backOut"
+            try {
+                await video.play();
+                setPlayingVideo(id);
+            } catch (error) {
+                console.error('Video playback failed:', error);
             }
         }
     };
 
     return (
-        <div className="w-full pt-16 bg-bgColor">
+        <div className="w-full py-16 bg-bgColor overflow-hidden">
             <motion.div
-                ref={ref}
-                className='w-[95%] md:w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue rounded-[20px] max-lg:py-10 lg:p-14'
+                ref={containerRef}
+                className="w-[95%] md:w-[90%] 2xl:w-[80%] mx-auto bg-bgBlue rounded-[20px] p-6 md:p-10 lg:p-14"
+                initial={{ opacity: 0, y: 50 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                transition={{ duration: 0.6 }}
             >
-                {/* Header Section */}
+                {/* Header */}
                 <motion.div
-                    variants={headerVariants}
-                    initial="hidden"
-                    animate={isInView ? "visible" : "hidden"}
-                    className="text-center mb-4"
+                    className="text-center mb-8 md:mb-12 relative"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                    <h2 className="text-white font-[600] max-lg:text-3xl max-sm:text-xl lg:text-[54px] leading-tight lg:leading-[65px]">
-                        Over 1000+ People Trust Us
-                    </h2>
-                    <p className="   lg:text-[24px] leading-normal lg:leading-[29px] text-[#f6f6f6] opacity-60">
-                        Brick N Key supports a variety of the most popular properties.
-                    </p>
+                    <div className="flex flex-col items-center">
+                        <h2 className="text-white font-semibold text-2xl md:text-4xl lg:text-[54px] leading-tight max-w-[800px]">
+                            Over 1000+ People Trust Us
+                        </h2>
+                        {/* Decorative line */}
+                        <div className="w-24 h-1 bg-gradient-to-r from-transparent via-white to-transparent my-4"></div>
+                        <p className="text-[#f6f6f6] opacity-60 mt-2 text-sm md:text-base lg:text-xl max-w-[600px]">
+                            Brick N Key supports a variety of the most popular properties.
+                        </p>
+                    </div>
                 </motion.div>
 
-                {/* Slider Section */}
-                <div className="relative w-full mx-auto mt-8 md:mt-12 lg:mt-20 mb-8">
+                {/* Video Slider */}
+                <div className="relative">
                     {/* Navigation Buttons */}
-                    <motion.button
-                        variants={buttonVariants}
-                        initial="hidden"
-                        animate={isInView ? "visible" : "hidden"}
-                        whileHover={{ 
-                            backgroundColor: "rgba(255, 255, 255, 0.3)",
-                            transition: { duration: 0.2 }
-                        }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => paginate(-1)}
-                        className="fixed-nav-button left-2 md:left-4 lg:left-8"
-                    >
-                        <ChevronLeft className="nav-icon" />
-                    </motion.button>
-                    
-                    <motion.button
-                        variants={buttonVariants}
-                        initial="hidden"
-                        animate={isInView ? "visible" : "hidden"}
-                        whileHover={{ 
-                            backgroundColor: "rgba(255, 255, 255, 0.3)",
-                            transition: { duration: 0.2 }
-                        }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => paginate(1)}
-                        className="fixed-nav-button right-2 md:right-4 lg:right-8"
-                    >
-                        <ChevronRight className="nav-icon" />
-                    </motion.button>
-
-                    <AnimatePresence initial={false} custom={currentIndex}>
-                        <motion.div 
-                            className="overflow-hidden"
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
+                    <div className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-10">
+                        <button
+                            onClick={() => handleScroll('left')}
+                            className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95"
                         >
-                            <motion.div
-                                className="w-full flex gap-8 max-xl:gap-4 max-sm:gap-0"
-                                initial={{ x: 0 }}
-                                animate={{ x: `-${currentIndex * 33.333}%` }}
-                                transition={{
-                                    type: "spring",
-                                    stiffness: 300,
-                                    damping: 30,
-                                    duration: 0.5
-                                }}
-                                drag="x"
-                                dragConstraints={{ left: 0, right: 0 }}
-                                dragElastic={1}
-                                onDragEnd={(e, { offset, velocity }) => {
-                                    const swipe = swipePower(offset.x, velocity.x);
-                                    if (swipe < -swipeConfidenceThreshold) {
-                                        paginate(1);
-                                    } else if (swipe > swipeConfidenceThreshold) {
-                                        paginate(-1);
-                                    }
-                                }}
-                            >
-                                {trustUsArray?.map((currElem:{id:number,title: string, designation: string, video: string }, index:number) => {
-                                    const isVisible = index >= currentIndex && index < currentIndex + 3;
-                                    const isCenterSlide = index === currentIndex + 1;
-                                    
-                                    return (
-                                        <div
-                                            key={currElem?.id}
-                                            className={`
-                                                transition-all duration-500 
-                                                // lg:min-w-[31.333%] 
-                                                ${isVisible ? 'opacity-100' : 'opacity-0'}
-                                                ${isCenterSlide ? 
-                                                    'max-lg:min-w-[60%] max-lg:z-20 max-lg:scale-110' : 
-                                                    'max-lg:min-w-[27.5%] max-lg:opacity-75'
-                                                }
-                                            `}
-                                        >
-                                            <div className={`
-                                                mx-2 rounded-lg overflow-hidden
-                                                ${isCenterSlide ? 'max-lg:aspect-[3/4]' : ''}
-                                            `}>
-                                                <div className="relative w-full h-full flex justify-center items-center bg-center">
-                                                    <video
-                                                        className={`
-                                                            w-full object-cover
-                                                            ${isCenterSlide ? 
-                                                                'max-lg:h-full  lg:h-[400px] 2xl:h-[500px]' : 
-                                                                'h-[240px] sm:h-[350px] lg:h-[400px] 2xl:h-[500px]'
-                                                            }
-                                                        `}
-                                                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${currElem?.video}`}
-                                                        ref={el => { videoRefs.current[currElem?.id] = el; }}
-                                                    ></video>
-                                                    <div className={`
-                                                        video_info absolute bottom-2 md:bottom-5 w-full 
-                                                        flex justify-between items-center text-white px-2 md:px-3
-                                                        ${isCenterSlide ? 'max-lg:bottom-8' : ''}
-                                                    `}>
-                                                        <div className='h-full flex flex-col justify-center items-start'>
-                                                            <h3 className={`
-                                                                text-sm md:text-base
-                                                                ${isCenterSlide ? 'max-lg:text-lg' : ''}
-                                                            `}>
-                                                                {currElem?.title}
-                                                            </h3>
-                                                            <p className={`
-                                                                text-xs
-                                                                ${isCenterSlide ? 'max-lg:text-sm' : ''}
-                                                            `}>
-                                                                {currElem?.designation}
-                                                            </p>
-                                                        </div>
-                                                        <Image
-                                                            width={46}
-                                                            height={46}
-                                                            src={playingVideo === currElem?.id ?  '/images/pause_btn.png' : '/images/play_btn.png'}
-                                                            alt="testimonial img"
-                                                            className={`
-                                                                cursor-pointer w-8 h-8 md:w-12 md:h-12
-                                                                ${isCenterSlide ? 
-                                                                    'max-lg:w-14 max-lg:h-14 max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2 max-lg:bottom-16' : 
-                                                                    ''
-                                                                }
-                                                            `}
-                                                            onClick={() => handleVideoClick(currElem?.id)}
-                                                        />
-                                                    </div>
+                            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                        </button>
+                    </div>
+                    <div className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-10">
+                        <button
+                            onClick={() => handleScroll('right')}
+                            className="bg-white/10 backdrop-blur-sm border border-white/20 p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95"
+                        >
+                            <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                        </button>
+                    </div>
+
+                    {/* Slider Container */}
+                    <div 
+                        ref={sliderRef}
+                        className="overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth"
+                    >
+                        <div className="flex gap-6 md:gap-8 pb-4">
+                            {/* Add empty div for initial spacing */}
+                            <div className="flex-shrink-0 w-[120px] md:w-[160px] lg:w-[190px]" />
+                            
+                            {trustUsArray.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex-shrink-0 w-[280px] md:w-[320px] lg:w-[380px] snap-center"
+                                >
+                                    <div className="relative bg-black rounded-lg overflow-hidden aspect-[9/16] group">
+                                        <video
+                                            ref={el => { videoRefs.current[item.id] = el }}
+                                            src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${item.video}`}
+                                            className="w-full h-full object-cover"
+                                            playsInline
+                                        />
+                                        {/* Centered Play Button Overlay */}
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <button
+                                                onClick={() => handleVideoClick(item.id)}
+                                                className={`transform transition-all duration-300 
+                                                    ${playingVideo === item.id ? 'scale-90 opacity-0' : 'scale-100 opacity-100'} 
+                                                    group-hover:scale-110`}
+                                            >
+                                                <Image
+                                                    src={playingVideo === item.id ? '/images/pause_btn.png' : '/images/play_btn.png'}
+                                                    alt={playingVideo === item.id ? "Pause" : "Play"}
+                                                    width={60}
+                                                    height={60}
+                                                    className="w-12 h-12 md:w-16 md:h-16"
+                                                />
+                                            </button>
+                                        </div>
+                                        {/* Bottom Info Gradient */}
+                                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="text-white font-medium text-sm md:text-base">
+                                                        {item.title}
+                                                    </h3>
+                                                    <p className="text-white/80 text-xs md:text-sm">
+                                                        {item.designation}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
-                                    );
-                                })}
-                            </motion.div>
-                        </motion.div>
-                    </AnimatePresence>
+                                    </div>
+                                </div>
+                            ))}
+                            
+                            {/* Add empty div for end spacing */}
+                            <div className="flex-shrink-0 w-[120px] md:w-[160px] lg:w-[190px]" />
+                        </div>
+                    </div>
                 </div>
             </motion.div>
-
-            {/* Add this style block at the end of the component */}
-            <style jsx global>{`
-                .fixed-nav-button {
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    background: rgba(255, 255, 255, 0.15);
-                    backdrop-filter: blur(4px);
-                    border: 1px solid rgba(255, 255, 255, 0.3);
-                    padding: 8px;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    z-index: 10;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                }
-
-                @media (min-width: 768px) {
-                    .fixed-nav-button {
-                        padding: 12px;
-                    }
-                }
-
-                @media (min-width: 1024px) {
-                    .fixed-nav-button {
-                        padding: 16px;
-                    }
-                }
-
-                .nav-icon {
-                    width: 16px;
-                    height: 16px;
-                    color: white;
-                }
-
-                @media (min-width: 768px) {
-                    .nav-icon {
-                        width: 20px;
-                        height: 20px;
-                    }
-                }
-
-                @media (min-width: 1024px) {
-                    .nav-icon {
-                        width: 24px;
-                        height: 24px;
-                    }
-                }
-            `}</style>
         </div>
     );
 }
