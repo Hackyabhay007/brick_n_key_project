@@ -8,6 +8,7 @@ import Template from "./components/Template";
 import { Suspense } from "react";
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Loader from "./components/Loader";
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -29,7 +30,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className={montserrat.className}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div><Loader/></div>}>
           <Provider store={store}>
             {/* <Header /> */}
             <Template>
