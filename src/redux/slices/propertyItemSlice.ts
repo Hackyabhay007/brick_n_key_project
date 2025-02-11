@@ -190,15 +190,15 @@ export const fetchNewPropertyItems = createAsyncThunk<
 
 export const fetchPropertyItems = createAsyncThunk<
   ApiResponse,
-  void,
+  PropertyFilters | undefined,
   { state: RootState, rejectValue: string }
 >(
   "propertyItems/fetchPropertyItems",
-  async (_, { getState, rejectWithValue }) => {
+  async (filters, { getState, rejectWithValue }) => {
     try {
       const state = getState();
       // console.log('Current filters:', state.propertyItems.activeFilters);
-      const url = buildApiUrl(state?.propertyItems?.activeFilters);
+      const url = buildApiUrl(filters || state?.propertyItems?.activeFilters);
       const response = await axios.get(url);
       // console.log('API Response:', response.data);
       return response.data;

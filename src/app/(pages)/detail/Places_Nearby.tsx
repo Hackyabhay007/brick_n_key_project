@@ -4,7 +4,12 @@ import React from 'react';
 import { Plane, School, Coffee, ShoppingBag, Train, Bus, Hospital } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, nearBy_Array: [{id :number, item: string}]}) => {
+interface PlacesNearbyProps {
+  propertyAddress?: string;
+  nearBy_Array?: Array<any>;
+}
+
+const Places_Nearby: React.FC<PlacesNearbyProps> = ({ nearBy_Array }) => {
   const icons = {
     'Airport': Plane,
     'School': School,
@@ -13,7 +18,6 @@ const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, 
     'Train': Train,
     'Bus': Bus,
     'Hospital': Hospital,
-
   };
 
   return (
@@ -28,7 +32,7 @@ const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, 
         </div>
 
         <div className="flex flex-wrap gap-3">
-          {nearBy_Array.map((currElem) => {
+          {nearBy_Array?.map((currElem) => {
             const IconComponent = icons[currElem?.item as keyof typeof icons] || Plane;
             return (
               <motion.div

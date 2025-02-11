@@ -16,6 +16,7 @@ import Image from "next/image";
 import { giveCorrectImage } from "@/app/data";
 import { ImSpinner9 } from "react-icons/im";
 import ImageViewer from "@/app/components/ImageViewer";
+import PropertyStructuredData from './components/PropertyStructuredData';
 
 const DetailPage = () => {
     const searchParams = useSearchParams();
@@ -23,12 +24,6 @@ const DetailPage = () => {
     const [images, setImages] = useState([]);
     const [imageLoading, setImageLoading] = useState(true);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    // const images = [
-    //     "/images/detail_page_img_1.png",
-    //     "/images/explore_img_2.png",  // Add more image paths as needed
-    //     "/images/detail_page_img_1.png"
-    // ];
-
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -54,11 +49,9 @@ const DetailPage = () => {
 
         const image_Data = data?.property_Images.map((currElem: { url: string, id: number }) => currElem?.url);
         setImages(image_Data);
-        // Reset currentImageIndex when images change
         setCurrentImageIndex(0);
     }, [data]);
 
-    // Modify auto-sliding effect to only work when there are multiple images
     useEffect(() => {
         if (images?.length > 1) {
             const timer = setInterval(() => {
@@ -68,8 +61,8 @@ const DetailPage = () => {
                         prevIndex === images.length - 1 ? 0 : prevIndex + 1
                     );
                     setIsTransitioning(false);
-                }, 500); // Match this with CSS transition duration
-            }, 5000); // Change slide every 5 seconds
+                }, 500);
+            }, 5000);
 
             return () => clearInterval(timer);
         }
@@ -129,6 +122,8 @@ const DetailPage = () => {
 
     return (
         <>
+            {data && <PropertyStructuredData data={data} />}
+            
             <div className="detail_container w-full bg-bgColor">
                 <div className="detail_inner_container group relative w-[95%] sm:w-[90%] 2xl:w-[80%] z-10 mx-auto">
                     <div className="carousel_container cursor-pointer relative w-[95%] sm:w-[90%] lg:w-[80%] mx-auto h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-[20px] overflow-hidden">

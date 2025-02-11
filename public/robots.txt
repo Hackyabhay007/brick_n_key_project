@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /listing
+Allow: /contact
+Allow: /map
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+Sitemap: https://YOUR_DOMAIN.com/sitemap.xml

@@ -1,12 +1,10 @@
 "use client"
 
-
 import ContactForm from '@/app/components/ContactForm';
 import React from 'react';
 
-
 const Contact = () => {
-    let listing_Id = undefined;
+    const listing_Id: undefined = undefined;
     return (
         <div className="w-full bg-bgColor py-16 max-md:pt-2">
             <div className="w-[90%] 2xl:w-[80%] max-sm:w-[95%] mx-auto grid grid-cols-[3fr_5fr] gap-20 max-md:gap-12 max-lg:grid-cols-1 items-center">
