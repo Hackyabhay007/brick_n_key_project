@@ -249,12 +249,12 @@ export default function Search_Filter_Mobile({ isOpen, onClose }: SearchFilterMo
 
                         {/* Make this section scrollable */}
                         <div className="flex-1 overflow-y-auto">
-                            {/* Search input section */}
+                            {/* Search input section - removed sticky positioning */}
                             <motion.div 
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 0.4, delay: 0.3 }}
-                                className="buy_section_in_mobile w-[93%] border border-black -mt-6 lg:hidden rounded-lg flex justify-between items-center bg-bgColor mx-auto mb-4 sticky top-[5rem] z-[5]"
+                                className="buy_section_in_mobile w-[93%] border border-black -mt-6 lg:hidden rounded-lg flex justify-between items-center bg-bgColor mx-auto mb-4"
                             >
                                 <div className="w-full flex items-center">
                                     <input 
