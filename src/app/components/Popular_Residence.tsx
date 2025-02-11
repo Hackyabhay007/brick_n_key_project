@@ -74,10 +74,12 @@ const Popular_Residence = () => {
         align: 'start',
         containScroll: 'trimSnaps',
         loop: false,
-        dragFree: true,
+        dragFree: false, // Changed to false for better control
         slidesToScroll: 1,
         watchDrag: true,
-        inViewThreshold: 0.7
+        skipSnaps: false, // Added for smoother snapping
+        inViewThreshold: 1, // Changed to 1 for better visibility
+        startIndex: 0
     });
 
     const data = useSelector((state: RootState) => state.popularSection?.data);
@@ -120,9 +122,9 @@ const Popular_Residence = () => {
 
     return (
         <div className="w-full relative flex justify-end bg-bgColor">
-            <div className="w-[95%] 2xl:w-[90%] max-sm:w-full -mt-24 z-20 py-10 max-lg:py-4 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue">
-                <div className="flex justify-between items-center mb-8 max-lg:mb-4 px-10 max-sm:px-4">
-                    <h2 className="text-white font-[500] text-[28px] max-lg:text-lg leading-[39.81px]">Popular Residence</h2>
+            <div className="w-[95%] 2xl:w-[90%] max-sm:w-full -mt-24 z-20 py-10 max-lg:py-4 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue pl-6 max-sm:pl-4">
+                <div className="flex justify-between items-center mb-8 max-lg:mb-4 px-4 max-sm:px-0">
+                    <h2 className="text-white font-[500] text-[28px] max-lg:text-lg leading-[39.81px] pl-2">Popular Residence</h2>
                     <div className="flex gap-2 mr-16 max-lg:mr-10">
                         <button
                             onClick={scrollPrev}
@@ -147,25 +149,26 @@ const Popular_Residence = () => {
                     </div>
                 </div>
 
-                <div className="overflow-hidden px-10 max-sm:px-4" ref={emblaRef}>
-                    <div className="flex">
+                <div className="overflow-hidden px-10 max-sm:px-4 -mx-1" ref={emblaRef}>
+                    <div className="flex -ml-1">
                         {(data?.data)?.map((item: { id: number, property_Images: { url: string }, property_Location: string, property_Type: String }) => (
                             <div
                                 key={"string" + item.id}
-                                className="pl-0 pr-6 max-sm:pr-4 flex-[0_0_16.666%] 
-                                    md:flex-[0_0_18.18%] 
-                                    max-md:flex-[0_0_22.22%] 
-                                    max-sm:flex-[0_0_31.25%] cursor-pointer"
+                                className="min-w-0 pl-1 pr-1 flex-[0_0_calc(16.666%-8px)]
+                                    md:flex-[0_0_calc(25%-8px)]
+                                    max-md:flex-[0_0_calc(33.333%-8px)]
+                                    max-sm:flex-[0_0_calc(50%-8px)]
+                                    cursor-pointer"
                                 onClick={() => handleFilterChange('property_Location', item.property_Location || undefined)}
                             >
                                 <div className="rounded-lg overflow-hidden flex flex-col justify-start items-start text-[16px] font-[500] leading-[19.5px]">
-                                    <div className="relative group">
+                                    <div className="relative group w-full">
                                         <Image
-                                            width={100}
-                                            height={100}
+                                            width={300}
+                                            height={200}
                                             src={giveCorrectImage(item.property_Images.url)}
                                             alt="popular_residence_img"
-                                            className="w-full h-[200px] max-lg:w-full max-lg:h-[130px] max-sm:h-[100px] max-sm:w-full object-cover rounded-[10px] transition-transform duration-300 group-hover:scale-105"
+                                            className="w-full h-[200px] max-lg:h-[130px] max-sm:h-[100px] object-cover rounded-[10px] transition-transform duration-300 group-hover:scale-105"
                                         />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center rounded-[10px]">
                                             <span className="py-1.5 px-4 text-sm border border-white text-white rounded-full translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
