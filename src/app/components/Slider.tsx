@@ -56,7 +56,7 @@ const Slider: React.FC<SliderProps> = ({
             rotate: 0,
             stretch: 0,
             depth: 100,
-            modifier: 2.5,
+            modifier: 2,  // Reduced from 2.5
             slideShadows: false,
           }}
           pagination={{ clickable: true }}
@@ -75,6 +75,7 @@ const Slider: React.FC<SliderProps> = ({
             prevEl: '.custom-prev',
             nextEl: '.custom-next',
           }}
+          spaceBetween={30}  // Add this line to create space between slides
         >
           {data?.data?.map((item: any, index: number) => (
             <SwiperSlide key={item.id} className="!w-[300px] md:!w-[450px] transition-all duration-300">

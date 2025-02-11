@@ -54,22 +54,24 @@ body {
 .swiper-slide {
   transition: all 0.5s ease;
   opacity: 0.4;
-  transform: scale(0.8);
+  transform: scale(0.7); /* Reduced from 0.8 */
   filter: brightness(0.6);
+  z-index: 1; /* Added z-index */
 }
 
 .swiper-slide-active {
   opacity: 1;
-  transform: scale(1.1);
-  z-index: 2;
+  transform: scale(1);
+  z-index: 3; /* Increased z-index for active slide */
   filter: brightness(1);
 }
 
 .swiper-slide-prev,
 .swiper-slide-next {
   opacity: 0.6;
-  transform: scale(0.9);
+  transform: scale(0.8); /* Reduced from 0.9 */
   filter: brightness(0.7);
+  z-index: 2; /* Added z-index */
 }
 
 /* Hide default swiper navigation */
