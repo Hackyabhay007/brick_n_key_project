@@ -37,14 +37,19 @@ const Buy_Section = ({ component, isLuxury, onClearSearch }: BuySectionProps) =>
     }
   }, []);
 
+  // Modify handleSearchButtonClick to handle both search and filter
   const handleSearchButtonClick = () => {
-    if (component === "herosection") {
-      if (property_Location.trim()) {
-        router.push(`/listing?property_Location=${encodeURIComponent(property_Location)}`);
-      } else {
-        router.push('/listing');
-      }
+    // Only perform search if there's a search term
+    if (property_Location.trim()) {
+      router.push(`/listing?property_Location=${encodeURIComponent(property_Location)}`);
     } else {
+      router.push('/listing');
+    }
+  };
+
+  // Add new handler for search input click
+  const handleSearchInputClick = () => {
+    if (component !== "herosection") {
       setIsMobileFilterOpen(true);
     }
   };
@@ -159,9 +164,9 @@ const Buy_Section = ({ component, isLuxury, onClearSearch }: BuySectionProps) =>
             </div>
 
           <div className='flex justify-center items-center gap-4'>
-            <div className='flex justify-center items-center w-12 h-12 rounded-full bg-bgRed bg-opacity-20'>
+            {/* <div className='flex justify-center items-center w-12 h-12 rounded-full bg-bgRed bg-opacity-20'>
               <Image width={100} height={100} className='w-5 h-auto' src="/images/buy_section_icon_3.svg" alt="buy_section_micBtn" />
-            </div>
+            </div> */}
             <div className='flex justify-center items-center w-12 h-12 rounded-full bg-bgRed bg-opacity-20'>
               <Image width={100} height={100} className='w-5 h-auto' src="/images/buy_section_icon_4.svg" alt="buy_section_img_4_targetBtn" />
             </div>
@@ -171,7 +176,7 @@ const Buy_Section = ({ component, isLuxury, onClearSearch }: BuySectionProps) =>
       </div>
 
       {/* Mobile view - Updated */}
-      <div className='w-full lg:hidden'>
+      <div className='w-full lg:hidden flex flex-col gap-3'>
         <div className="relative w-full p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/90">
           <div className="flex items-center gap-3">
             <div className="flex-1 relative">
@@ -181,6 +186,7 @@ const Buy_Section = ({ component, isLuxury, onClearSearch }: BuySectionProps) =>
                 placeholder='Search location' 
                 value={property_Location}
                 onChange={(e) => setProperty_Location(e.target.value)}
+                onClick={handleSearchInputClick} // Add click handler here
                 className='w-full py-3 pl-10 pr-10 bg-white/50 rounded-xl outline-none text-gray-800 placeholder:text-gray-500/70 focus:ring-2 focus:ring-bgRed/30 transition-all duration-300'
               />
               {property_Location && (
@@ -202,7 +208,7 @@ const Buy_Section = ({ component, isLuxury, onClearSearch }: BuySectionProps) =>
           </div>
         </div>
 
-        {/* Only show filter modal in listing page */}
+        {/* Filter Modal */}
         {component !== "herosection" && (
           <Search_Filter_Mobile 
             isOpen={isMobileFilterOpen}
