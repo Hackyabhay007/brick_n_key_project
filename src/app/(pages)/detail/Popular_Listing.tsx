@@ -135,21 +135,29 @@ const Popular_Listing = ({ propertyType }: { propertyType: string }) => {
             <button
               onClick={() => emblaApi?.scrollPrev()}
               disabled={!canScrollPrev}
-              className={`absolute left-4 top-1/2 -translate-y-[60%] z-10 p-3 md:p-4 rounded-full bg-white/90 shadow-lg 
-                transition-all ${!canScrollPrev ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:scale-105'}`}
-              style={{ transform: 'translateY(calc(-50% + 20px))' }}
+              className={`absolute left-[-12px] top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-full 
+                bg-white/60 backdrop-blur-[2px]
+                transition-all duration-200 ease-in-out
+                ${!canScrollPrev 
+                  ? 'opacity-30 cursor-not-allowed' 
+                  : 'hover:bg-white/80 hover:shadow-sm'
+                }`}
             >
-              <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-black" />
+              <ChevronLeft className="w-4 h-4 text-gray-900" strokeWidth={2} />
             </button>
 
             <button
               onClick={() => emblaApi?.scrollNext()}
               disabled={!canScrollNext}
-              className={`absolute right-4 top-1/2 -translate-y-[60%] z-10 p-3 md:p-4 rounded-full bg-white/90 shadow-lg 
-                transition-all ${!canScrollNext ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:scale-105'}`}
-              style={{ transform: 'translateY(calc(-50% + 20px))' }}
+              className={`absolute right-[-12px] top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-full 
+                bg-white/60 backdrop-blur-[2px]
+                transition-all duration-200 ease-in-out
+                ${!canScrollNext 
+                  ? 'opacity-30 cursor-not-allowed' 
+                  : 'hover:bg-white/80 hover:shadow-sm'
+                }`}
             >
-              <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-black" />
+              <ChevronRight className="w-4 h-4 text-gray-900" strokeWidth={2} />
             </button>
           </>
         )}

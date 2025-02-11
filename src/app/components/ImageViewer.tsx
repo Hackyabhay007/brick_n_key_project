@@ -26,19 +26,21 @@ const ImageViewer = ({ images, currentIndex, onClose, onNext, onPrev }: ImageVie
         <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
             <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-white p-2 hover:bg-white/20 rounded-full transition-colors"
+                className="absolute top-4 right-4 text-white p-2 hover:bg-white/20 rounded-full transition-colors z-[60] pointer-events-auto"
                 aria-label="Close"
             >
                 <IoClose size={24} />
             </button>
 
-            <button
-                onClick={onPrev}
-                className="absolute left-4 text-white p-2 hover:bg-white/20 rounded-full transition-colors"
-                aria-label="Previous image"
-            >
-                <IoIosArrowBack size={24} />
-            </button>
+            {images.length > 1 && (
+                <button
+                    onClick={onPrev}
+                    className="absolute left-4 text-white p-2 hover:bg-white/20 rounded-full transition-colors z-[60] pointer-events-auto"
+                    aria-label="Previous image"
+                >
+                    <IoIosArrowBack size={24} />
+                </button>
+            )}
 
             <div className="relative w-[90vw] h-[90vh]">
                 <Image
@@ -50,13 +52,15 @@ const ImageViewer = ({ images, currentIndex, onClose, onNext, onPrev }: ImageVie
                 />
             </div>
 
-            <button
-                onClick={onNext}
-                className="absolute right-4 text-white p-2 hover:bg-white/20 rounded-full transition-colors"
-                aria-label="Next image"
-            >
-                <IoIosArrowForward size={24} />
-            </button>
+            {images.length > 1 && (
+                <button
+                    onClick={onNext}
+                    className="absolute right-4 text-white p-2 hover:bg-white/20 rounded-full transition-colors z-[60] pointer-events-auto"
+                    aria-label="Next image"
+                >
+                    <IoIosArrowForward size={24} />
+                </button>
+            )}
         </div>
     );
 };
