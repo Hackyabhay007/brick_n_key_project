@@ -229,32 +229,33 @@ export default function Search_Filter_Mobile({ isOpen, onClose }: SearchFilterMo
                     transition={{ duration: 0.3 }}
                     className="fixed inset-0 z-50 bg-bgColor overflow-hidden"
                 >
-                    {/* Add max-height and overflow-y-auto to make content scrollable */}
                     <div className='w-full h-full flex flex-col lg:hidden'>
-                        {/* Header stays fixed */}
+                        {/* Modified header with better spacing and close button */}
                         <motion.div 
                             initial={{ y: -20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ duration: 0.4, delay: 0.2 }}
-                            className="search_filter_header bg-bgBlue w-full py-12 flex justify-between items-center px-6 text-white sticky top-0 z-10"
+                            className="bg-bgBlue w-full py-4 px-6 flex flex-col gap-4 text-white sticky top-0 z-10"
                         >
-                            <button className="text-lg py-2 px-4 bg-gray-600 rounded-xl">Buy</button>
-                            <button 
-                                onClick={handleClose}
-                                className="text-lg"
-                            >
-                                X
-                            </button>
+                            <div className="flex justify-between items-center">
+                                <span className="text-xl font-medium">Filters</span>
+                                <button 
+                                    onClick={handleClose}
+                                    className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                                >
+                                    <IoClose className="w-6 h-6" />
+                                </button>
+                            </div>
                         </motion.div>
 
-                        {/* Make this section scrollable */}
-                        <div className="flex-1 overflow-y-auto">
-                            {/* Search input section - removed sticky positioning */}
+                        {/* Scrollable content with adjusted search bar */}
+                        <div className="flex-1 overflow-y-auto pt-4">
+                            {/* Search input section with proper spacing */}
                             <motion.div 
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 0.4, delay: 0.3 }}
-                                className="buy_section_in_mobile w-[93%] border border-black -mt-6 lg:hidden rounded-lg flex justify-between items-center bg-bgColor mx-auto mb-4"
+                                className="w-[93%] border border-black rounded-lg flex justify-between items-center bg-bgColor mx-auto mb-6"
                             >
                                 <div className="w-full flex items-center">
                                     <input 
@@ -282,7 +283,7 @@ export default function Search_Filter_Mobile({ isOpen, onClose }: SearchFilterMo
                                 </button>
                             </motion.div>
 
-                            {/* Filter sections */}
+                            {/* Rest of the filter sections */}
                             <div className="px-6 pb-20">
                                 {/* Property Type Section */}
                                 <div className="mb-6">
