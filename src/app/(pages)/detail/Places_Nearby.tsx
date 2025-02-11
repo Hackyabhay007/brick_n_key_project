@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import { Plane, School, Coffee, ShoppingBag, Train, Bus, Hospital, Park } from 'lucide-react';
+import { Plane, School, Coffee, ShoppingBag, Train, Bus, Hospital } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, nearBy_Array: [{id :number, item: string}]}) => {
@@ -13,7 +13,7 @@ const Places_Nearby = ({propertyAddress, nearBy_Array}:{propertyAddress:string, 
     'Train': Train,
     'Bus': Bus,
     'Hospital': Hospital,
-    'Park': Park
+
   };
 
   return (

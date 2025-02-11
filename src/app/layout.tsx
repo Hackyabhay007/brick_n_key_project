@@ -6,6 +6,7 @@ import "./globals.css";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
 import Template from "./components/Template";
+import { Suspense } from "react";
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -36,9 +37,9 @@ const metadata: Metadata = {
 };
 
 
-  console.error = () => {};
-  console.warn = () => {};
-  console.log = () => {};
+  // console.error = () => {};
+  // console.warn = () => {};
+  // console.log = () => {};
 
 export default function RootLayout({
   children,
@@ -55,11 +56,15 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className={montserrat.className}>
-        <Provider store={store}>
+
+      <Suspense fallback={<div>Loading...</div>}>
+      <Provider store={store}>
           <Template>
             {children}
           </Template> 
         </Provider>
+        </Suspense>
+     
       </body>
     </html>
   );
