@@ -41,7 +41,7 @@ const Brand = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [isImageTransitioning, setIsImageTransitioning] = useState<{ [key: string]: boolean }>({});
-
+  const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 
   const router = useRouter();
 
@@ -244,7 +244,6 @@ const Brand = () => {
     setTimeout(() => setIsItemsVisible(false), 5000);
   };
 
-
   const cycleImage = (propertyId: string, imagesLength: number) => {
     setIsImageTransitioning(prev => ({ ...prev, [propertyId]: true }));
     
@@ -260,6 +259,20 @@ const Brand = () => {
     }, 200);
 };
 
+  useEffect(() => {
+    let scrollInterval: NodeJS.Timeout;
+    
+    if (isAutoScrolling && data?.data?.length > 5) {
+      scrollInterval = setInterval(() => {
+        setCurrentIndex((prevIndex) => {
+          const nextIndex = prevIndex === data.data.length - 5 ? 0 : prevIndex + 1;
+          return nextIndex;
+        });
+      }, 3000); // Slower scroll speed (3 seconds per move)
+    }
+
+    return () => clearInterval(scrollInterval);
+  }, [isAutoScrolling, data?.data?.length]);
 
   return (
     <div className="brand_container w-full bg-bgColor pt-16">
@@ -274,24 +287,28 @@ const Brand = () => {
         </div>
 
         {/* Brands Slider */}
-        <div className="relative mx-auto mb-12 px-4 w-full mt-20 max-xl:mt-10 max-lg:mt-0">
+        <div className="relative mx-auto mb-8 px-4 w-full mt-20 max-xl:mt-10 max-lg:mt-0">
           {/* Brand Logos */}
           <div className="overflow-x-auto w-full px-4 md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-            <div className="w-full flex gap-4 md:transform md:transition-all md:duration-700 md:ease-in-out touch-pan-x">
+            <div 
+              className="w-full flex gap-4 md:transform md:transition-all md:duration-700 md:ease-in-out touch-pan-x"
+              onMouseEnter={() => setIsAutoScrolling(false)}
+              onMouseLeave={() => setIsAutoScrolling(true)}
+            >
               {(data?.data)?.map((currElem: { id: number, brand_ID: string, brand_name: string, brand_logo: { url: string } }, index: number) => (
           <div
             key={"brand" + currElem.id}
             className="flex-shrink-0 w-1/3 md:w-1/5 px-2 md:px-3 cursor-pointer scroll-snap-align-start"
             onClick={() => { handleBrandClick(index); setShowPropertyCard(true); setBrand_name(currElem?.brand_name); }}
           >
-            <div className="group flex flex-col items-center justify-center p-2 md:p-6 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300">
+            <div className="group flex flex-col items-center justify-center p-2 md:p-6 rounded-2xl bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all duration-300 border border-white/10">
               <div className="relative w-full h-full flex items-center justify-center">
           <Image
             width={400}
             height={400}
             src={giveCorrectImage(currElem.brand_logo.url)}
             alt={currElem.brand_name}
-            className="w-auto h-auto object-contain transition-all duration-300 group-hover:scale-110"
+            className="w-auto h-auto object-contain transition-all duration-300 group-hover:scale-110 mix-blend-luminosity group-hover:mix-blend-normal"
             style={{
               maxWidth: '100%',
               maxHeight: '100%',
@@ -306,6 +323,16 @@ const Brand = () => {
           </div>
               ))}
             </div>
+          </div>
+
+          {/* View All Brands Button */}
+          <div className="flex justify-center mt-8">
+            <button 
+              onClick={() => router.push('/listing?new=true')}
+              className="px-6 py-2 text-sm text-white rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/10"
+            >
+              View All Brands
+            </button>
           </div>
         </div>
 
