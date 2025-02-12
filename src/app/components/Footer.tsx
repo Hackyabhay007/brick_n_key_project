@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { subscribeToNewsletter, resetSubscribeState } from '@/redux/slices/subscribeSlice';
 import { RootState, AppDispatch } from '@/redux/store';
 import Link from 'next/link';
+import { FacebookIcon, TwitterIcon, InstagramIcon, LinkedInIcon } from './SocialIcons';
 
 export default function Footer() {
     const ref = useRef(null);
@@ -109,6 +110,13 @@ export default function Footer() {
         }
     };
 
+    const socialIcons = [
+        { Icon: FacebookIcon, href: '#' },
+        { Icon: TwitterIcon, href: '#' },
+        { Icon: InstagramIcon, href: '#' },
+        { Icon: LinkedInIcon, href: '#' }
+    ];
+
     return (
         <>
             <Toast 
@@ -139,21 +147,18 @@ export default function Footer() {
                             />
                             <p className="text-sm sm:text-base mb-6">Your trusted real estate partner for buying, selling, renting, and managing properties.</p>
                             <div className="flex gap-4 mb-4">
-                                {["facebook_logo.png", "twitter_logo.png", "instagram_logo.png", "linkedIn_logo.png"].map((icon, index) => (
+                                {socialIcons.map(({ Icon }, index) => (
                                     <motion.div
-                                        key={icon}
+                                        key={index}
                                         variants={socialIconVariants}
                                         custom={index}
                                         initial="hidden"
                                         animate={isInView ? "visible" : "hidden"}
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="text-[#8F90A6] hover:text-white transition-colors cursor-pointer"
                                     >
-                                        <Image 
-                                            width={22} 
-                                            height={22} 
-                                            src={`/images/${icon}`} 
-                                            alt={`${icon.split('_')[0]} icon`}
-                                            className="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]"
-                                        />
+                                        <Icon />
                                     </motion.div>
                                 ))}
                             </div>
