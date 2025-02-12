@@ -25,6 +25,14 @@
   box-sizing: border-box;
 }
 
+/* Add these at the beginning of your globals.css */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* styles/globals.css */
 html {
   scroll-behavior: smooth;
