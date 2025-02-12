@@ -19,7 +19,7 @@ export const fetchPeopleTrustUs_Slice = createAsyncThunk(
   "peopleTrustUs/fetchPeopleTrustUs_Slice",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://147.93.106.161:1337/api/people-trust-uses?populate=*");
+      const response = await axios.get("https://strapi.bricknkey.com/api/people-trust-uses?populate=*");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to fetch data");

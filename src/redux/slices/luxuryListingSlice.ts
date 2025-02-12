@@ -19,7 +19,7 @@ export const fetchLuxuryListingItem = createAsyncThunk(
   "luxuryListingItem/fetchLuxuryListingItem",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://147.93.106.161:1337/api/detail-pages?filters[isLuxury][$eq]=true&populate=*");
+      const response = await axios.get("https://strapi.bricknkey.com/api/detail-pages?filters[isLuxury][$eq]=true&populate=*");
     //   console.log(response)
       return response.data;
     } catch (error: any) {

@@ -32,7 +32,7 @@ export default function Header() {
     const data = useSelector((state: RootState) => state.headerSection?.data);
     const dispatch = useDispatch<AppDispatch>();
 
-    // const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://147.93.106.161:1337"; // Fallback for local dev
+    // const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "https://strapi.bricknkey.com"; // Fallback for local dev
     // const imagePath = data?.data?.header_container?.LogoLink?.image?.url; 
 
     // if (!imagePath) {

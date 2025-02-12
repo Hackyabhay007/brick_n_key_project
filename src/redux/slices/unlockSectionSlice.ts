@@ -19,7 +19,7 @@ export const fetchUnlockSection = createAsyncThunk(
   "unlockSection/fetchUnlockSection",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://147.93.106.161:1337/api/unlock-section");
+      const response = await axios.get("https://strapi.bricknkey.com/api/unlock-section");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to fetch data");

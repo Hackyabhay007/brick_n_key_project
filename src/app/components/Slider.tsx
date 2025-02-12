@@ -43,6 +43,15 @@ const Slider: React.FC<SliderProps> = ({
     dispatch(fetchLuxuryListingItem());
   }, [dispatch]);
 
+  // Add this new useEffect to set initial location
+  useEffect(() => {
+    if (data?.data?.length > 0) {
+      const initialLocation = data.data[0].property_Location;
+      setActiveLocation(initialLocation);
+      onLocationChange(initialLocation);
+    }
+  }, [data, onLocationChange]);
+
   return (
     <div className="w-full relative">
       <div className="w-full relative px-4">
@@ -52,6 +61,7 @@ const Slider: React.FC<SliderProps> = ({
           centeredSlides={true}
           loop={true}
           slidesPerView={'auto'}
+          initialSlide={0}  // Add this line to set initial slide
           coverflowEffect={{
             rotate: 0,
             stretch: 0,

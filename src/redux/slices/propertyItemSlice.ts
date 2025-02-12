@@ -52,7 +52,7 @@ const initialState: PopularSectionSlice = {
 };
 
 const buildApiUrl = (filters: PropertyFilters): string => {
-  const baseUrl = "http://147.93.106.161:1337/api/detail-pages";
+  const baseUrl = "https://strapi.bricknkey.com/api/detail-pages";
   const page = filters.page || 1;
   const pageSize = filters.pageSize || 5; // Default to 5 items per page
   
@@ -149,7 +149,7 @@ export const fetchPropertiesByPriceRange = createAsyncThunk<
       
       // Fetch the filtered results
       const response = await axios.get(
-        `http://147.93.106.161:1337/api/detail-pages?populate=*&filters[property_price][$gte]=${minPrice}&filters[property_price][$lte]=${maxPrice}&pagination[start]=0&pagination[limit]=10`
+        `https://strapi.bricknkey.com/api/detail-pages?populate=*&filters[property_price][$gte]=${minPrice}&filters[property_price][$lte]=${maxPrice}&pagination[start]=0&pagination[limit]=10`
       );
       
       return response.data;
@@ -172,7 +172,7 @@ export const fetchNewPropertyItems = createAsyncThunk<
   async (_, { rejectWithValue }) => {
     try {
       // Use sorting by createdAt in descending order to get the newest items
-      const url = `http://147.93.106.161:1337/api/detail-pages?populate=*&pagination[start]=0&pagination[limit]=5&sort[0]=createdAt:desc`;
+      const url = `https://strapi.bricknkey.com/api/detail-pages?populate=*&pagination[start]=0&pagination[limit]=5&sort[0]=createdAt:desc`;
       
       const response = await axios.get(url);
       // console.log('New Items API Response:', response.data);

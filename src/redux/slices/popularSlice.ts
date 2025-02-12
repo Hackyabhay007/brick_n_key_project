@@ -19,7 +19,7 @@ export const fetchPopularSection = createAsyncThunk(
   "popularSection/fetchPopularSection",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://147.93.106.161:1337/api/popular-residences?populate=*");
+      const response = await axios.get("https://strapi.bricknkey.com/api/popular-residences?populate=*");
       // console.log(response)
       return response.data;
     } catch (error: any) {

@@ -19,7 +19,7 @@ export const fetchHeaderSection = createAsyncThunk(
   "headerSection/fetchHeaderSection",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://147.93.106.161:1337/api/global?populate=header_container.LogoLink.image&populate[1]=header_container.navLinks");
+      const response = await axios.get("https://strapi.bricknkey.com/api/global?populate=header_container.LogoLink.image&populate[1]=header_container.navLinks");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to fetch data");

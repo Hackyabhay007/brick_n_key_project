@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
-        port: "1337", // Strapi default port
+        port: "1337",
         pathname: "/uploads/**",
       },
       {
@@ -26,7 +26,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "your-production-strapi.com", // Change this for production
+        hostname: "your-production-strapi.com",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "strapi.bricknkey.com",
         pathname: "/uploads/**",
       },
     ],

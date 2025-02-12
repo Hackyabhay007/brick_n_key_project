@@ -19,7 +19,7 @@ export const fetch_whyChooseUsSection = createAsyncThunk(
   "whyChooseUsSection/fetch_whyChooseUsSection",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://147.93.106.161:1337/api/why-choose-us-section");
+      const response = await axios.get("https://strapi.bricknkey.com/api/why-choose-us-section");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to fetch data");
