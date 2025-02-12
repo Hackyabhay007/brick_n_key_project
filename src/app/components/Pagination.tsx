@@ -39,7 +39,7 @@ const Pagination = ({
       <button 
         onClick={() => {
           onPageChange(currentPage - 1);
-          document.querySelector('.listing_container')?.scrollIntoView({ behavior: 'smooth' });
+          document.querySelector('.listing_inner_container')?.scrollIntoView({ behavior: 'smooth' });
         }}
         disabled={currentPage === 1}
         className="w-8 h-8 rounded border border-white/40 flex items-center justify-center text-white hover:bg-white/10 transition-colors disabled:opacity-50"
@@ -53,7 +53,10 @@ const Pagination = ({
       {getPageNumbers().map((number) => (
         <button
           key={number}
-          onClick={() => onPageChange(number)}
+          onClick={() => {
+            onPageChange(number);
+            document.querySelector('.listing_inner_container')?.scrollIntoView({ behavior: 'smooth' });
+          }}
           className={`w-8 h-8 rounded flex items-center justify-center border ${
             currentPage === number ? 'border-white text-white' : 'border-white/40 text-white/80'
           } hover:bg-white/10 transition-colors text-lg`}
@@ -68,7 +71,7 @@ const Pagination = ({
       <button 
         onClick={() => {
           onPageChange(currentPage + 1);
-          document.querySelector('.listing_container')?.scrollIntoView({ behavior: 'smooth' });
+          document.querySelector('.listing_inner_container')?.scrollIntoView({ behavior: 'smooth' });
         }}
         disabled={currentPage === totalPages}
         className="w-8 h-8 rounded border border-white/40 flex items-center justify-center text-white hover:bg-white/10 transition-colors disabled:opacity-50"
