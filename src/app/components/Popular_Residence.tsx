@@ -124,7 +124,7 @@ const Popular_Residence = () => {
         <div className="w-full relative flex justify-end bg-bgColor">
             <div className="w-[95%] 2xl:w-[90%] max-sm:w-full -mt-24 z-20 py-10 max-lg:py-4 rounded-tl-[79px] rounded-bl-[20px] bg-bgBlue pl-6 max-sm:pl-4">
                 <div className="flex justify-between items-center mb-8 max-lg:mb-4 px-4 max-sm:px-0">
-                    <h2 className="text-white font-[500] text-[28px] max-lg:text-lg leading-[39.81px] pl-2">Popular Residence</h2>
+                    <h2 className="text-white font-[500] text-[28px] max-lg:text-lg leading-[39.81px] pl-4">Popular Residence</h2>
                     <div className="flex gap-2 mr-16 max-lg:mr-10">
                         <button
                             onClick={scrollPrev}
