@@ -36,6 +36,7 @@ const Slider: React.FC<SliderProps> = ({
   const data = useSelector((state: RootState) => state.luxuryListingItems?.data);
   const dispatch = useDispatch<AppDispatch>();
   const [activeLocation, setActiveLocation] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [swiper, setSwiper] = useState<any>(null);
 
@@ -43,14 +44,25 @@ const Slider: React.FC<SliderProps> = ({
     dispatch(fetchLuxuryListingItem());
   }, [dispatch]);
 
-  // Add this new useEffect to set initial location
   useEffect(() => {
     if (data?.data?.length > 0) {
       const initialLocation = data.data[0].property_Location;
       setActiveLocation(initialLocation);
       onLocationChange(initialLocation);
+      // Add a small delay to ensure proper initialization
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
     }
   }, [data, onLocationChange]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-[400px] flex items-center justify-center">
+        <div className="animate-pulse w-[300px] md:w-[450px] h-[300px] bg-gray-200 rounded-[20px]" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full relative">
@@ -61,12 +73,16 @@ const Slider: React.FC<SliderProps> = ({
           centeredSlides={true}
           loop={true}
           slidesPerView={'auto'}
-          initialSlide={0}  // Add this line to set initial slide
+          initialSlide={0}
+          autoplay={{
+            delay: 100,
+            disableOnInteraction: false,
+          }}
           coverflowEffect={{
             rotate: 0,
             stretch: 0,
             depth: 100,
-            modifier: 2,  // Reduced from 2.5
+            modifier: 2,
             slideShadows: false,
           }}
           pagination={{ clickable: true }}
@@ -79,13 +95,17 @@ const Slider: React.FC<SliderProps> = ({
               onLocationChange(activeSlide.property_Location);
             }
           }}
-          onSwiper={setSwiper}
+          onSwiper={(swiperInstance) => {
+            setSwiper(swiperInstance);
+            // Ensure first slide is centered
+            swiperInstance.slideTo(1, 0);
+          }}
           navigation={{
             enabled: true,
             prevEl: '.custom-prev',
             nextEl: '.custom-next',
           }}
-          spaceBetween={30}  // Add this line to create space between slides
+          spaceBetween={30}
         >
           {data?.data?.map((item: any, index: number) => (
             <SwiperSlide key={item.id} className="!w-[300px] md:!w-[450px] transition-all duration-300">
